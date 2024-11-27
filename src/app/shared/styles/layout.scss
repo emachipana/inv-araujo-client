@@ -1,0 +1,25 @@
+@mixin flex-container($width: auto, $align: center, $justify: center, $gap: 1rem, $direction: row) {
+  display: flex;
+  flex-direction: $direction; 
+  width: $width;
+  align-items: $align;
+  justify-content: $justify;
+  gap: $gap;
+}
+
+@mixin text(
+  $size: 1rem, $weight: 500, $color: inherit, $decoration: none,
+  $cursor: inherit, $align: start, $hover_color: inherit
+  ) {
+  font-size: $size;
+  font-weight: $weight;
+  color: $color;
+  text-decoration: $decoration;
+  cursor: $cursor;
+  text-align: $align;
+  transition: color .1s ease;
+
+  &:hover {
+    color: $hover_color;
+  }
+}
