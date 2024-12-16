@@ -9,8 +9,6 @@
 .container {
   height: 30px;
   background-color: $gray;
-  position: sticky;
-  top: 0;
   padding: 0.5rem;
   @include flex-container($justify: flex-end)
 }

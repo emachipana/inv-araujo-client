@@ -1,0 +1,26 @@
+@use 'layout.scss' as *;
+
+.container {
+  @include flex-container($width: 100%, $align: flex-start, $gap: 0.5rem);
+  position: relative;
+}
+
+.label {
+  font-weight: 700;
+  text-align: start;
+}
+
+.section {
+  @include flex-container($width: 100%, $gap: 0.5rem);
+  height: 38px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.5rem;
+}
+
+.textarea-heigth {
+  height: 80px;
+}
+
+.icon {
+  font-size: 24px;
+}

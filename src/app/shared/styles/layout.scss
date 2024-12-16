@@ -23,3 +23,11 @@
     color: $hover_color;
   }
 }
+
+@mixin image($height: 100px, $width: auto, $radius: 1rem, $cursor: pointer) {
+  height: $height;
+  width: $width;
+  border-radius: $radius;
+  object-fit: cover;
+  cursor: $cursor;
+}

@@ -1,0 +1,23 @@
+<div class="container">
+  @if(label) {
+    <label 
+      [htmlFor]="id"
+      [ngClass]="fontSize"
+    >
+      {{ label | titlecase }}
+    </label>
+  }
+  <section class="section">
+    @if (icon) {
+      <mat-icon class="icon">{{ icon }}</mat-icon>
+    }
+    <input 
+      [id]="id"
+      [ngClass]="fontSize"
+      [disabled]="isDisabled"
+      [placeholder]="placeholder"
+      [type]=""
+      [value]=""
+    />
+  </section>
+</div>

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-main',
+  selector: 'main-section',
   standalone: true,
-  imports: [],
+  imports: [MatIconModule],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
