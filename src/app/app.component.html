@@ -1,2 +1,16 @@
-<app-navbar />
-<router-outlet />
+@if (_authService.isLoading()) {
+  <ngx-spinner 
+    bdColor = "{{colors.white}}" 
+    size = "medium" 
+    color = "{{colors.persian}}" 
+    type = "square-jelly-box"
+  />
+}@else {
+  <app-navbar />
+  <router-outlet />
+  <p-dialog [(visible)]="_loginModalService.isOpen" [closeIcon]="'no'" [modal]="true" [dismissableMask]="true" (onHide)="_loginModalService.close()">
+    <section class="modal-header">
+      
+    </section>
+  </p-dialog>
+}

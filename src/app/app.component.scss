@@ -1,0 +1,10 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.modal-header {
+  @include flex-container($width: 100%);
+  min-width: 320px;
+  background-color: $persian;
+  border-radius: 1rem;
+  padding: 1rem 0.5rem;
+}
