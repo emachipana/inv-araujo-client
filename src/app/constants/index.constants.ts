@@ -2,11 +2,15 @@ import { environment } from "../../environments/environment";
 
 export const ApiConstants = {
   auth: `${environment.base_uri}/auth`,
-  users: `${environment.base_uri}/users`
+  users: `${environment.base_uri}/users`,
+  clients: `${environment.base_uri}/clients`,
+  categories: `${environment.base_uri}/categories`,
+  banners: `${environment.base_uri}/offers`
 }
 
 export const AppConstants = {
-  token_key: "inversiones-token"
+  token_key: "inversiones-token",
+  cart_key: "cart-inversiones"
 }
 
 export const Colors = {
@@ -27,5 +31,4 @@ export const Colors = {
   yellow: "#FFB829",
   yellow_hover: "#F5A300",
   emerald: "#00CC76"
-
 }

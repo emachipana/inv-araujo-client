@@ -1,0 +1,61 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.section {
+  align-items: center;
+  width: 100%;
+  margin: 2rem 0 0 0;
+}
+
+.services {
+  width: 100%;
+  background-color: $smoke;
+  padding: 2rem 1rem;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.service-item {
+  @include flex-container($align: flex-start, $gap: 0.25rem);
+  max-width: 280px;
+}
+
+.info {
+  width: 80%;
+  gap: 0;
+}
+
+.icon {
+  color: $persian;
+  font-size: 45px;
+  width: 20%;
+  height: 50px;
+}
+
+.service-title {
+  @include text($size: 17px, $weight: 700);
+  line-height: 18px;
+}
+
+.service-description {
+  @include text($size: 15px, $color: $taupe, $hover_color: $taupe, $align: justify);
+}
+
+.banner {
+  width: 100%;
+  padding: 3rem 1rem;
+  margin-top: 2rem;
+  background-image: linear-gradient(rgba(45, 55, 66, .8), rgba(45, 55, 66, .8)), url("/desk.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: $white;
+  align-items: center;
+  gap: 3rem;
+}
+
+.line {
+  width: 50px;
+  transform: rotate(90deg);
+  border: 1px solid $taupe;
+}

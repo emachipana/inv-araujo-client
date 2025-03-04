@@ -2,9 +2,80 @@
 @use 'colors.scss' as *;
 
 .modal-header {
-  @include flex-container($width: 100%);
+  @include flex-container($width: 100%, $justify: space-between);
   min-width: 320px;
   background-color: $persian;
-  border-radius: 1rem;
-  padding: 1rem 0.5rem;
+  border-radius: 0.8rem;
+  padding: 1rem;
+}
+
+.item-modal-header {
+  padding: 6px 8px;
+  background-color: transparent;
+  color: white;
+  border-radius: 0.5rem;
+  gap: 0.25rem;
+  transition: .2s ease-in;
+
+  &:hover {
+    background-color: $persian_hover;
+  }
+}
+
+.text-modal-header {
+  @include text($weight: 600);
+}
+
+.active {
+  background-color: $persian_hover;
+}
+
+.close-icon {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+
+.flex-column {
+  gap: 1.5rem;
+}
+
+.button-google {
+  padding: 6px 8px;
+  border: 1px solid $taupe;
+  border-radius: 0.75rem;
+  background-color: $smoke;
+
+  &:hover {
+    transition: .2s ease-in-out;
+    background-color: $platinium;
+  }
+}
+
+.button-google-icon {
+  width: 28px;
+  height: 28px
+}
+
+.button-google-text {
+  @include text($weight: 600);
+}
+
+.base-form-text {
+  @include text($size: 14px, $color: $taupe, $hover_color: $taupe);
+}
+
+.link {
+  @include text($size: 14px, $color: $blue, $hover_color: $blue, $decoration: underline, $cursor: pointer);
+}
+
+.loader {
+  background-color: $white;
+  height: 100vh;
+  position: fixed;
+  @include flex-container($width: 100%);
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }

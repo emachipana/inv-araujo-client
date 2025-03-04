@@ -43,6 +43,29 @@
 
 	&:hover {
 		color: $persian;
+
 	}
 }
 
+.flex-column {
+	padding: 0.5rem;
+}
+
+.cart-items {
+	@include flex-container();
+	width: 20px;
+	height: 20px;
+	top: -5px;
+	right: -5px;
+	position: absolute;
+	border-radius: 50%;
+	background-color: $dim;
+	color: white;
+	font-weight: 600;
+	padding: 0.25rem;
+	font-size: 15px;
+}
+
+.cart-items-active {
+	background-color: $persian;
+}

@@ -1,0 +1,14 @@
+<button [disabled]="isDisabled" (click)="handleClick()" class="container" [ngClass]="theme">
+  @if(isLoading) {
+    <spinner color="secondary"/>
+  }@else {
+    @if (icon) {
+      <mat-icon>{{ icon }}</mat-icon>
+    }
+  }
+  <p
+    [ngClass]="fontSize"
+  >
+    <ng-content></ng-content>
+  </p>
+</button>

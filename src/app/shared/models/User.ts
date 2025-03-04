@@ -5,5 +5,8 @@ export interface User {
   role: string,
   fullName: string,
   username: string,
-  image: Image | null
+  image: Image | null,
+  isVerified: boolean,
+  cartId?: number,
+  totalCart?: number
 }

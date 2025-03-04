@@ -1,4 +1,4 @@
-@if(isVisible) {
+@if(_dataService.isInfoNavbarVisible) {
   <div class="container">
     <section class="section">
       <mat-icon
@@ -20,7 +20,7 @@
     </section>
     <mat-icon 
       class="close"
-      (click)="hiddenInfo()"
+      (click)="_dataService.isInfoNavbarVisible = false"
     >
       close
     </mat-icon>

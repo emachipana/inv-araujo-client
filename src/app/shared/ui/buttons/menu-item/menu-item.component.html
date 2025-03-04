@@ -1,4 +1,6 @@
 <div (click)="handleClick()" class="container cursor-pointer">
-  <p class="name">{{name}}</p>
+  <p class="name">
+    <ng-content></ng-content>
+  </p>
   <hr />
 </div>

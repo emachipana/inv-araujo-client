@@ -5,7 +5,7 @@ type errors = {
   maxlength?: number
 }
 
-export const errorMessage = (form: FormGroup, name: string, errors: errors): string => {
+export const messageGenerator = (form: FormGroup, name: string, errors: errors): string => {
   const input = form.get(name);
   if(!input || !input.touched) return "";
 
@@ -16,6 +16,8 @@ export const errorMessage = (form: FormGroup, name: string, errors: errors): str
   if(input.hasError("maxlength")) return `El máximo son ${errors.maxlength} caracteres`;
 
   if(input.hasError("email")) return "El formato es incorrecto";
+
+  if(name === "confirmPassword" && form.hasError("passwordMismatch")) return "Las contraseñas no coinciden";
 
   return "";
 }

@@ -1,0 +1,29 @@
+@if(isLoading) {
+  <spinner 
+    size="md"
+  />
+}@else {
+  <div class="container">
+    <p-carousel
+      [value]="_dataService.categories()"
+      [numVisible]="4"
+      [numScroll]="2"
+      [circular]="true"
+      [autoplayInterval]="5000"
+    >
+      <ng-template let-category #item>
+        <div class="card" >
+          <img
+            class="img"
+            alt="{{category.name}}"
+            src="{{category.image ? category.image.url : 'default_category.jpg'}}"
+          />
+          <section class="card-section">
+            <h5 class="title">{{ category.name }}</h5>
+            <p class="description">{{ category.description }}</p>
+          </section>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </div>
+}

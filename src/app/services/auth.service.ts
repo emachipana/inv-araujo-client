@@ -1,33 +1,62 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../shared/models/User';
-import { LoginRequest } from '../shared/models/LoginRequest';
-import { RegisterRequest } from '../shared/models/RegisterRequest';
+import { AuthRequest } from '../shared/models/AuthRequest';
 import { ApiConstants, AppConstants } from '../constants/index.constants';
 import { ApiResponse } from '../shared/models/ApiResponse';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable, switchMap, tap } from 'rxjs';
+import { Client } from '../shared/models/Client';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _http = inject(HttpClient);
-  private _spinnerService = inject(NgxSpinnerService);
+  private toast = inject(HotToastService);
   currentUser = signal<User | null>(null);
   isLoading = signal(true);
   isLoggedIn = signal(false);
 
   constructor() {
     this.checkAuth();
-    this._spinnerService.show();
   }
 
-  login(credentials: LoginRequest) {
-
+  login(credentials: AuthRequest): Observable<ApiResponse<{user: User, token: string}>> {
+    return this._http.post<ApiResponse<{user: User, token: string}>>(`${ApiConstants.auth}/login`, credentials)
+      .pipe(
+        tap((response) => {
+          localStorage.setItem(AppConstants.token_key, response.data.token);
+          this.isLoggedIn.set(true);
+          this.currentUser.set(response.data.user);
+        })
+      );
   }
 
-  register(body: RegisterRequest) {
+  register(request: AuthRequest): Observable<ApiResponse<{user: User, token: string}>> {
+    const clientBody: Client = {
+      rsocial: "Usuario nuevo",
+      createdBy: "CLIENTE",
+      documentType: "DNI",
+      email: request.username,
+    };
 
+    // check email before create client
+    // https://api.hunter.io/v2/email-verifier
+
+    return this._http.post<ApiResponse<Client>>(ApiConstants.clients, clientBody).pipe(
+      switchMap((response) => {
+        const clientId = response.data.id;
+        const userBody = { password: request.password, clientId };
+        return this._http.post<ApiResponse<{ user: User, token: string }>>(`${ApiConstants.auth}/register`, userBody);
+      })
+    ).pipe(
+      tap((response) => {
+        localStorage.setItem(AppConstants.token_key, response.data.token);
+        this.isLoggedIn.set(true);
+        this.currentUser.set(response.data.user);
+      })
+    );
   }
 
   logout() {
@@ -47,9 +76,9 @@ export class AuthService {
         this.isLoading.set(false)
       },
       error: (error) => {
-        // this.isLoading.set(false);
-        console.log(error)
-        this.logout();
+        this.isLoading.set(false);
+        this.toast.error(error.error.message);
+        console.log(error);
       }
     });
   }

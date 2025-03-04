@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'menu-item',
@@ -8,7 +8,6 @@ import { Component, EventEmitter, HostListener, Input, Output } from '@angular/c
   styleUrl: './menu-item.component.scss'
 })
 export class MenuItemComponent {
-  @Input({required: true}) name: string = "";
   @Output() onClick = new EventEmitter<void>();
 
   handleClick() {

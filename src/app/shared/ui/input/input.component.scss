@@ -2,6 +2,10 @@
 @use 'colors.scss' as *;
 @use 'fonts.scss' as * ;
 
+:host { 
+  width: 100%;
+}
+
 .container {
   @include flex-container($width: 100%, $align: flex-start, $gap: 0.5rem, $direction: column);
   position: relative;

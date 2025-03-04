@@ -9,6 +9,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { provideHotToastConfig } from '@ngxpert/hot-toast';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +20,9 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(NgxSpinnerModule.forRoot({type: "square-jelly-box"})),
     provideAnimationsAsync(),
     provideAnimations(),
+    provideHotToastConfig({
+      position: "top-right"
+    }),
     providePrimeNG({
       theme: {
         preset: Aura,

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { DataService } from '../../../../services/data.service';
 
 @Component({
   selector: 'info',
@@ -9,9 +10,5 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './info.component.scss'
 })
 export class InfoComponent {
-  isVisible = true;
-
-  hiddenInfo() {
-    this.isVisible = false;
-  }
+  _dataService = inject(DataService);
 }
