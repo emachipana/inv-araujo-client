@@ -50,3 +50,7 @@
 .main-description {
   @include text($align: center, $color: $taupe, $hover_color: $taupe);
 }
+
+.relative {
+  position: relative;
+}

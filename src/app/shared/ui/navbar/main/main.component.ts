@@ -4,17 +4,16 @@ import { InputComponent } from "../../input/input.component";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { LoginModalService } from '../../../../services/login-modal.service';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { Menu } from 'primeng/menu';
 import { NgClass } from '@angular/common';
 import { MenuItemComponent } from '../../buttons/menu-item/menu-item.component';
 import { Router } from '@angular/router';
 import { CartService } from '../../../../services/cart.service';
+import { MenuComponent } from "../../menu/menu.component";
 
 @Component({
   selector: 'main-section',
   standalone: true,
-  imports: [MatIconModule, InputComponent, Menu, ReactiveFormsModule, OverlayPanelModule, NgClass, MenuItemComponent],
+  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
@@ -38,8 +37,19 @@ export class MainComponent implements OnInit {
     });
   }
 
-  handleProf(action: "register" | "login"): void {
+  handleProfileClick(action: "register" | "login", handler: VoidFunction): void {
+    handler();
     this._loginModalService.open(action);
     this.isProfOpen = false;
+  }
+
+  openProfileMenu(handler: VoidFunction) {
+    handler();
+    this.isProfOpen = true;
+  }
+
+  openCartMenu(handler: VoidFunction) {
+    handler();
+    this.isCartOpen = true;
   }
 }

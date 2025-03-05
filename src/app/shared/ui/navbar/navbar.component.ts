@@ -4,17 +4,16 @@ import { MainComponent } from "./main/main.component";
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { Menu } from 'primeng/menu';
 import { DataService } from '../../../services/data.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { MenuItemComponent } from "../buttons/menu-item/menu-item.component";
 import { SpinnerComponent } from "../spinner/spinner.component";
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { MenuComponent } from "../menu/menu.component";
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [InfoComponent, MainComponent, NgClass, MatIconModule, OverlayPanelModule, Menu, MenuItemComponent, SpinnerComponent],
+  imports: [InfoComponent, MainComponent, NgClass, MatIconModule, MenuItemComponent, SpinnerComponent, MenuComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
@@ -29,7 +28,8 @@ export class NavbarComponent {
     return this.router.url === route;
   }
 
-  openMenu(): void {
+  openMenu(handler: VoidFunction): void {
+    handler();
     this.isMenuOpen = true;
     
     if(this._dataService.controller.categories) return;

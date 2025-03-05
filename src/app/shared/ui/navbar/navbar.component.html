@@ -8,19 +8,36 @@
     >
       inicio
     </h3>
-    <div 
-      class="flex-row item"
-      style="gap: 0.25rem"
-      (mouseenter)="menu.toggle($event)"
-      [ngClass]="{'active': isActive('/tienda') || isMenuOpen}"
-    >
-      <h3 
-        class="item"
+    <section class="relative">
+      <div
+        class="flex-row item"
+        style="gap: 0.25rem"
+        (mouseenter)="openMenu(menu.show)"
+        [ngClass]="{'active': isActive('/tienda') || isMenuOpen}"
       >
-        tienda
-      </h3>
-      <mat-icon>keyboard_arrow_down</mat-icon>
-    </div>
+        <h3 
+          class="item"
+        >
+          tienda
+        </h3>
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
+      <app-menu #menu (onHide)="isMenuOpen = false">
+        <div class="flex-column">
+          @if (isLoading) {
+            <spinner />
+          }@else {
+            @for (category of _dataService.categories(); track $index) {
+              <menu-item
+                (onClick)="router.navigate(['/tienda'])"
+              >
+                {{category.name}}
+              </menu-item>
+            }
+          }
+        </div>
+      </app-menu>
+    </section>
     <h3 
       class="item"
       [ngClass]="{'active': isActive('/invitro')}"
@@ -41,20 +58,3 @@
     </h3>
   </nav>
 </div>
-<p-menu #menu [popup]="true" (onShow)="openMenu()" (onHide)="isMenuOpen = false">
-  <ng-template pTemplate="start" style="padding: 0;">
-    <div class="flex-column">
-      @if (isLoading) {
-        <spinner />
-      }@else {
-        @for (category of _dataService.categories(); track $index) {
-          <menu-item
-            (onClick)="router.navigate(['/tienda'])"
-          >
-            {{category.name}}
-          </menu-item>
-        }
-      }
-    </div>
-  </ng-template>
-</p-menu>

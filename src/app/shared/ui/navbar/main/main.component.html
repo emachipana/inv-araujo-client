@@ -12,26 +12,59 @@
     />
   </form>
   <div class="section">
-    <section class="section cursor-pointer" style="gap: 0.3rem" (mouseenter)="profile.toggle($event)">
-      <p class="text" [ngClass]="{'active': isProfOpen}">
-        Hola,
-        <br /> 
-        <span style="font-weight: 700;">
-          @if (_authService.isLoggedIn()) {
-            {{userFirstName()}}
+    <div class="relative">
+      <section class="section cursor-pointer" style="gap: 0.3rem" (mouseenter)="openProfileMenu(profile.show)">
+        <p class="text" [ngClass]="{'active': isProfOpen}">
+          Hola,
+          <br /> 
+          <span style="font-weight: 700;">
+            @if (_authService.isLoggedIn()) {
+              {{userFirstName()}}
+            }@else {
+              Iniciar sesión
+            }
+          </span>
+        </p>
+        <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+      </section>
+      <app-menu #profile (onHide)="isProfOpen = false">
+        <div class="flex-column">
+          @if(_authService.isLoggedIn()) {
+            <menu-item
+              (onClick)="router.navigate(['/perfil'])"
+            >
+              Mi cuenta
+            </menu-item>
+            <menu-item 
+            >
+              Mis compras
+            </menu-item>
+            <menu-item
+              (onClick)="_authService.logout()"
+            >
+              Cerrar sesión
+            </menu-item>
           }@else {
-            Iniciar sesión
+            <menu-item 
+              (onClick)="handleProfileClick('login', profile.hide)"
+            >
+              Iniciar sesión
+            </menu-item>
+            <menu-item 
+              (onClick)="handleProfileClick('register', profile.hide)"
+            >
+              Registrarme
+            </menu-item>
           }
-        </span>
-      </p>
-      <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
-    </section>
+        </div>
+      </app-menu>
+    </div>
     <hr class="vertical" />
-    <div style="position: relative;">
+    <div class="relative">
       <mat-icon 
         class="icon" 
         [ngClass]="{'active': isCartOpen}"
-        (mouseenter)="cart.toggle($event)"
+        (mouseenter)="openCartMenu(cart.show)"
       >
         shopping_cart
       </mat-icon>
@@ -41,44 +74,9 @@
       >
         {{_cartService.items().length}}
       </span>
+      <app-menu #cart (onHide)="isCartOpen = false" position="right">
+        Mi carritoooo
+      </app-menu>
     </div>
   </div>
 </section>
-<p-menu #profile [popup]="true" (onShow)="isProfOpen = true" (onHide)="isProfOpen = false">
-  <ng-template pTemplate="start">
-    <div class="flex-column">
-      @if(_authService.isLoggedIn()) {
-        <menu-item
-          (onClick)="router.navigate(['/perfil'])"
-        >
-          Mi cuenta
-        </menu-item>
-        <menu-item 
-        >
-          Mis compras
-        </menu-item>
-        <menu-item
-          (onClick)="_authService.logout()"
-        >
-          Cerrar sesión
-        </menu-item>
-      }@else {
-        <menu-item 
-          (onClick)="handleProf('login')"
-        >
-          Iniciar sesión
-        </menu-item>
-        <menu-item 
-          (onClick)="handleProf('register')"
-        >
-          Registrarme
-        </menu-item>
-      }
-    </div>
-  </ng-template>
-</p-menu>
-<p-menu #cart [popup]="true" (onShow)="isCartOpen = true" (onHide)="isCartOpen = false">
-  <ng-template pTemplate="start">
-    mi carritooo
-  </ng-template>
-</p-menu>

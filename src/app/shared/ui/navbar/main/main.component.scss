@@ -47,10 +47,6 @@
 	}
 }
 
-.flex-column {
-	padding: 0.5rem;
-}
-
 .cart-items {
 	@include flex-container();
 	width: 20px;
