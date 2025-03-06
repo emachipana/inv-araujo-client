@@ -1,4 +1,9 @@
-<button [disabled]="isDisabled" (click)="handleClick()" class="container" [ngClass]="theme">
+<button
+  [disabled]="isDisabled"
+  (click)="handleClick()"
+  class="container"
+  [ngClass]="[theme, fullSize ? 'full-size' : '']"
+>
   @if(isLoading) {
     <spinner color="secondary"/>
   }@else {

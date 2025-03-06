@@ -1,5 +1,5 @@
 import { Discount } from "./Discount";
-import { Image } from "./Image";
+import { ProductImage } from "./ProductImage";
 
 export interface Product {
   id: number,
@@ -11,6 +11,6 @@ export interface Product {
   stock: number,
   categoryId: number,
   categoryName: string,
-  images: Image[],
+  images: ProductImage[],
   discount: Discount | null
 }

@@ -8,10 +8,10 @@
 
 .main {
   width: 100%;
-  padding: 2rem;
+  padding: 1rem 2rem;
   background-color: $green;
   height: 185px;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .info {
@@ -27,4 +27,21 @@
 .logo {
   width: 180px;
   object-fit: cover;
+}
+
+.title {
+  font-size: 19px;
+  color: $white;
+}
+
+.text {
+  @include text($weight: 400, $color: $platinium, $hover_color: $platinium, $cursor: pointer);
+}
+
+.link {
+  text-decoration: underline;
+}
+
+.platinium {
+  color: $platinium;
 }

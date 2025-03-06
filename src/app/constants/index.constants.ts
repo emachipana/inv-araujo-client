@@ -5,7 +5,8 @@ export const ApiConstants = {
   users: `${environment.base_uri}/users`,
   clients: `${environment.base_uri}/clients`,
   categories: `${environment.base_uri}/categories`,
-  banners: `${environment.base_uri}/offers`
+  banners: `${environment.base_uri}/offers`,
+  products: `${environment.base_uri}/products`
 }
 
 export const AppConstants = {

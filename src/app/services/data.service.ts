@@ -13,13 +13,15 @@ export class DataService {
   private _http = inject(HttpClient); 
   categories = signal<Category[]>([]);
   products = signal<Product[]>([]);
+  discounts = signal<Product[]>([]);
   banners = signal<Banner[]>([]);
   isLoading = signal(false);
   isInfoNavbarVisible = true;
   controller = {
     categories: false,
     products: false,
-    banners: false
+    banners: false,
+    discounts: false
   }
 
   loadCategories(): Observable<Category[]> {
@@ -36,6 +38,15 @@ export class DataService {
       tap((response) => {
         this.banners.set(response);
         this.controller = {...this.controller, banners: true};
+      })
+    );
+  }
+
+  loadProductsWithDiscounts(): Observable<Product[]> {
+    return this._http.get<Product[]>(`${ApiConstants.products}/withDiscounts`).pipe(
+      tap((response) => {
+        this.discounts.set(response);
+        this.controller = {...this.controller, discounts: true};
       })
     );
   }

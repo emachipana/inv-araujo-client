@@ -1,0 +1,13 @@
+@if(isLoading) {
+  <spinner 
+    size="md"
+  />
+}@else {
+  <div class="flex-row container">
+    @for (product of _dataService.discounts(); track $index) {
+      <product-card 
+        [product]="product"
+      />
+    }
+  </div>
+}

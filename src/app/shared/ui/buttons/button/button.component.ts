@@ -8,11 +8,15 @@ import { SpinnerComponent } from "../../spinner/spinner.component";
   standalone: true,
   imports: [NgClass, MatIconModule, SpinnerComponent],
   templateUrl: './button.component.html',
-  styleUrl: './button.component.scss'
+  styleUrl: './button.component.scss',
+  host: {
+    '[class.full-width]': 'fullSize',
+  },
 })
 export class ButtonComponent {
   @Input() theme: 'primary' | 'secondary' | 'warning' | 'danger' = "primary";
   @Input() fontSize: 'font-sm' | 'font-md' | 'font-xl' | 'font-st' | 'font-xxl' = "font-st";
+  @Input() fullSize: boolean = false;
   @Input() icon?: string;
   @Input({transform: booleanAttribute }) isLoading: boolean = false;
   @Input({transform: booleanAttribute }) isDisabled: boolean = false;

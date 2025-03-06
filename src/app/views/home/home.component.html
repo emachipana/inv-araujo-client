@@ -5,7 +5,7 @@
     <p class="main-description">Contamos con los mejores productos para tu negocio</p>
   </div>
   @defer (on viewport(categories)) {
-    <app-categories-section />
+    <categories-section />
   }
 </section>
 <section class="section flex-column">
@@ -50,11 +50,14 @@
     </div>
   </div>
 </section>
-<section class="section flex-column">
+<section class="section flex-column" #products>
   <div>
     <h3 class="main-title">Productos en descuento</h3>
     <p class="main-description">Aprovecha nuestros mejores descuentos</p>
   </div>
+  @defer (on viewport(products)) {
+    <products-section />
+  }
 </section>
 <div class="banner flex-column">
   <div>
