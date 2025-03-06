@@ -1,0 +1,41 @@
+<div class="container">
+  @if(label) {
+    <label 
+      [htmlFor]="id"
+      [ngClass]="fontSize"
+      class="label"
+    >
+      {{ label | titlecase }}
+    </label>
+  }
+  <section
+    class="section"
+    [ngClass]="color()"
+  >
+    @if (icon) {
+      <mat-icon 
+        class="icon" 
+        [ngClass]="color()"
+      >{{ icon }}</mat-icon>
+    }
+    <input
+      class="input"
+      [id]="id"
+      [ngClass]="fontSize"
+      [disabled]="isDisabled"
+      [placeholder]="placeholder"
+      [type]="type"
+      [value]="value"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (input)="onInputChange($event)"
+    />
+  </section>
+  @if(error()) {
+    <p 
+      class="red font-md"
+    >
+      {{ error() }}
+    </p>
+  }
+</div>

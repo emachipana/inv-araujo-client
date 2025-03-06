@@ -1,0 +1,67 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+.container {
+  @include flex-container($width: 100%, $justify: space-between);
+  padding: 0.2rem 2rem;
+  height: 80px;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, .3);
+  background-color: $white;
+}
+
+.image {
+	@include image($height: 100%, $radius: 0);
+}
+
+.section {
+	@include flex-container($gap: 1rem);
+}
+
+.icon {
+	font-size: 35px;
+	width: 35px;
+	height: 35px;
+	cursor: pointer;
+	color: $dim;
+}
+
+.vertical {
+	width: 25px;
+	transform: rotate(90deg);
+	border: none;
+	border-top: 1.9px solid $dim;
+	border-radius: 1rem;
+}
+
+.text {
+	@include text($size: 17px);
+	line-height: 15px;
+}
+
+.active {
+	color: $persian;
+
+	&:hover {
+		color: $persian;
+
+	}
+}
+
+.cart-items {
+	@include flex-container();
+	width: 20px;
+	height: 20px;
+	top: -5px;
+	right: -5px;
+	position: absolute;
+	border-radius: 50%;
+	background-color: $dim;
+	color: white;
+	font-weight: 600;
+	padding: 0.25rem;
+	font-size: 15px;
+}
+
+.cart-items-active {
+	background-color: $persian;
+}

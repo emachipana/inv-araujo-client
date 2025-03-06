@@ -1,1 +1,56 @@
+@use '@ngxpert/hot-toast/src/styles/styles.scss';
 @use 'reset.scss';
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.font-sm {
+  font-size: 12px;
+}
+
+.font-md {
+  font-size: 14px;
+}
+
+.font-xl {
+  font-size: 16px;
+}
+
+.font-st {
+  font-size: 17px;
+}
+
+.font-xxl {
+  font-size: 18px;
+}
+
+.form {
+  @include flex-container($direction: column, $width: 100%, $align: flex-start);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.flex-column {
+  @include flex-container($direction: column, $gap: 0.75rem, $align: flex-start);
+}
+
+.flex-row {
+  @include flex-container($gap: 0.5rem);
+}
+
+.full-size {
+  width: 100%;
+}
+
+.main-title {
+  @include text($size: 2rem, $weight: 800, $align: center);
+}
+
+.main-description {
+  @include text($align: center, $color: $taupe, $hover_color: $taupe);
+}
+
+.relative {
+  position: relative;
+}

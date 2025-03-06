@@ -1,0 +1,47 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.container {
+  height: 200px;
+  width: 100%;
+}
+
+.main {
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: $green;
+  height: 185px;
+  justify-content: space-around;
+}
+
+.info {
+  width: 100%;
+  padding: 0 0.5rem;
+  height: 25px;
+  background-color: $gray;
+  @include flex-container($justify: flex-start);
+  color: $white;
+  font-size: 13px;
+}
+
+.logo {
+  width: 180px;
+  object-fit: cover;
+}
+
+.title {
+  font-size: 19px;
+  color: $white;
+}
+
+.text {
+  @include text($weight: 400, $color: $platinium, $hover_color: $platinium, $cursor: pointer);
+}
+
+.link {
+  text-decoration: underline;
+}
+
+.platinium {
+  color: $platinium;
+}

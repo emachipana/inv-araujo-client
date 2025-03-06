@@ -1,0 +1,82 @@
+<section class="container">
+  <img 
+    src="/logo.png"
+    class="image"
+  />
+  <form [formGroup]="form">
+    <custom-input
+      formControlName="search"
+      id="search"
+      placeholder="Busca un producto..."
+      icon="search"
+    />
+  </form>
+  <div class="section">
+    <div class="relative">
+      <section class="section cursor-pointer" style="gap: 0.3rem" (mouseenter)="openProfileMenu(profile.show)">
+        <p class="text" [ngClass]="{'active': isProfOpen}">
+          Hola,
+          <br /> 
+          <span style="font-weight: 700;">
+            @if (_authService.isLoggedIn()) {
+              {{userFirstName()}}
+            }@else {
+              Iniciar sesión
+            }
+          </span>
+        </p>
+        <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+      </section>
+      <app-menu #profile (onHide)="isProfOpen = false">
+        <div class="flex-column">
+          @if(_authService.isLoggedIn()) {
+            <menu-item
+              (onClick)="router.navigate(['/perfil'])"
+            >
+              Mi cuenta
+            </menu-item>
+            <menu-item 
+            >
+              Mis compras
+            </menu-item>
+            <menu-item
+              (onClick)="_authService.logout()"
+            >
+              Cerrar sesión
+            </menu-item>
+          }@else {
+            <menu-item 
+              (onClick)="handleProfileClick('login', profile.hide)"
+            >
+              Iniciar sesión
+            </menu-item>
+            <menu-item 
+              (onClick)="handleProfileClick('register', profile.hide)"
+            >
+              Registrarme
+            </menu-item>
+          }
+        </div>
+      </app-menu>
+    </div>
+    <hr class="vertical" />
+    <div class="relative">
+      <mat-icon 
+        class="icon" 
+        [ngClass]="{'active': isCartOpen}"
+        (mouseenter)="openCartMenu(cart.show)"
+      >
+        shopping_cart
+      </mat-icon>
+      <span 
+        class="cart-items"
+        [ngClass]="{'cart-items-active': isCartOpen}"
+      >
+        {{_cartService.items().length}}
+      </span>
+      <app-menu #cart (onHide)="isCartOpen = false" position="right">
+        Mi carritoooo
+      </app-menu>
+    </div>
+  </div>
+</section>

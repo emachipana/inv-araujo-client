@@ -1,0 +1,34 @@
+<div class="container" (click)="handleClick()">
+  <img 
+    class="img"
+    [alt]="product.name"
+    [src]="mainProductImg(product.images[0])"
+  />
+  <section class="description">
+    <div class="header">
+      <p class="category">{{product.categoryName}}</p>
+      <div class="brand">{{product.brand}}</div>
+    </div>
+    <h6 class="name">{{product.name}}</h6>
+    <p class="text-description">{{product.description}}</p>
+    <div class="flex-row">
+      <p class="price" [ngClass]="{'hasDiscount': !!product.discount}">S/. {{product.price}}</p>
+      @if(!!product.discount) {
+        <p class="discount-price">S/. {{product.discount.price}}</p>
+      }
+    </div>
+    <app-button
+      [fullSize]="true"
+      theme="secondary"
+    >
+      Agregar al carrito
+    </app-button>
+  </section>
+  @if (product.discount) {
+    <section class="discount">
+      <p class="text-discount">
+        -{{product.discount.percentage}}%
+      </p>
+    </section>
+  }
+</div>

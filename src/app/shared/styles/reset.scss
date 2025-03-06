@@ -19,10 +19,17 @@ p {
   padding: 0;
 }
 
+button {
+  font-family: $font_primary;
+  border: none;
+  color: $gray;
+}
+
 body {
   font-family: $font_primary;
   color: $gray;
   font-size: 1rem;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -35,8 +42,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: $dim;
-  border-radius: 6px;
+  background-color: $taupe;
   cursor: grab;
 }
 

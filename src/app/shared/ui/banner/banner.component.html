@@ -1,0 +1,43 @@
+<div class="container" [ngStyle]="{'height': _dataService.isInfoNavbarVisible ? 'calc(100vh - 160px)' : 'calc(100vh - 130px)'}">
+  <p-carousel
+    [value]="_dataService.banners()"
+    [numVisible]="1"
+    circular
+    [autoplayInterval]="5000"
+  >
+    <ng-template let-banner pTemplate="item">
+      <section class="section" [ngStyle]="{'height': _dataService.isInfoNavbarVisible ? 'calc(100vh - 200px)' : 'calc(100vh - 180px)'}">
+        <div class="flex-column">
+          <h2 class="title" [innerHTML]="highlightMarkedWord(banner.title, banner.markedWord)"></h2>
+          <p class="description">{{banner.description}}</p>
+          <app-button>
+            Comprar
+          </app-button>
+        </div>
+        <div class="items">
+          @for (item of banner.items; track $index) {
+            <div class="item">
+              <img 
+                class="product-img"
+                alt="{{item.product.name}}"
+                src="{{mainProductImg(item.product.images[0]?.image)}}"
+              />
+              <section class="price">
+                <div class="price-discount">
+                  <p>
+                    S/. {{item.product.price}}
+                  </p>
+                </div>
+                <div class="price-item">
+                  <p>
+                    S/. {{item.product.discount?.price}}
+                  </p>
+                </div>
+              </section>
+            </div>
+          }
+        </div>
+      </section>
+    </ng-template>
+  </p-carousel>
+</div>

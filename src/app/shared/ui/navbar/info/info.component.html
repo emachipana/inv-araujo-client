@@ -1,0 +1,28 @@
+@if(_dataService.isInfoNavbarVisible) {
+  <div class="container">
+    <section class="section">
+      <mat-icon
+        fontSet="material-icons-outlined"
+        class="info"
+      >
+        mail
+      </mat-icon>
+      <p class="text">{{'inversionesaraujojl@gmail.com'}}</p>
+    </section>
+    <section class="section">
+      <mat-icon
+        fontSet="material-icons-outlined"
+        class="info"
+      >
+        call
+      </mat-icon>
+      <p class="text">+51 990849369</p>
+    </section>
+    <mat-icon 
+      class="close"
+      (click)="_dataService.isInfoNavbarVisible = false"
+    >
+      close
+    </mat-icon>
+  </div>
+}

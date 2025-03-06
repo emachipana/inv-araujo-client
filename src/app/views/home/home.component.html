@@ -1,0 +1,98 @@
+<app-banner />
+<section class="section flex-column" #categories>
+  <div>
+    <h3 class="main-title">Productos para la agricultura</h3>
+    <p class="main-description">Contamos con los mejores productos para tu negocio</p>
+  </div>
+  @defer (on viewport(categories)) {
+    <categories-section />
+  }
+</section>
+<section class="section flex-column">
+  <div>
+    <h3 class="main-title">Nuestros servicios</h3>
+    <p class="main-description">Nos respalda nuestra amplia experiencia y personal calificado</p>
+  </div>
+  <div class="services flex-row">
+    <div class="service-item">
+      <mat-icon class="icon">local_shipping</mat-icon>
+      <section class="info flex-column">
+        <h6 class="service-title">Envío de productos a todo destino</h6>
+        <p class="service-description">
+          Envío de productos y paquetes
+          a nivel nacional, enviamos con
+          las empresas de transportes
+          más confiables.
+        </p>
+      </section>
+    </div>
+    <div class="service-item">
+      <mat-icon class="icon">live_tv</mat-icon>
+      <section class="info flex-column">
+        <h6 class="service-title">Talleres y asesoramiento</h6>
+        <p class="service-description">
+          Contamos con una amplia experiencia
+          en el rubro agrícola, realizamos
+          talleres gratuitos y de pago.
+        </p>
+      </section>
+    </div>
+    <div class="service-item">
+      <mat-icon class="icon">description</mat-icon>
+      <section class="info flex-column">
+        <h6 class="service-title">Certificados y fichas técnicas</h6>
+        <p class="service-description">
+          Por la compra de cualquiera de
+          nuestros productos le otorgamos
+          la ficha técnica del producto deseado.
+        </p>
+      </section>
+    </div>
+  </div>
+</section>
+<section class="section flex-column" #products>
+  <div>
+    <h3 class="main-title">Productos en descuento</h3>
+    <p class="main-description">Aprovecha nuestros mejores descuentos</p>
+  </div>
+  @defer (on viewport(products)) {
+    <products-section />
+  }
+</section>
+<div class="banner flex-column">
+  <div>
+    <h3 class="main-title">Realice aquí su consulta o cotización</h3>
+    <p 
+      class="main-description"
+      [style]="{'color': colors.platinium}"
+    >
+      ¿Está buscando productos agrícolas para su proyecto?
+    </p>
+  </div>
+  <div class="flex-row">
+    <div class="flex-column">
+      <div class="flex-row">
+        <mat-icon
+          fontSet="material-icons-outlined"
+          [style]="{'color': colors.persian}"
+        >
+          mail
+        </mat-icon>
+        <p>{{'inversionesaraujojl@gmail.com'}}</p>
+      </div>
+      <div class="flex-row">
+        <mat-icon
+          fontSet="material-icons-outlined"
+          [style]="{'color': colors.persian}"
+        >
+          phone
+        </mat-icon>
+        <p>+51 990849369</p>
+      </div>
+    </div>
+    <hr class="line"/>
+    <app-button>
+      Realizar consulta
+    </app-button>
+  </div>
+</div>

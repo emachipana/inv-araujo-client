@@ -1,2 +1,122 @@
-<h1>hola</h1>
-<router-outlet />
+@if (_authService.isLoading() || _dataService.isLoading()) {
+  <div class="loader">
+    <spinner
+      color="main"
+      size="xl"
+    />
+  </div>
+}@else {
+  <app-navbar />
+  <router-outlet />
+  <app-footer />
+  <p-dialog 
+    [(visible)]="_loginModalService.isOpen"
+    [modal]="true"
+    [dismissableMask]="true"
+    [closable]="true"
+    (onHide)="_loginModalService.close()"
+    [style]="{'padding': '1.8rem', 'position': 'relative'}"
+  >
+    <ng-template #headless>
+      <mat-icon 
+        class="close-icon cursor-pointer"
+        (click)="_loginModalService.close()"
+      >
+        close
+      </mat-icon>
+      <div class="flex-column">
+        <section class="modal-header">
+          <div
+            (click)="changeAction('login')"
+            class="flex-row item-modal-header cursor-pointer"
+            [ngClass]="{'active': _loginModalService.currentAction === 'login'}"
+          >
+            <mat-icon>person</mat-icon>
+            <p class="text-modal-header">Iniciar sesión</p>
+          </div>
+          <div
+            (click)="changeAction('register')"
+            class="flex-row item-modal-header cursor-pointer"
+            [ngClass]="{'active': _loginModalService.currentAction === 'register'}"
+          >
+            <mat-icon>person_add</mat-icon>
+            <p class="text-modal-header">Registrarme</p>
+          </div>
+        </section>
+        <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <custom-input 
+            id="username"
+            formControlName="username"
+            placeholder="Correo electrónico"
+            icon="alternate_email"
+            [error]="errorMessage(form, 'username', {})"
+          />
+          <custom-input 
+            id="password"
+            formControlName="password"
+            placeholder="Contraseña"
+            icon="lock"
+            type="password"
+            [error]="errorMessage(form, 'password', {minlength: 6})"
+          />
+          @if (_loginModalService.currentAction === "register") {
+            <custom-input 
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              type="password"
+              placeholder="Confirmar la contraseña"
+              icon="lock"
+              [error]="errorMessage(form, 'confirmPassword', {})"
+            />
+            <div class="flex-row" style="margin-bottom: 0.4rem;">
+              <p class="base-form-text">¿Ya tienes una cuenta?</p>
+              <p
+                class="link"
+                (click)="changeAction('login')"
+              >
+                Iniciar sesión
+              </p>
+            </div>
+          }@else {
+            <div>
+              <div class="flex-row" style="margin-bottom: 0.4rem;">
+                <p class="base-form-text">¿No tienes una cuenta?</p>
+                <p
+                  class="link"
+                  (click)="changeAction('register')"
+                >
+                  Registrarme
+                </p>
+              </div>
+              <p class="link">Olvidé mi contraseña</p>
+            </div>
+          }
+          <app-button 
+            style="align-self: center;"
+            [isLoading]="isLoading"
+            [isDisabled]="form.invalid || isLoading"
+          >
+            @if (_loginModalService.currentAction === "login") {
+              Iniciar sesión
+            }@else {
+              Registrarme
+            }
+          </app-button>
+        </form>
+        <button
+          class="flex-row button-google cursor-pointer"
+          style="align-self: center;"
+        >
+          <img
+            class="button-google-icon"
+            alt="google-logo"
+            src="google.svg"
+          />
+          <p class="button-google-text">
+            Continuar con Google
+          </p>
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+}

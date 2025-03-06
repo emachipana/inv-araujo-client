@@ -1,0 +1,54 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host(.full-width) {
+  width: 100%;
+}
+
+.container {
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: .3s ease-out;
+  @include flex-container($gap: 0.5rem);
+  font-weight: 700;
+  color: $white;
+  background-color: $persian;
+
+  &:hover {
+    background-color: $persian_hover;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .8;
+  }
+
+  &.full-size {
+    width: 100%;
+  }
+}
+
+.secondary {
+  background-color: $gray;
+
+  &:hover {
+    background-color: $dark;
+  }
+}
+
+.danger {
+  background-color: $red;
+
+  &:hover {
+    background-color: $red_hover;
+  }
+}
+
+.warning {
+  background-color: $yellow;
+
+  &:hover {
+    background-color: $yellow_hover;
+  }
+}
