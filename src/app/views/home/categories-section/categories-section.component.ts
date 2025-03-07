@@ -3,6 +3,7 @@ import { DataService } from '../../../services/data.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { CarouselModule } from 'primeng/carousel';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'categories-section',
@@ -14,6 +15,7 @@ import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 export class CategoriesSectionComponent implements OnInit {
   _dataService = inject(DataService);
   toast = inject(HotToastService);
+  router = inject(Router);
   isLoading = false;
 
   ngOnInit(): void {

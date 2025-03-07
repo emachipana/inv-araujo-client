@@ -5,6 +5,7 @@ import { ApiConstants } from '../constants/index.constants';
 import { Observable, tap } from 'rxjs';
 import { Banner } from '../shared/models/Banner';
 import { Product } from '../shared/models/Product';
+import { Pageable } from '../shared/models/Pageable';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ import { Product } from '../shared/models/Product';
 export class DataService {
   private _http = inject(HttpClient); 
   categories = signal<Category[]>([]);
-  products = signal<Product[]>([]);
+  products = signal<Pageable<Product>>({content: [], number: 0, pageable: {}});
   discounts = signal<Product[]>([]);
   banners = signal<Banner[]>([]);
   isLoading = signal(false);
@@ -49,5 +50,41 @@ export class DataService {
         this.controller = {...this.controller, discounts: true};
       })
     );
+  }
+
+  loadProducts(filters = { minPrice: undefined, maxPrice: undefined, categoryName: undefined, page: 0 }): Observable<Pageable<Product>> {
+    const url = `${ApiConstants.products}/${this.filterBuilder(filters.minPrice, filters.maxPrice, filters.categoryName, filters.page)}`
+
+    console.log(url);
+
+    return this._http.get<Pageable<Product>>(url).pipe(
+      tap((response) => {
+        this.products.set(response);
+        this.controller = {...this.controller, products: true};
+      })
+    );
+  }
+
+  private filterBuilder(minPrice?: number, maxPrice?: number, categoryName?: string, page?: number) {
+    let result = "";
+
+    if(categoryName) result += `?categoryName=${categoryName}`;
+    
+    if(minPrice) {
+      const op = categoryName ? "&" : "?";
+      result += `${op}minPrice=${minPrice}`;
+    } 
+
+    if(maxPrice) {
+      const op = (categoryName || minPrice) ? "&" : "?";
+      result += `${op}maxPrice=${maxPrice}`;
+    }
+
+    if(page) {
+      const op = (categoryName || minPrice || maxPrice) ? "&" : "?";
+      result += `${op}page=${page}`;
+    }
+
+    return result;
   }
 }

@@ -12,7 +12,7 @@
       [autoplayInterval]="5000"
     >
       <ng-template let-category #item>
-        <div class="card" >
+        <div class="card cursor-pointer" (click)="router.navigate(['/tienda'], {queryParams: {category: category.name}})">
           <img
             class="img"
             alt="{{category.name}}"

@@ -1,9 +1,8 @@
-import { Type } from '@angular/core';
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
 import { HomeComponent } from './views/home/home.component';
+import { StoreComponent } from './views/store/store.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'pedidos', component: Type, canActivate: [AuthGuard] }
+  { path: 'tienda', component: StoreComponent }
 ];

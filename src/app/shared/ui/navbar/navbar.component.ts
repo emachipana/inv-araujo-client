@@ -25,10 +25,14 @@ export class NavbarComponent {
   isMenuOpen = false;
 
   isActive(route: string): boolean {
-    return this.router.url === route;
+    if(route === "/") return this.router.url === route;
+
+    return this.router.url.includes(route);
   }
 
   openMenu(handler: VoidFunction): void {
+    if(this.router.url.includes("tienda")) return;
+    
     handler();
     this.isMenuOpen = true;
     
@@ -44,5 +48,11 @@ export class NavbarComponent {
         this.toast.error(error.error.message);
       })
     });
+  }
+
+  handleMenuClick(handler: VoidFunction, categoryName: string): void {
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName } });
+    handler();
+    this.isMenuOpen = false;
   }
 }
