@@ -1,0 +1,34 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  cursor: pointer;
+  gap: 2px;
+  
+  &:hover {
+    color: $persian;
+  }
+}
+
+.line {
+  // border: 1px solid $taupe;
+  width: 100%;
+}
+
+.name {
+  @include text($weight: 700);
+}
+
+.active {
+  color: $persian;
+}
+
+.section {
+  width: 100%;
+  justify-content: space-between;
+}

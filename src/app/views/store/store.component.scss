@@ -1,17 +1,36 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
 .container {
   width: 100%;
+  min-height: 50vh;
   padding: 1rem 0.5rem;
-  border: 1px solid black;
+  align-items: flex-start;
 }
 
 .filter {
-  width: 28%;
-  border: 1px solid blue;
+  width: 20%;
   padding: 1rem;
+  position: sticky;
 }
 
 .products {
-  width: 70%;
-  border: 1px solid red;
+  width: 78%;
   padding: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.category {
+  @include text($weight: 800);
+}
+
+.line {
+  border: 2px solid $persian;
+  width: 40%;
+}
+
+.categories-section {
+  width: 100%;
+  gap: 1rem;
 }

@@ -1,8 +1,39 @@
 <div class="container flex-row">
-  <section class="filter">
-
+  <section class="flex-column filter" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
+    <div>
+      <h4 class="category">CATEGORÍAS</h4>
+      <hr class="line" />
+    </div>
+    <section class="flex-column categories-section">
+      @if(isCategoriesLoading) {
+        <spinner size="sm" />
+      } @else {
+        <category-item 
+          [currentCategory]="currentCategory"
+          [id]="0"
+          name="Todo"
+          [subCategories]="5"
+        />
+        @for (category of _dataService.categories(); track $index) {
+          <category-item 
+            [currentCategory]="currentCategory"
+            [id]="category.id"
+            [name]="category.name"
+            [subCategories]="category.subcategories"
+          />
+        }
+      }
+    </section>
   </section>
-  <section class="products">
-
+  <section class="products flex-row">
+    @if(isLoading) {
+      <spinner size="md" />
+    } @else {
+      @for (product of this._dataService.products().content; track $index) {
+        <product-card 
+          [product]="product"
+        />
+      }
+    }
   </section>
 </div>

@@ -33,4 +33,8 @@ export class CategoriesSectionComponent implements OnInit {
       })
     });
   }
+
+  handleClick(categoryName: string): void {
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName.toLowerCase().split(" ").join("-") } });
+  }
 }

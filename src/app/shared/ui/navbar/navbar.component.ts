@@ -51,7 +51,7 @@ export class NavbarComponent {
   }
 
   handleMenuClick(handler: VoidFunction, categoryName: string): void {
-    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName } });
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName.toLowerCase().split(" ").join("-") } });
     handler();
     this.isMenuOpen = false;
   }

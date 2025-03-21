@@ -1,0 +1,11 @@
+<div class="flex-column container" [ngClass]="{'active': isActive()}">
+  <div class="flex-row section">
+    <p class="name">{{name}}</p>
+    @if (subCategories > 0) {
+      <mat-icon>
+        keyboard_arrow_down
+      </mat-icon>
+    }
+  </div>
+  <hr class="line" />
+</div>
