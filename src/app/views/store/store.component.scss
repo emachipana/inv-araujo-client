@@ -17,8 +17,13 @@
 .products {
   width: 78%;
   padding: 1rem;
+  align-items: center;
+}
+
+.products-content {
   flex-wrap: wrap;
   justify-content: space-around;
+  gap: 1rem;
 }
 
 .category {
@@ -32,5 +37,16 @@
 
 .categories-section {
   width: 100%;
+  // height: 200px;
+  overflow-y: auto;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.price-filter {
+  width: 100%;
   gap: 1rem;
+  justify-content: space-between;
 }

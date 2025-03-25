@@ -1,0 +1,63 @@
+<p-dialog
+  [(visible)]="_cartService.cartModalIsOpen"
+  [modal]="true"
+  [dismissableMask]="true"
+  [closable]="true"
+  (onHide)="onClose()"
+  [style]="{'padding': '1.8rem', 'position': 'relative'}"
+>
+  <ng-template #headless>
+    <mat-icon 
+      class="close-icon cursor-pointer"
+      (click)="onClose()"
+    >
+      close
+    </mat-icon>
+    <div class="flex-column" style="padding: 0 1.5rem; gap: 0.5rem; align-items: center;">
+      <div class="flex-row">
+        <mat-icon class="icon">
+          check
+        </mat-icon>
+        <p class="title">Producto añadido correctamente</p>
+      </div>
+      <section class="flex-row" style="gap: 2rem;">
+        <img 
+          [src]="product?.mainImg"
+          [alt]="product?.name"
+          class="img"
+        />
+        <div class="flex-column" style="gap: 0.2rem;">
+          <h5 class="name">{{product?.name}}</h5>
+          <div class="flex-row">
+            <p class="price" [ngClass]="{'hasDiscount': !!product?.discountPrice}">S/. {{product?.price}}</p>
+            @if(!!product?.discountPrice) {
+              <p class="discount-price">S/. {{product?.discountPrice}}</p>
+            }
+          </div>
+          <div class="flex-row">
+            <p class="sub">Cantidad: </p>
+            <p class="item">{{product?.quantity}}</p>
+          </div>
+          <div class="flex-row">
+            <p class="sub">Subtotal: </p>
+            <p class="item">S/. {{(product?.quantity ?? 0) * ((product?.discountPrice ?? product?.price) ?? 0)}}</p>
+          </div>
+        </div>
+      </section>
+      <div class="flex-row" style="gap: 1rem;">
+        <app-button
+          theme="secondary"
+          fontSize="font-md"
+          (onClick)="onClose()"
+        >
+          Seguir comprando
+        </app-button>
+        <app-button
+          fontSize="font-md"
+        >
+          Finalizar compra
+        </app-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

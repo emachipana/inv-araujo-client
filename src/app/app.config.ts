@@ -21,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideAnimations(),
     provideHotToastConfig({
-      position: "top-right"
+      position: "top-center"
     }),
     providePrimeNG({
       theme: {

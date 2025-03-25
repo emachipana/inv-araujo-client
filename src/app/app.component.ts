@@ -18,11 +18,13 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { SpinnerComponent } from "./shared/ui/spinner/spinner.component";
 import { DataService } from './services/data.service';
 import { FooterComponent } from "./shared/ui/footer/footer.component";
+import { CartModalComponent } from "./shared/ui/cart-modal/cart-modal.component";
+import { CartService } from './services/cart.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, ReactiveFormsModule, NgxSpinnerModule, DialogModule, MatIconModule, NgClass, InputComponent, ButtonComponent, SpinnerComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, ReactiveFormsModule, NgxSpinnerModule, DialogModule, MatIconModule, NgClass, InputComponent, ButtonComponent, SpinnerComponent, FooterComponent, CartModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -30,6 +32,7 @@ export class AppComponent {
   _authService = inject(AuthService);
   _loginModalService = inject(LoginModalService);
   _dataService = inject(DataService);
+  _cartService = inject(CartService);
   router = inject(Router);
   toast = inject(HotToastService);
   isLoading = false;

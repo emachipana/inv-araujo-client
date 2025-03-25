@@ -4,7 +4,7 @@
       <h4 class="category">CATEGORÍAS</h4>
       <hr class="line" />
     </div>
-    <section class="flex-column categories-section">
+    <section class="flex-row categories-section">
       @if(isCategoriesLoading) {
         <spinner size="sm" />
       } @else {
@@ -12,7 +12,8 @@
           [currentCategory]="currentCategory"
           [id]="0"
           name="Todo"
-          [subCategories]="5"
+          [subCategories]="0"
+          (onClick)="updateFilters({categoryName: undefined})"
         />
         @for (category of _dataService.categories(); track $index) {
           <category-item 
@@ -20,20 +21,58 @@
             [id]="category.id"
             [name]="category.name"
             [subCategories]="category.subcategories"
+            (onClick)="updateFilters({categoryName: category.name})"
           />
         }
       }
     </section>
-  </section>
-  <section class="products flex-row">
-    @if(isLoading) {
-      <spinner size="md" />
-    } @else {
-      @for (product of this._dataService.products().content; track $index) {
-        <product-card 
-          [product]="product"
+    <div>
+      <h4 class="category">PRECIO</h4>
+      <hr class="line" />
+    </div>
+    <form [formGroup]="form" class="form">
+      <section class="price-filter flex-row">
+        <custom-input 
+          id="minPrice"
+          placeholder="s/. 0.0"
+          label="Mínimo"
+          formControlName="minPrice"
         />
-      }
-    }
+        <custom-input 
+          id="maxPrice"
+          placeholder="s/. 5000.0"
+          label="Máximo"
+          formControlName="maxPrice"
+        />
+      </section>
+      <app-button 
+        fontSize="font-st"
+        theme="secondary"
+        (onClick)="updatePriceFilter()"
+        [isDisabled]="!form.valid"
+      >
+        Filtrar
+      </app-button>
+    </form>
   </section>
+  <div class="products flex-column">
+    <div class="flex-row" style="width: 100%; justify-content: space-between;">
+      <p-paginator 
+        
+        [rows]="_dataService.products().size"
+        [totalRecords]="_dataService.products().totalElements"
+      />
+    </div>
+    <section class="products-content flex-row">
+      @if(isLoading) {
+        <spinner size="md" />
+      } @else {
+        @for (product of this._dataService.products().content; track $index) {
+          <product-card 
+            [product]="product"
+          />
+        }
+      }
+    </section>
+  </div>
 </div>

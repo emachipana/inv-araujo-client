@@ -1,4 +1,4 @@
-<div class="flex-column container" [ngClass]="{'active': isActive()}">
+<div class="container" [ngClass]="{'active': isActive()}" (click)="handleClick()">
   <div class="flex-row section">
     <p class="name">{{name}}</p>
     @if (subCategories > 0) {
@@ -7,5 +7,4 @@
       </mat-icon>
     }
   </div>
-  <hr class="line" />
 </div>

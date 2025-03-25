@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -14,6 +14,11 @@ export class CategoryItemComponent {
   @Input({required: true}) name: string = "";
   @Input({required: true}) currentCategory: number = 0;
   @Input({required: true}) subCategories: number = 0;
+  @Output() onClick = new EventEmitter<void>();
+    
+  handleClick() {
+    this.onClick.emit();
+  }
 
   isActive(): boolean {
     if(this.currentCategory < 0 && this.name === "Todo") return true;

@@ -4,4 +4,5 @@ export interface Pageable<T> {
   number: number,
   totalPages: number,
   totalElements: number,
+  size: number,
 }

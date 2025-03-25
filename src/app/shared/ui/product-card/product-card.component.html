@@ -19,9 +19,16 @@
     </div>
     <app-button
       [fullSize]="true"
-      theme="secondary"
+      [theme]="foundedItem ? 'primary' : 'secondary'"
+      [icon]="foundedItem ? 'check' : 'shopping_cart'"
+      fontSize="font-xl"
+      (onClick)="addToCart()"
     >
-      Agregar al carrito
+      @if (foundedItem) {
+        En el carrito
+      }@else {
+        Agregar al carrito
+      }
     </app-button>
   </section>
   @if (product.discount) {

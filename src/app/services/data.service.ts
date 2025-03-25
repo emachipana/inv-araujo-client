@@ -14,16 +14,15 @@ import { ProductFilters } from '../shared/models/ProductFilters';
 export class DataService {
   private _http = inject(HttpClient); 
   categories = signal<Category[]>([]);
-  products = signal<Pageable<Product>>({content: [], number: 0, pageable: {}, totalElements: 0, totalPages: 0});
+  products = signal<Pageable<Product>>({content: [], number: 0, pageable: {}, totalElements: 0, totalPages: 0, size: 0});
   discounts = signal<Product[]>([]);
   banners = signal<Banner[]>([]);
   isLoading = signal(false);
   isInfoNavbarVisible = true;
-  productsCache = new Map<String, Pageable<Product>>();
+  cachedProducts: { [key: string]: Product[] } = {};
 
   controller = {
     categories: false,
-    products: false,
     banners: false,
     discounts: false
   }
@@ -63,7 +62,6 @@ export class DataService {
     return this._http.get<Pageable<Product>>(url).pipe(
       tap((response) => {
         this.products.set(response);
-        this.controller = {...this.controller, products: true};
       })
     );
   }

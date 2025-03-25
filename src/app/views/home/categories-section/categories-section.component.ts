@@ -4,6 +4,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { CarouselModule } from 'primeng/carousel';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 import { Router } from '@angular/router';
+import { parseCategory } from '../../../shared/helpers/main';
 
 @Component({
   selector: 'categories-section',
@@ -35,6 +36,6 @@ export class CategoriesSectionComponent implements OnInit {
   }
 
   handleClick(categoryName: string): void {
-    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName.toLowerCase().split(" ").join("-") } });
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: parseCategory(categoryName) }});
   }
 }

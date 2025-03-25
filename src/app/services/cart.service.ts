@@ -1,12 +1,15 @@
 import { Injectable, signal } from '@angular/core';
 import { AppConstants } from '../constants/index.constants';
 import { ProductCart } from '../shared/models/ProductCart';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  items = signal<ProductCart[]>([]);
+  items$ = new BehaviorSubject<ProductCart[]>([]);
+  productOnModal = signal<ProductCart | null>(null);
+  cartModalIsOpen = false;
   // private _http = inject(HttpClient);
   // private _auth = inject(AuthService);
 
@@ -16,15 +19,15 @@ export class CartService {
 
   private loadCart() {
     const storedItems = JSON.parse(localStorage.getItem(AppConstants.cart_key) || '[]');
-    this.items.set(storedItems);
+    this.items$.next(storedItems);
   }
 
   private saveCart() {
-    localStorage.setItem(AppConstants.cart_key, JSON.stringify(this.items()));
+    localStorage.setItem(AppConstants.cart_key, JSON.stringify(this.items$.value));
   }
 
   addToCart(product: ProductCart) {
-    const currentItems = [...this.items()];
+    const currentItems = [...this.items$.value];
     const index = currentItems.findIndex(item => item.id === product.id);
 
     if (index !== -1) {
@@ -33,18 +36,22 @@ export class CartService {
       currentItems.push({ ...product });
     }
 
-    this.items.set(currentItems);
+    this.items$.next(currentItems);
     this.saveCart();
   }
 
   removeFromCart(productId: number) {
-    const updatedItems = this.items().filter(item => item.id !== productId);
-    this.items.set(updatedItems);
+    const updatedItems = this.items$.value.filter(item => item.id !== productId);
+    this.items$.next(updatedItems);
     this.saveCart();
   }
 
   clearCart() {
-    this.items.set([]);
+    this.items$.next([]);
     localStorage.removeItem(AppConstants.cart_key);
+  }
+
+  findItemOnCart(id: number): ProductCart | undefined {
+    return this.items$.value.find((item) => item.id === id);
   }
 }

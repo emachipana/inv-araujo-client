@@ -9,6 +9,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { MenuItemComponent } from "../buttons/menu-item/menu-item.component";
 import { SpinnerComponent } from "../spinner/spinner.component";
 import { MenuComponent } from "../menu/menu.component";
+import { parseCategory } from '../../helpers/main';
 
 @Component({
   selector: 'app-navbar',
@@ -51,7 +52,7 @@ export class NavbarComponent {
   }
 
   handleMenuClick(handler: VoidFunction, categoryName: string): void {
-    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: categoryName.toLowerCase().split(" ").join("-") } });
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: parseCategory(categoryName) }});
     handler();
     this.isMenuOpen = false;
   }

@@ -5,4 +5,5 @@ export interface ProductCart {
   quantity: number,
   discountPercentage?: number,
   discountPrice?: number,
+  mainImg?: String,
 }
