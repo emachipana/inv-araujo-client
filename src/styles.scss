@@ -4,7 +4,7 @@
 @use 'colors.scss' as *;
 
 .font-sm {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .font-md {
@@ -53,4 +53,10 @@
 
 .relative {
   position: relative;
+}
+
+.close-icon {
+  position: absolute;
+  top: 7px;
+  right: 7px;
 }

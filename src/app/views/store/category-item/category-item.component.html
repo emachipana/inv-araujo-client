@@ -1,0 +1,10 @@
+<div class="container" [ngClass]="{'active': isActive()}" (click)="handleClick()">
+  <div class="flex-row section">
+    <p class="name">{{name}}</p>
+    @if (subCategories > 0) {
+      <mat-icon>
+        keyboard_arrow_down
+      </mat-icon>
+    }
+  </div>
+</div>

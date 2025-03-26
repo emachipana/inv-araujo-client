@@ -9,11 +9,12 @@ import { MenuItemComponent } from '../../buttons/menu-item/menu-item.component';
 import { Router } from '@angular/router';
 import { CartService } from '../../../../services/cart.service';
 import { MenuComponent } from "../../menu/menu.component";
+import { ButtonComponent } from "../../buttons/button/button.component";
 
 @Component({
   selector: 'main-section',
   standalone: true,
-  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent],
+  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
@@ -25,15 +26,15 @@ export class MainComponent implements OnInit {
   isProfOpen = false;
   isCartOpen = false;
   userFirstName = computed(() => this._authService.currentUser()?.fullName.split(" ")[0]);
+  cartTotal: number = 0;
 
   form = new FormGroup({
     search: new FormControl('', [Validators.required, Validators.minLength(3)]),
   });
 
   ngOnInit(): void {
-    this.form.valueChanges.subscribe(val => {
-      console.log(val);
-      console.log(this.form.get("search"));
+    this._cartService.items$.subscribe((val) => {
+      this.cartTotal = val.reduce((acc, cur) => (cur.quantity * (cur.discountPrice ?? cur.price)) + acc, 0);
     });
   }
 
@@ -51,5 +52,11 @@ export class MainComponent implements OnInit {
   openCartMenu(handler: VoidFunction) {
     handler();
     this.isCartOpen = true;
+  }
+
+  closeCartMenu({redirectTo, handler}: {redirectTo: String, handler: VoidFunction}) {
+    handler();
+    this.router.navigate([redirectTo]);
+    this.isCartOpen = false;
   }
 }

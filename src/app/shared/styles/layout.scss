@@ -7,6 +7,11 @@
   gap: $gap;
 }
 
+@mixin icon($color) {
+  color: $color;
+  cursor: pointer;
+}
+
 @mixin text(
   $size: 1rem, $weight: 500, $color: inherit, $decoration: none,
   $cursor: inherit, $align: start, $hover_color: inherit

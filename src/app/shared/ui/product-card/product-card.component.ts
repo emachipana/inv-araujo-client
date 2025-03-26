@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { Image } from '../../models/Image';
 import { Product } from '../../models/Product';
 import { ProductImage } from '../../models/ProductImage';
 import { NgClass } from '@angular/common';
 import { ButtonComponent } from "../buttons/button/button.component";
+import { ProductCart } from '../../models/ProductCart';
+import { CartService } from '../../../services/cart.service';
 
 @Component({
   selector: 'product-card',
@@ -12,7 +14,7 @@ import { ButtonComponent } from "../buttons/button/button.component";
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss'
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit {
   @Input({required: true}) product: Product = {
     id: 0,
     name: "",
@@ -28,6 +30,15 @@ export class ProductCardComponent {
   };
   @Output() onClick = new EventEmitter<void>();
 
+  _cartService = inject(CartService);
+  foundedItem: ProductCart | undefined;
+
+  ngOnInit(): void {
+    this._cartService.items$.subscribe(() => {
+      this.foundedItem = this._cartService.findItemOnCart(this.product?.id ?? -1);
+    });
+  }
+
   handleClick(): void {
     this.onClick.emit();
   }
@@ -36,5 +47,23 @@ export class ProductCardComponent {
     if(!pimage?.image) return "default_product.png";
 
     return pimage.image.url;
+  }
+
+  addToCart(): void {
+    if(this.foundedItem) return;
+
+    const data: ProductCart = {
+      id: this.product.id,
+      name: this.product.name,
+      price: this.product.price,
+      quantity: 1,
+      discountPercentage: this.product.discount?.percentage,
+      discountPrice: this.product.discount?.price,
+      mainImg: this.mainProductImg(this.product.images[0]),
+    }
+
+    this._cartService.addToCart(data);
+    this._cartService.productOnModal.set(data);
+    this._cartService.cartModalIsOpen = true;
   }
 }

@@ -1,11 +1,6 @@
 @use 'colors.scss' as *;
 @use 'layout.scss' as *;
 
-@mixin icon($color) {
-  color: $color;
-  cursor: pointer;
-}
-
 .container {
   height: 30px;
   background-color: $gray;

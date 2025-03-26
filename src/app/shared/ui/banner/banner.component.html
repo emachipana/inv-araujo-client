@@ -10,7 +10,7 @@
         <div class="flex-column">
           <h2 class="title" [innerHTML]="highlightMarkedWord(banner.title, banner.markedWord)"></h2>
           <p class="description">{{banner.description}}</p>
-          <app-button>
+          <app-button (onClick)="router.navigate(['/tienda'])">
             Comprar
           </app-button>
         </div>

@@ -6,6 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Colors } from '../../../constants/index.constants';
 import { Image } from '../../models/Image';
 import { ButtonComponent } from "../buttons/button/button.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-banner',
@@ -17,6 +18,7 @@ import { ButtonComponent } from "../buttons/button/button.component";
 export class BannerComponent {
   _dataService = inject(DataService);
   sanitizer = inject(DomSanitizer);
+  router = inject(Router);
 
   highlightMarkedWord(title: string, markedWord: string) {
     if (!title || !markedWord) return title;

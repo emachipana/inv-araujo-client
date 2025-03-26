@@ -72,10 +72,60 @@
         class="cart-items"
         [ngClass]="{'cart-items-active': isCartOpen}"
       >
-        {{_cartService.items().length}}
+        {{_cartService.items$.value.length}}
       </span>
       <app-menu #cart (onHide)="isCartOpen = false" position="right">
-        Mi carritoooo
+        <div class="flex-column main">
+          @if(_cartService.items$.value.length <= 0) {
+            <div class="flex-column" style="margin-bottom: 2rem; width: 100%; align-items: center;">
+              <mat-icon class="bag-icon">
+                shopping_bag
+              </mat-icon>
+              <p class="text-subtitle">No hay productos en el carrito</p>
+            </div>
+            <app-button
+              (onClick)="closeCartMenu({redirectTo: '/tienda', handler: cart.hide})"
+            >
+              Ir a la tienda
+            </app-button>
+          } @else {
+            <div class="cart-content flex-column">
+              @for (product of _cartService.items$.value; track $index) {
+                <div class="flex-column" style="width: 100%;">
+                  <div class="flex-row" style="width: 100%; justify-content: space-between;">
+                    <img 
+                      [alt]="product.name"
+                      [src]="product.mainImg"
+                      class="product-img"
+                    />
+                    <section class="flex-column">
+                      <p class="product-name">{{product.name}}</p>
+                      <p class="product-price">{{product.quantity}} x S/. {{product.discountPrice ?? product.price}}</p>
+                    </section>
+                  </div>
+                  <hr style="width: 100%" />
+                </div>
+              }
+            </div>
+            <div class="flex-row" style="width: 100%; justify-content: space-between;">
+              <p class="product-name">Total: </p>
+              <p class="product-price">S/. {{cartTotal.toFixed(2)}}</p>
+            </div>
+            <div class="flex-column" style="gap: 0.5rem; width: 100%;">
+              <app-button
+                [fullSize]="true"
+                theme="secondary"
+              >
+                Ver carrito
+              </app-button>
+              <app-button
+                [fullSize]="true"
+              >
+                Finalizar compra
+              </app-button>
+            </div>
+          }
+        </div>
       </app-menu>
     </div>
   </div>

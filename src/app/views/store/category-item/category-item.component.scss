@@ -1,0 +1,30 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.container {
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background-color: rgba($color: $persian, $alpha: .2);
+  color: $persian;
+  transition: .2s ease-in-out;
+
+  &:hover {
+    color: $white;
+    background-color: $persian;
+  }
+}
+
+.name {
+  @include text($weight: 600, $size: 15px);
+}
+
+.active {
+  color: $white;
+  background-color: $persian;
+}
+
+.section {
+  width: 100%;
+  justify-content: space-between;
+}

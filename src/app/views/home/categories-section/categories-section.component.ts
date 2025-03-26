@@ -3,6 +3,8 @@ import { DataService } from '../../../services/data.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { CarouselModule } from 'primeng/carousel';
 import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
+import { Router } from '@angular/router';
+import { parseCategory } from '../../../shared/helpers/main';
 
 @Component({
   selector: 'categories-section',
@@ -14,6 +16,7 @@ import { SpinnerComponent } from '../../../shared/ui/spinner/spinner.component';
 export class CategoriesSectionComponent implements OnInit {
   _dataService = inject(DataService);
   toast = inject(HotToastService);
+  router = inject(Router);
   isLoading = false;
 
   ngOnInit(): void {
@@ -30,5 +33,9 @@ export class CategoriesSectionComponent implements OnInit {
         this.toast.error(error.error.message);
       })
     });
+  }
+
+  handleClick(categoryName: string): void {
+    this.router.navigate(["/tienda"], categoryName === "all" ? {} : {queryParams: { category: parseCategory(categoryName) }});
   }
 }

@@ -6,7 +6,7 @@
 }
 
 .container {
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.8rem;
   border-radius: 10px;
   cursor: pointer;
   transition: .3s ease-out;
@@ -51,4 +51,10 @@
   &:hover {
     background-color: $yellow_hover;
   }
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
 }

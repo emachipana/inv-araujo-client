@@ -2,7 +2,8 @@
   <info />
   <main-section />
   <nav class="navigation">
-    <h3 
+    <h3
+      (click)="router.navigate([''])"
       class="item"
       [ngClass]="{'active': isActive('/')}"
     >
@@ -27,9 +28,14 @@
           @if (isLoading) {
             <spinner />
           }@else {
+            <menu-item
+              (onClick)="handleMenuClick(menu.hide, 'all')"
+            >
+              Todo
+            </menu-item>
             @for (category of _dataService.categories(); track $index) {
               <menu-item
-                (onClick)="router.navigate(['/tienda'])"
+                (onClick)="handleMenuClick(menu.hide, category.name)"
               >
                 {{category.name}}
               </menu-item>
@@ -41,18 +47,21 @@
     <h3 
       class="item"
       [ngClass]="{'active': isActive('/invitro')}"
+      (click)="router.navigate(['/invitro'])"
     >
       invitro
     </h3>
     <h3 
       class="item"
       [ngClass]="{'active': isActive('/contactanos')}"
+      (click)="router.navigate(['/contactanos'])"
     >
       contáctanos
     </h3>
     <h3 
       class="item"
       [ngClass]="{'active': isActive('/nosotros')}"
+      (click)="router.navigate(['/nosotros'])"
     >
       nosotros
     </h3>

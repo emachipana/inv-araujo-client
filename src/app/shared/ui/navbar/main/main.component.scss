@@ -65,3 +65,52 @@
 .cart-items-active {
 	background-color: $persian;
 }
+
+.main {
+	width: 200px;
+	align-items: center;
+}
+
+.cart-content {
+	padding: 0.5rem;
+	height: 250px;
+	width: 100%;
+	overflow-y: auto;
+	overflow-x: none;
+	justify-content: flex-start;
+}
+
+.bag-icon {
+	width: 160px;
+	height: 160px;
+	font-size: 160px;
+	color: $taupe;
+}
+
+.text-subtitle {
+	@include text($size: 18px, $weight: 600);
+	text-align: center;
+}
+
+.product-name {
+	display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+  line-height: 14px;
+  max-width: 200px;
+	@include text($weight: 700);
+}
+
+.product-price {
+	@include text($color: $taupe, $hover_color: $taupe);
+}
+
+.product-img {
+	width: 70px;
+	height: 70px;
+	// height: 100%;
+	object-fit: contain;
+	mix-blend-mode: multiply;
+}
