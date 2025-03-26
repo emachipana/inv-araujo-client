@@ -1,0 +1,137 @@
+@if (isLoading) {
+  <div class="wrap">
+    <spinner size="xl" />
+  </div>
+} @else {
+  @if (!product) {
+    <div class="wrap">
+      <h2>El producto no existe</h2>
+    </div>
+  } @else {
+    <div class="store-container flex-row">
+      <section class="flex-column store-filter" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
+        <div>
+          <h4 class="store-category">CATEGORÍAS</h4>
+          <hr class="store-line" />
+        </div>
+        <section class="flex-row store-categories-section">
+          @if(isCategoriesLoading) {
+            <spinner size="sm" />
+          } @else {
+            <category-item
+              [currentCategory]="currentCategory"
+              [id]="0"
+              name="Todo"
+              [subCategories]="0"
+              (onClick)="onCategoryName('all')"
+            />
+            @for (category of _dataService.categories(); track $index) {
+              <category-item 
+                [currentCategory]="currentCategory"
+                [id]="category.id"
+                [name]="category.name"
+                [subCategories]="category.subcategories"
+                (onClick)="onCategoryName(category.name)"
+              />
+            }
+          }
+        </section>
+      </section>
+      <div class="flex-column store-products">
+        <div class="flex-row product">
+          <div class="image-container">
+            @if (product.images.length <= 0) {
+              <img 
+                class="image"
+                [alt]="product.name"
+                src="default_product.png"
+              />
+            } @else if (product.images.length === 1) {
+              <img 
+                class="image"
+                [alt]="product.name"
+                [src]="product.images[0].image?.url"
+              />
+            }@else {
+              <p-carousel
+                [value]="product.images"
+                [numVisible]="1"
+                circular
+                [autoplayInterval]="5000"
+              >
+                <ng-template let-image pTemplate="item">
+                  <img 
+                    class="image"
+                    [alt]="product.name"
+                    [src]="image.image.url"
+                  />
+                </ng-template>    
+              </p-carousel>
+            }
+          </div>
+          <div class="flex-column">
+            <section class="detail flex-column">
+              <p class="text">TIENDA / {{product.categoryName.toUpperCase()}}</p>
+              <h3 class="name">{{product.name}}</h3>
+              <div class="flex-row">
+                <p class="price" [ngClass]="{'hasDiscount': !!product.discount}">S/. {{product.price}}</p>
+                @if(!!product.discount) {
+                  <p class="discount-price">S/. {{product.discount.price}}</p>
+                }
+              </div>
+              <p class="text">{{product.description}}</p>
+              <p class="discount-price"><span class="text">Distribución: </span>{{product.unit.toLocaleLowerCase()}}</p>
+            </section>
+            <section class="flex-column">
+              <p [ngClass]="{'text red': product.stock <= 0, 'text gray': product.stock > 0}">
+                @if (product.stock <= 0) {
+                  Sin stock
+                } @else {
+                  {{product.stock}} disponibles
+                }
+              </p>
+              @if(product.stock > 0) {
+                <div class="flex-row" style="gap: 1rem;">
+                  @if (foundProductOnCart) {
+                    <app-button
+                      fontSize="font-xl"
+                      icon="check"
+                    >
+                      En el carrito
+                    </app-button>
+                    <app-button
+                      fontSize="font-xl"
+                      theme="secondary"
+                      (onClick)="router.navigate(['/carrito'])"
+                    >
+                      Ver carrito
+                    </app-button>
+                  } @else {
+                    <app-quantity 
+                      [maxQuantity]="product.stock"
+                      [num]="0"
+                      (onMinus)="onMinus($event)"
+                      (onPlus)="onPlus($event)"
+                    />
+                    <app-button
+                      (onClick)="addToCart()"
+                      fontSize="font-xl"
+                    >
+                      Añadir al carrito
+                    </app-button>
+                  }
+                </div>
+              }
+            </section>
+          </div>
+        </div>
+        <div class="flex-column" #products style="width: 100%;">
+          <h5 class="name">Productos relacionados</h5>
+          @defer (on viewport(products)) {
+            <app-related [productId]="product.id" />
+          }
+        </div>
+      </div>
+    </div>
+  }
+}

@@ -2,11 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Category } from '../shared/models/Category';
 import { ApiConstants } from '../constants/index.constants';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, retry, tap } from 'rxjs';
 import { Banner } from '../shared/models/Banner';
 import { Product } from '../shared/models/Product';
 import { Pageable } from '../shared/models/Pageable';
 import { ProductFilters } from '../shared/models/ProductFilters';
+import { ApiResponse } from '../shared/models/ApiResponse';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +29,12 @@ export class DataService {
     discounts: false
   }
 
+  getProductById(id: number): Observable<Product> {
+    return this._http.get<ApiResponse<Product>>(`${ApiConstants.products}/${id}`).pipe(
+      map((response) => response.data),
+    );
+  }
+
   loadCategories(): Observable<Category[]> {
     return this._http.get<Category[]>(ApiConstants.categories).pipe(
       tap((response) => {
@@ -45,13 +53,17 @@ export class DataService {
     );
   }
 
-  loadProductsWithDiscounts(): Observable<Pageable<Product>> {
-    return this._http.get<Pageable<Product>>(`${ApiConstants.products}?withDiscounts=true&size=5`).pipe(
+  loadProductsWithDiscounts(size: number = 5): Observable<Pageable<Product>> {
+    return this._http.get<Pageable<Product>>(`${ApiConstants.products}?withDiscounts=true&size=${size}`).pipe(
       tap((response) => {
         this.discounts.set(response.content);
         this.controller = {...this.controller, discounts: true};
       })
     );
+  }
+
+  getRelatedProducts(productId: number): Observable<Product[]> {
+    return this._http.get<Product[]>(`${ApiConstants.products}/${productId}/related`);
   }
 
   loadProducts(filters: ProductFilters = {minPrice: undefined, maxPrice: undefined, categoryId: undefined, page: 0}): Observable<Pageable<Product>> {

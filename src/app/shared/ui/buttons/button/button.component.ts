@@ -22,7 +22,8 @@ export class ButtonComponent {
   @Input({transform: booleanAttribute }) isDisabled: boolean = false;
   @Output() onClick = new EventEmitter<void>();
   
-  handleClick() {
+  handleClick(event: any) {
+    event.stopPropagation();
     this.onClick.emit();
   }
 }

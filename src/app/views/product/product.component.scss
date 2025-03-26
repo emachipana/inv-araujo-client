@@ -1,0 +1,38 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.product {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.image-container {
+  width: 40%;
+}
+
+.image {
+  width: 100%;
+  height: 320px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.text {
+  @include text($color: $taupe, $hover_color: $taupe, $weight: 600);
+}
+
+.gray {
+  color: $gray;
+}
+
+.detail {
+  gap: 0.25rem;
+}
