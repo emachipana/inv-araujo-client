@@ -50,3 +50,14 @@
   gap: 1rem;
   justify-content: space-between;
 }
+
+.filter-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: $persian;
+}
+
+.filter-text {
+  @include text($weight: 600);
+}

@@ -10,15 +10,15 @@ import { Category } from '../../shared/models/Category';
 import { parseCategory } from '../../shared/helpers/main';
 import { CartService } from '../../services/cart.service';
 import { PaginatorModule } from 'primeng/paginator';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SelectComponent } from "../../shared/ui/select/select.component";
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputComponent } from "../../shared/ui/input/input.component";
 import { ButtonComponent } from "../../shared/ui/buttons/button/button.component";
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-store',
   standalone: true,
-  imports: [SpinnerComponent, CategoryItemComponent, ProductCardComponent, NgStyle, PaginatorModule, SelectComponent, InputComponent, ReactiveFormsModule, ButtonComponent],
+  imports: [SpinnerComponent, CategoryItemComponent, ProductCardComponent, NgStyle, PaginatorModule, InputComponent, ReactiveFormsModule, ButtonComponent, MatIconModule],
   templateUrl: './store.component.html',
   styleUrl: './store.component.scss'
 })
@@ -31,8 +31,8 @@ export class StoreComponent implements OnInit {
   currentCategory: number = -1;
   isLoading = false;
   isCategoriesLoading = false;
-  minPrice: number = 0;
-  maxPrice: number = 0;
+  currentPage: number = 0;
+  hasActiveFilters: boolean = false;
 
   form = new FormGroup({
     minPrice: new FormControl(0),
@@ -43,22 +43,29 @@ export class StoreComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const minPrice = params['minPrice'] ? Number(params['minPrice']) : undefined;
       const maxPrice = params['maxPrice'] ? Number(params['maxPrice']) : undefined;
+      const page = params['page'] ? Number(params['page']) : 0;
 
       this.form.setValue({ minPrice: minPrice ?? 0, maxPrice: maxPrice ?? 0 }, { emitEvent: false });
+      this.currentPage = page;
 
-      this.loadCategoriesAndProducts(minPrice, maxPrice);
+      this.loadCategoriesAndProducts(minPrice, maxPrice, page);
+
+      this.hasActiveFilters = (
+        this.currentCategory !== -1 || 
+        minPrice !== undefined ||
+        maxPrice !== undefined
+      );
     });
   }
   
-  loadCategoriesAndProducts(minPrice?: number, maxPrice?: number): void {
+  loadCategoriesAndProducts(minPrice?: number, maxPrice?: number, page: number = 0): void {
     if (!this._dataService.controller.categories) {
       this.isCategoriesLoading = true;
-      
       this._dataService.loadCategories().subscribe({
         next: (categories) => {
           this.isCategoriesLoading = false;
           this.currentCategory = this.getCurrentCategory(categories);
-          this.loadProducts(minPrice, maxPrice);
+          this.loadProducts(minPrice, maxPrice, page);
         },
         error: (error) => {
           this.isCategoriesLoading = false;
@@ -67,32 +74,29 @@ export class StoreComponent implements OnInit {
       });
     } else {
       this.currentCategory = this.getCurrentCategory(this._dataService.categories());
-      this.loadProducts(minPrice, maxPrice);
+      this.loadProducts(minPrice, maxPrice, page);
     }
   }
   
-  loadProducts(minPrice?: number, maxPrice?: number): void {
-    const cacheKey = `category-${this.currentCategory}-min-${minPrice ?? 'null'}-max-${maxPrice ?? 'null'}`;
-  
+  loadProducts(minPrice?: number, maxPrice?: number, page: number = 0): void {
+    const cacheKey = `category-${this.currentCategory}-min-${minPrice ?? 'null'}-max-${maxPrice ?? 'null'}-page-${page}`;
+
     if (this._dataService.cachedProducts[cacheKey]) {
-      this._dataService.products.set({
-        ...this._dataService.products(),
-        content: this._dataService.cachedProducts[cacheKey]
-      });      
+      this._dataService.products.set(this._dataService.cachedProducts[cacheKey]);
       return;
     }
-  
+
     this.isLoading = true;
-  
+
     this._dataService.loadProducts({
       categoryId: this.currentCategory < 0 ? undefined : this.currentCategory,
       maxPrice: maxPrice,
       minPrice: minPrice,
-      page: 0
+      page: page,
     }).subscribe({
       next: (products) => {
-        this._dataService.cachedProducts[cacheKey] = products.content;
-        this._dataService.products.set(products); // Actualiza los productos
+        this._dataService.cachedProducts[cacheKey] = products;
+        this._dataService.products.set(products);
         this.isLoading = false;
       },
       error: (error) => {
@@ -107,17 +111,24 @@ export class StoreComponent implements OnInit {
     if (categoryName) {
       this.currentCategory = this.getCurrentCategory(this._dataService.categories());
     }
-  
+
     this.router.navigate([], {
       queryParams: {
         minPrice: minPrice ?? currentParams['minPrice'] ?? null,
         maxPrice: maxPrice ?? currentParams['maxPrice'] ?? null,
         category: categoryName ? (categoryName === "all" ? undefined : parseCategory(categoryName)) : currentParams["category"] ?? undefined,
+        page: 0,
       },
       queryParamsHandling: 'merge'
     });
   }
-  
+
+  updatePage(event: any): void {
+    this.router.navigate([], {
+      queryParams: { page: event.page },
+      queryParamsHandling: 'merge'
+    });
+  }
 
   updatePriceFilter(): void {
     if(!this.form.valid) return;
@@ -133,4 +144,19 @@ export class StoreComponent implements OnInit {
     const foundCategory = categories.find((category) => parseCategory(category.name) === categoryName);
     return foundCategory ? foundCategory.id : -1;
   }
+
+  clearFilters() {
+    this.currentCategory = -1;
+    this.form.reset();
+    this.currentPage = 0;
+    
+    this.router.navigate([], {
+      queryParams: {
+        minPrice: null,
+        maxPrice: null,
+        category: null,
+        page: null,
+      },
+    });
+  }  
 }

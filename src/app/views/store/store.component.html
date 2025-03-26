@@ -1,5 +1,15 @@
 <div class="container flex-row">
   <section class="flex-column filter" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
+    @if(hasActiveFilters) {
+      <app-button
+        icon="filter_alt_off"
+        fontSize="font-sm"
+        [isDisabled]="isCategoriesLoading || isLoading"
+        (onClick)="clearFilters()"
+      >
+        Limpiar filtros
+      </app-button>
+    }
     <div>
       <h4 class="category">CATEGORÍAS</h4>
       <hr class="line" />
@@ -13,7 +23,7 @@
           [id]="0"
           name="Todo"
           [subCategories]="0"
-          (onClick)="updateFilters({categoryName: undefined})"
+          (onClick)="updateFilters({categoryName: 'all'})"
         />
         @for (category of _dataService.categories(); track $index) {
           <category-item 
@@ -46,33 +56,34 @@
         />
       </section>
       <app-button 
-        fontSize="font-st"
+        fontSize="font-sm"
         theme="secondary"
         (onClick)="updatePriceFilter()"
-        [isDisabled]="!form.valid"
+        [isDisabled]="!form.valid || isCategoriesLoading || isLoading"
       >
         Filtrar
       </app-button>
     </form>
   </section>
   <div class="products flex-column">
-    <div class="flex-row" style="width: 100%; justify-content: space-between;">
-      <p-paginator 
-        
-        [rows]="_dataService.products().size"
-        [totalRecords]="_dataService.products().totalElements"
-      />
-    </div>
-    <section class="products-content flex-row">
-      @if(isLoading) {
-        <spinner size="md" />
-      } @else {
+    @if (isLoading || isCategoriesLoading) {
+      <spinner size="md" />
+    } @else {
+      <div class="flex-row" style="width: 100%; justify-content: flex-end;">
+        <p-paginator 
+          [rows]="_dataService.products().size"
+          [totalRecords]="_dataService.products().totalElements"
+          [first]="currentPage * _dataService.products().size"
+          (onPageChange)="updatePage($event)"
+        />
+      </div>
+      <section class="products-content flex-row">
         @for (product of this._dataService.products().content; track $index) {
           <product-card 
             [product]="product"
           />
         }
-      }
-    </section>
+      </section>
+    }
   </div>
 </div>

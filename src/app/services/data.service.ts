@@ -19,7 +19,7 @@ export class DataService {
   banners = signal<Banner[]>([]);
   isLoading = signal(false);
   isInfoNavbarVisible = true;
-  cachedProducts: { [key: string]: Product[] } = {};
+  cachedProducts: { [key: string]: Pageable<Product> } = {};
 
   controller = {
     categories: false,
