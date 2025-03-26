@@ -115,11 +115,13 @@
               <app-button
                 [fullSize]="true"
                 theme="secondary"
+                (onClick)="router.navigate(['/carrito'])"
               >
                 Ver carrito
               </app-button>
               <app-button
                 [fullSize]="true"
+                (onClick)="router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}})"
               >
                 Finalizar compra
               </app-button>

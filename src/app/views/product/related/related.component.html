@@ -1,11 +1,11 @@
 @if(isLoading) {
-  <spinner 
+  <spinner
     size="md"
   />
 }@else {
   <div class="flex-row container">
-    @for (product of _dataService.discounts(); track $index) {
-      <product-card 
+    @for (product of products; track $index) {
+      <product-card
         [product]="product"
         (onClick)="router.navigate(['/tienda/productos', product.id])"
       />

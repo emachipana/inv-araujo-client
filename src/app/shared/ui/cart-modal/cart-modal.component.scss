@@ -8,24 +8,6 @@
   mix-blend-mode: multiply;
 }
 
-.name {
-  @include text($size: 18px, $weight: 700);
-  max-width: 220px;
-}
-
-.price {
-  @include text($weight: 700, $color: $persian, $hover_color: $persian);
-}
-
-.price.hasDiscount {
-  color: $taupe;
-  text-decoration: line-through;
-}
-
-.discount-price {
-  @include text($weight: 700, $color: $orange, $hover_color: $orange);
-}
-
 .sub {
   @include text($color: $taupe, $hover_color: $taupe, $weight: 600);
 }

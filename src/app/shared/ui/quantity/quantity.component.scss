@@ -1,0 +1,26 @@
+@use 'colors.scss' as *;
+
+.container {
+  border-radius: 0.8rem;
+  overflow: hidden;
+  gap: 0;
+}
+
+.button {
+  width: 30px;
+  height: 30px;
+  color: $white;
+  background-color: $gray;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.num {
+  width: 35px;
+  height: 30px;
+  background-color: white;
+  color: $gray;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid $gray;
+}

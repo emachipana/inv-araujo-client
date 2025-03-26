@@ -60,3 +60,67 @@
   top: 7px;
   right: 7px;
 }
+
+.store-container {
+  width: 100%;
+  min-height: 50vh;
+  padding: 1rem 0.5rem;
+  align-items: flex-start;
+}
+
+.store-filter {
+  width: 20%;
+  padding: 1rem;
+  position: sticky;
+}
+
+.store-category {
+  @include text($weight: 800);
+}
+
+.store-line {
+  border: 2px solid $persian;
+  width: 40%;
+}
+
+.store-categories-section {
+  width: 100%;
+  // height: 200px;
+  overflow-y: auto;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.store-products {
+  width: 78%;
+  padding: 1rem;
+  align-items: center;
+}
+
+.name {
+  @include text($size: 18px, $weight: 700);
+  max-width: 220px;
+}
+
+.price {
+  @include text($weight: 700, $color: $persian, $hover_color: $persian);
+}
+
+.price.hasDiscount {
+  color: $taupe;
+  text-decoration: line-through;
+}
+
+.discount-price {
+  @include text($weight: 700, $color: $orange, $hover_color: $orange);
+}
+
+.red {
+  color: $red;
+
+  &:hover {
+    color: $red;
+  }
+}

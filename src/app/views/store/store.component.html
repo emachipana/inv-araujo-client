@@ -1,5 +1,5 @@
-<div class="container flex-row">
-  <section class="flex-column filter" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
+<div class="store-container flex-row">
+  <section class="flex-column store-filter" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
     @if(hasActiveFilters) {
       <app-button
         icon="filter_alt_off"
@@ -11,10 +11,10 @@
       </app-button>
     }
     <div>
-      <h4 class="category">CATEGORÍAS</h4>
-      <hr class="line" />
+      <h4 class="store-category">CATEGORÍAS</h4>
+      <hr class="store-line" />
     </div>
-    <section class="flex-row categories-section">
+    <section class="flex-row store-categories-section">
       @if(isCategoriesLoading) {
         <spinner size="sm" />
       } @else {
@@ -37,8 +37,8 @@
       }
     </section>
     <div>
-      <h4 class="category">PRECIO</h4>
-      <hr class="line" />
+      <h4 class="store-category">PRECIO</h4>
+      <hr class="store-line" />
     </div>
     <form [formGroup]="form" class="form">
       <section class="price-filter flex-row">
@@ -65,7 +65,7 @@
       </app-button>
     </form>
   </section>
-  <div class="products flex-column">
+  <div class="store-products flex-column">
     @if (isLoading || isCategoriesLoading) {
       <spinner size="md" />
     } @else {
@@ -81,6 +81,7 @@
         @for (product of this._dataService.products().content; track $index) {
           <product-card 
             [product]="product"
+            (onClick)="router.navigate(['/tienda/productos/', product.id])"
           />
         }
       </section>

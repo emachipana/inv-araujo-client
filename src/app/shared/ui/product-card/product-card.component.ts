@@ -6,6 +6,8 @@ import { NgClass } from '@angular/common';
 import { ButtonComponent } from "../buttons/button/button.component";
 import { ProductCart } from '../../models/ProductCart';
 import { CartService } from '../../../services/cart.service';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { mainProductImg } from '../../helpers/main';
 
 @Component({
   selector: 'product-card',
@@ -31,7 +33,9 @@ export class ProductCardComponent implements OnInit {
   @Output() onClick = new EventEmitter<void>();
 
   _cartService = inject(CartService);
+  toast = inject(HotToastService);
   foundedItem: ProductCart | undefined;
+  getImage = mainProductImg;
 
   ngOnInit(): void {
     this._cartService.items$.subscribe(() => {
@@ -39,17 +43,17 @@ export class ProductCardComponent implements OnInit {
     });
   }
 
+
   handleClick(): void {
     this.onClick.emit();
   }
 
-  mainProductImg(pimage: ProductImage): string {
-    if(!pimage?.image) return "default_product.png";
-
-    return pimage.image.url;
-  }
-
   addToCart(): void {
+    if(this.product.stock <= 0) {
+      this.toast.error("No hay suficiente stock");
+      return;
+    }
+
     if(this.foundedItem) return;
 
     const data: ProductCart = {
@@ -59,7 +63,7 @@ export class ProductCardComponent implements OnInit {
       quantity: 1,
       discountPercentage: this.product.discount?.percentage,
       discountPrice: this.product.discount?.price,
-      mainImg: this.mainProductImg(this.product.images[0]),
+      mainImg: mainProductImg(this.product.images[0]),
     }
 
     this._cartService.addToCart(data);

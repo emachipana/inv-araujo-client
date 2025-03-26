@@ -14,6 +14,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputComponent } from "../../shared/ui/input/input.component";
 import { ButtonComponent } from "../../shared/ui/buttons/button/button.component";
 import { MatIconModule } from '@angular/material/icon';
+import { getCurrentCategory } from './handler';
 
 @Component({
   selector: 'app-store',
@@ -25,7 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class StoreComponent implements OnInit {
   _dataService = inject(DataService);
   _cartService = inject(CartService);
-  private router = inject(Router);
+  router = inject(Router);
   private route = inject(ActivatedRoute);
   private toast = inject(HotToastService);
   currentCategory: number = -1;
@@ -64,7 +65,7 @@ export class StoreComponent implements OnInit {
       this._dataService.loadCategories().subscribe({
         next: (categories) => {
           this.isCategoriesLoading = false;
-          this.currentCategory = this.getCurrentCategory(categories);
+          this.currentCategory = getCurrentCategory(categories, this.router);
           this.loadProducts(minPrice, maxPrice, page);
         },
         error: (error) => {
@@ -73,7 +74,7 @@ export class StoreComponent implements OnInit {
         }
       });
     } else {
-      this.currentCategory = this.getCurrentCategory(this._dataService.categories());
+      this.currentCategory = getCurrentCategory(this._dataService.categories(), this.router);
       this.loadProducts(minPrice, maxPrice, page);
     }
   }
@@ -109,7 +110,7 @@ export class StoreComponent implements OnInit {
   updateFilters({ minPrice, maxPrice, categoryName }: { minPrice?: number, maxPrice?: number, categoryName?: string }): void {
     const currentParams = this.route.snapshot.queryParams;
     if (categoryName) {
-      this.currentCategory = this.getCurrentCategory(this._dataService.categories());
+      this.currentCategory = getCurrentCategory(this._dataService.categories(), this.router);
     }
 
     this.router.navigate([], {
@@ -137,12 +138,6 @@ export class StoreComponent implements OnInit {
     const maxPrice = this.form.value.maxPrice;
 
     this.updateFilters({minPrice: minPrice ?? undefined, maxPrice: maxPrice ?? undefined});
-  }
-
-  getCurrentCategory(categories: Category[]): number {
-    const categoryName: string = this.router.parseUrl(this.router.url).queryParams["category"];
-    const foundCategory = categories.find((category) => parseCategory(category.name) === categoryName);
-    return foundCategory ? foundCategory.id : -1;
   }
 
   clearFilters() {

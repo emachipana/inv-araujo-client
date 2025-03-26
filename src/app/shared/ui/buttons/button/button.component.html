@@ -1,6 +1,6 @@
 <button
   [disabled]="isDisabled"
-  (click)="handleClick()"
+  (click)="handleClick($event)"
   class="container"
   [ngClass]="[theme, fullSize ? 'full-size' : '']"
 >

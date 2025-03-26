@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ButtonComponent } from "../buttons/button/button.component";
 import { CartService } from '../../../services/cart.service';
 import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart-modal',
@@ -22,7 +23,8 @@ export class CartModalComponent {
   };
 
   _cartService = inject(CartService);
-  
+  router = inject(Router);
+
   onClose(): void {
     this._cartService.cartModalIsOpen = false;
     this._cartService.productOnModal.set(null);
