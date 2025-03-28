@@ -4,7 +4,7 @@ import { User } from '../shared/models/User';
 import { AuthRequest } from '../shared/models/AuthRequest';
 import { ApiConstants, AppConstants } from '../constants/index.constants';
 import { ApiResponse } from '../shared/models/ApiResponse';
-import { Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import { Client } from '../shared/models/Client';
 import { HotToastService } from '@ngxpert/hot-toast';
 
@@ -14,7 +14,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 export class AuthService {
   private _http = inject(HttpClient);
   private toast = inject(HotToastService);
-  currentUser = signal<User | null>(null);
+  currentUser$ = new BehaviorSubject<User | null>(null);
   isLoading = signal(true);
   isLoggedIn = signal(false);
 
@@ -28,9 +28,15 @@ export class AuthService {
         tap((response) => {
           localStorage.setItem(AppConstants.token_key, response.data.token);
           this.isLoggedIn.set(true);
-          this.currentUser.set(response.data.user);
+          this.currentUser$.next(response.data.user);
         })
       );
+  }
+
+  getClientById(clientId: number): Observable<Client> {
+    return this._http.get<ApiResponse<Client>>(`${ApiConstants.clients}/${clientId}`).pipe(
+      map((response) => response.data),
+    );
   }
 
   register(request: AuthRequest): Observable<ApiResponse<{user: User, token: string}>> {
@@ -54,24 +60,24 @@ export class AuthService {
       tap((response) => {
         localStorage.setItem(AppConstants.token_key, response.data.token);
         this.isLoggedIn.set(true);
-        this.currentUser.set(response.data.user);
+        this.currentUser$.next(response.data.user);
       })
     );
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem(AppConstants.token_key);
     this.isLoggedIn.set(false);
-    this.currentUser.set(null);
+    this.currentUser$.next(null);
   }
 
-  checkAuth() {
+  checkAuth(): void {
     const token = localStorage.getItem(AppConstants.token_key);
     if(!token) return this.isLoading.set(false);
 
     this._http.get<ApiResponse<User>>(`${ApiConstants.users}/profile/info`).subscribe({
       next: (response) => {
-        this.currentUser.set(response.data);
+        this.currentUser$.next(response.data);
         this.isLoggedIn.set(true);
         this.isLoading.set(false)
       },

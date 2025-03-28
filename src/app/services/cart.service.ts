@@ -31,7 +31,7 @@ export class CartService {
     const index = currentItems.findIndex(item => item.id === product.id);
 
     if (index !== -1) {
-      currentItems[index].quantity += product.quantity;
+      currentItems[index].quantity = product.quantity;
     } else {
       currentItems.push({ ...product });
     }

@@ -1,0 +1,11 @@
+.img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.product-wrap {
+  width: fit-content;
+  gap: 0.5rem;
+}

@@ -19,7 +19,7 @@
           <br /> 
           <span style="font-weight: 700;">
             @if (_authService.isLoggedIn()) {
-              {{userFirstName()}}
+              {{userFirstName}}
             }@else {
               Iniciar sesión
             }
@@ -63,14 +63,14 @@
     <div class="relative">
       <mat-icon 
         class="icon" 
-        [ngClass]="{'active': isCartOpen}"
+        [ngClass]="{'active': isCartOpen || router.url.includes('carrito')}"
         (mouseenter)="openCartMenu(cart.show)"
       >
         shopping_cart
       </mat-icon>
       <span 
         class="cart-items"
-        [ngClass]="{'cart-items-active': isCartOpen}"
+        [ngClass]="{'cart-items-active': isCartOpen || router.url.includes('carrito')}"
       >
         {{_cartService.items$.value.length}}
       </span>
@@ -84,7 +84,7 @@
               <p class="text-subtitle">No hay productos en el carrito</p>
             </div>
             <app-button
-              (onClick)="closeCartMenu({redirectTo: '/tienda', handler: cart.hide})"
+              (onClick)="closeCartMenu({redirectTo: '/tienda', handler: cart.hide, params: {}})"
             >
               Ir a la tienda
             </app-button>
@@ -115,13 +115,13 @@
               <app-button
                 [fullSize]="true"
                 theme="secondary"
-                (onClick)="router.navigate(['/carrito'])"
+                (onClick)="closeCartMenu({redirectTo: '/carrito', handler: cart.hide, params: {}})"
               >
                 Ver carrito
               </app-button>
               <app-button
                 [fullSize]="true"
-                (onClick)="router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}})"
+                (onClick)="closeCartMenu({redirectTo: '/carrito', handler: cart.hide, params: {tab: 'checkout'}})"
               >
                 Finalizar compra
               </app-button>

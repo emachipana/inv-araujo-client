@@ -6,4 +6,5 @@ export interface ProductCart {
   discountPercentage?: number,
   discountPrice?: number,
   mainImg?: String,
+  maxQuantity: number,
 }

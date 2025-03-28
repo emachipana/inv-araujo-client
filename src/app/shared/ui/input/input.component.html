@@ -1,25 +1,25 @@
-<div class="container">
+<div class="input-container">
   @if(label) {
     <label 
       [htmlFor]="id"
       [ngClass]="fontSize"
-      class="label"
+      class="input-label"
     >
       {{ label | titlecase }}
     </label>
   }
   <section
-    class="section"
+    class="input-section"
     [ngClass]="color()"
   >
     @if (icon) {
       <mat-icon 
-        class="icon" 
+        class="input-icon" 
         [ngClass]="color()"
       >{{ icon }}</mat-icon>
     }
     <input
-      class="input"
+      class="custom-input"
       [id]="id"
       [ngClass]="fontSize"
       [disabled]="isDisabled"
@@ -33,7 +33,7 @@
   </section>
   @if(error()) {
     <p 
-      class="red font-md"
+      class="input-red font-md"
     >
       {{ error() }}
     </p>

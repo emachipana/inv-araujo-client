@@ -1,0 +1,271 @@
+<div class="flex-column container">
+  @if (_cartService.items$.value.length <= 0) {
+    <h4>No hay productos en el carrito</h4>
+    <app-button
+      fontSize="font-xl"
+      (onClick)="router.navigate(['/tienda'])"
+    >
+      Ir a la tienda
+    </app-button>
+  } @else {
+    <div class="flex-row">
+      <div 
+        class="flex-row cursor-pointer nav-item"
+        [ngClass]="{'active': currentTab === 'cart'}"
+        (click)="changeTab('cart')"
+      >
+        <div class="item flex-row" [ngClass]="{'active': currentTab === 'cart'}">1</div>
+        <p class="name">CARRITO</p>
+      </div>
+      <mat-icon class="taupe" style="font-weight: 800;">chevron_right</mat-icon>
+      <div 
+        class="flex-row cursor-pointer nav-item"
+        [ngClass]="{'active': currentTab === 'checkout'}"
+        (click)="changeTab('checkout')"
+      >
+        <div class="item flex-row" [ngClass]="{'active': currentTab === 'checkout'}">2</div>
+        <p class="name">DETALLES DE PAGO</p>
+      </div>
+      <mat-icon class="taupe" style="font-weight: 800;">chevron_right</mat-icon>
+      <div 
+        class="flex-row cursor-pointer nav-item"
+        [ngClass]="{'active': currentTab === 'success'}"
+      >
+        <div class="item flex-row" [ngClass]="{'active': currentTab === 'success'}">3</div>
+        <p class="name">PEDIDO COMPLETADO</p>
+      </div>
+    </div>
+    <div class="flex-row" style="width: 100%; align-items: flex-start; gap: 1rem;">
+      @if (currentTab === "cart") {
+        <section class="main-section flex-column">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <p class="header-title">PRODUCTO</p>
+                </th>
+                <th>
+                  <p class="header-title">PRECIO</p>
+                </th>
+                <th>
+                  <p class="header-title">CANTIDAD</p>
+                </th>
+                <th>
+                  <p class="header-title">SUBTOTAL</p>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of _cartService.items$.value; track $index) {
+                <tr app-product-item
+                  [product]="product"
+                ></tr>
+              }
+            </tbody>
+          </table>
+          <div class="flex-row">
+            <app-button
+              fontSize="font-xl"
+              (onClick)="router.navigate(['/tienda'])"
+            >
+              Seguir comprando
+            </app-button>
+            <app-button
+              fontSize="font-xl"
+              theme="secondary"
+              (onClick)="_cartService.clearCart()"
+            >
+              Vaciar carrito
+            </app-button>
+          </div>
+        </section>
+        <section class="secondary-section flex-column">
+          <p class="header-title">TOTAL PEDIDO</p>
+          <hr class="line" />
+          <section class="flex-column" style="width: 100%; gap: 0.25rem;">
+            <div class="flex-row full-row">
+              <p class="header-title">SUBTOTAL</p>
+              <p class="text">S/. {{totalWithoutIGV.toFixed(2)}}</p>
+            </div>
+            <div class="flex-row full-row">
+              <p class="header-title">IGV (18%)</p>
+              <p class="text">S/. {{igv.toFixed(2)}}</p>
+            </div>
+            <div class="flex-row full-row">
+              <p class="header-title">TOTAL</p>
+              <p class="discount-price">S/. {{totalCart.toFixed(2)}}</p>
+            </div>
+          </section>
+          <hr class="line" />
+          <p class="header-title">ENVÍO</p>
+          <div class="flex-column">
+            <label 
+              (click)="onShipChange('RECOJO_ALMACEN')"
+              class="flex-row"
+            >
+              <input class="input-radio" type="radio" name="option" value="1" [checked]="shipType === 'RECOJO_ALMACEN'">
+              <span class="custom-radio"></span>
+              <p class="text">Recojo en almacén (Sin costo)</p>
+            </label>
+            <label 
+              (click)="onShipChange('ENVIO_AGENCIA')"
+              class="flex-row"
+            >
+              <input class="input-radio" type="radio" name="option" value="2" [checked]="shipType === 'ENVIO_AGENCIA'">
+              <span class="custom-radio"></span>
+              <p class="text">Envío por agencia (Pago contra entrega)</p>
+            </label>
+          </div>
+          <hr class="line" />
+          <app-button
+            [fullSize]="true"
+            (onClick)="changeTab('checkout')"
+          >
+            Finalizar compra
+          </app-button>
+        </section>
+      } @else if (currentTab === "checkout") {
+        <section class="main-section flex-column">
+          @if (!_authService.isLoggedIn()) {
+            <div class="flex-column" style="width: 100%; gap: 0.5rem;">
+              <div class="flex-row">
+                <p class="text">¿Ya eres cliente?</p>
+                <p 
+                  class="link"
+                  (click)="_loginModalService.open('login')"
+                >
+                  Inicia sesión
+                </p>
+              </div>
+              <hr class="line" />
+            </div>
+          }
+          <form class="form">
+            <h4 class="name">Detalles del pedido</h4>
+            @if (!_authService.isLoggedIn()) {
+              <div class="flex-row" style="width: 100%;">
+                <app-select
+                  style="max-width: 28%;"
+                  id="documentType"
+                  label="Tipo documento"
+                  [options]="[{id: 1, content: 'DNI'}, {id: 2, content: 'RUC'}]"
+                />
+                <custom-input
+                  id="document"
+                  placeholder="Ingresa tu DNI"
+                  label="Documento"
+                />
+                <custom-input 
+                  id="email"
+                  label="correo"
+                  placeholder="john@doe.com"
+                />
+              </div>
+              <div class="flex-row" style="width: 100%;">
+                <custom-input 
+                  id="rsocial"
+                  label="Razón social"
+                  placeholder="ej. Jhon Doe"
+                />
+                <custom-input 
+                  id="phone"
+                  placeholder="123456789"
+                  label="Teléfono"
+                />
+              </div>
+            }@else {
+              <div class="client flex-column" [ngStyle]="{'align-items': isGettingClient ? 'center' : 'flex-start'}">
+                @if (isGettingClient) {
+                  <spinner
+                    size="sm"
+                  />
+                }@else {
+                  <p class="client-name">{{clientLogged?.document}} - {{_authService.currentUser$.value?.fullName}}</p>
+                  <p class="dest">Destino habitual: {{clientLogged?.city}}, {{clientLogged?.department}}</p>
+                }
+              </div>
+            }
+            <div class="flex-row" style="width: 100%;">
+              <app-select 
+                id="department"
+                [options]="departmentOptions"
+                label="Departamento"
+              />
+              <app-select 
+                id="province"
+                [options]="provinceOptions"
+                label="Ciudad"
+              />
+              @if (shipType === "ENVIO_AGENCIA") {
+                <app-select
+                  id="ship"
+                  [options]="[{id: 1, content: 'Shalom'}]"
+                  label="Agencia de envío"
+                />
+              } @else if(shipType === "RECOJO_ALMACEN") {
+                <app-select
+                  id="ship"
+                  [options]="[{id: 1, content: 'Sapallana'}]"
+                  label="Almacén de recojo"
+                />
+              }
+            </div>
+          </form>
+        </section>
+        <section class="secondary-section">
+          <div class="order flex-column">
+            <h5 class="order-title">TU PEDIDO</h5>
+            <div class="flex-row full-row">
+              <p class="header-title">PRODUCTO</p>
+              <p class="header-title">SUBTOTAL</p>
+            </div>
+            <hr class="line" />
+            @for (product of _cartService.items$.value; track $index) {
+              <div class="flex-row full-row">
+                <p class="text"><span class="taupe">{{product.name}}</span> x{{product.quantity}}</p>
+                <p class="discount-price">S/. {{((product.discountPrice ?? product.price) * product.quantity).toFixed(2)}}</p>
+              </div>
+            }
+            <hr class="line" />
+            <section class="flex-column" style="width: 100%; gap: 0.25rem;">
+              <div class="flex-row full-row">
+                <p class="header-title">SUBTOTAL</p>
+                <p class="text">S/. {{totalWithoutIGV.toFixed(2)}}</p>
+              </div>
+              <div class="flex-row full-row">
+                <p class="header-title">IGV (18%)</p>
+                <p class="text">S/. {{igv.toFixed(2)}}</p>
+              </div>
+              <div class="flex-row full-row">
+                <p class="header-title">TOTAL</p>
+                <p class="discount-price">S/. {{totalCart.toFixed(2)}}</p>
+              </div>
+            </section>
+            <hr class="line" />
+          <p class="header-title">ENVÍO</p>
+          <div class="flex-column">
+            <label 
+              (click)="onShipChange('RECOJO_ALMACEN')"
+              class="flex-row"
+            >
+              <input class="input-radio" type="radio" name="option" value="1" [checked]="shipType === 'RECOJO_ALMACEN'">
+              <span class="custom-radio"></span>
+              <p class="text">Recojo en almacén (Sin costo)</p>
+            </label>
+            <label 
+              (click)="onShipChange('ENVIO_AGENCIA')"
+              class="flex-row"
+            >
+              <input class="input-radio" type="radio" name="option" value="2" [checked]="shipType === 'ENVIO_AGENCIA'">
+              <span class="custom-radio"></span>
+              <p class="text">Envío por agencia (Pago contra entrega)</p>
+            </label>
+          </div>
+          </div>
+        </section>
+      } @else if (currentTab === "success") {
+        
+      }
+    </div>
+  }
+</div>

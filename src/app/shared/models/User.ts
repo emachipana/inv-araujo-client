@@ -8,5 +8,6 @@ export interface User {
   image: Image | null,
   isVerified: boolean,
   cartId?: number,
-  totalCart?: number
+  totalCart?: number,
+  clientId: number,
 }

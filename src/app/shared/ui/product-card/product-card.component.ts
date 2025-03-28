@@ -64,6 +64,7 @@ export class ProductCardComponent implements OnInit {
       discountPercentage: this.product.discount?.percentage,
       discountPrice: this.product.discount?.price,
       mainImg: mainProductImg(this.product.images[0]),
+      maxQuantity: this.product.stock,
     }
 
     this._cartService.addToCart(data);
