@@ -241,7 +241,7 @@ export const departments = [
 	}
 ];
 
-export const provinces = {
+export const provinces: Record<string, any[]> = {
   "2534": [
     {
       "id_ubigeo": "2557",

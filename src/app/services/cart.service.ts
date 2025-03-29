@@ -10,11 +10,13 @@ export class CartService {
   items$ = new BehaviorSubject<ProductCart[]>([]);
   productOnModal = signal<ProductCart | null>(null);
   cartModalIsOpen = false;
-  // private _http = inject(HttpClient);
-  // private _auth = inject(AuthService);
 
   constructor() {
     this.loadCart();
+  }
+
+  getTotal(items: ProductCart[]): number {
+    return items.reduce((acc, cur) => ((cur.discountPrice ?? cur.price) * cur.quantity) + acc, 0)
   }
 
   private loadCart() {

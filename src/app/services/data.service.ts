@@ -2,13 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Category } from '../shared/models/Category';
 import { ApiConstants } from '../constants/index.constants';
-import { map, Observable, retry, tap } from 'rxjs';
+import { forkJoin, map, Observable, retry, switchMap, tap } from 'rxjs';
 import { Banner } from '../shared/models/Banner';
 import { Product } from '../shared/models/Product';
 import { Pageable } from '../shared/models/Pageable';
 import { ProductFilters } from '../shared/models/ProductFilters';
 import { ApiResponse } from '../shared/models/ApiResponse';
-import { response } from 'express';
+import { Warehouse } from '../shared/models/Warehouse';
+import { OrderRequest } from '../shared/models/OrderRequest';
+import { Order } from '../shared/models/Order';
+import { ProductCart } from '../shared/models/ProductCart';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +30,27 @@ export class DataService {
     categories: false,
     banners: false,
     discounts: false
+  }
+
+  createOrder(request: OrderRequest, items: ProductCart[]): Observable<any> {
+    return this._http.post<ApiResponse<Order>>(`${ApiConstants.orders}`, request).pipe(
+      switchMap((response) => {
+        const orderId = response.data.id;
+        const itemRequests = items.map(item =>
+          this._http.post(`${ApiConstants.orderItems}`, { 
+            orderId, 
+            productId: item.productId, 
+            quantity: item.quantity 
+          })
+        );
+
+        return forkJoin(itemRequests).pipe(map(() => response.data));
+      }),
+    );
+  }
+
+  getWarehouses(): Observable<Warehouse[]> {
+    return this._http.get<Warehouse[]>(`${ApiConstants.warehouses}`);
   }
 
   getProductById(id: number): Observable<Product> {

@@ -6,7 +6,15 @@ export const ApiConstants = {
   clients: `${environment.base_uri}/clients`,
   categories: `${environment.base_uri}/categories`,
   banners: `${environment.base_uri}/offers`,
-  products: `${environment.base_uri}/products`
+  products: `${environment.base_uri}/products`,
+  stripe: `${environment.base_uri}/payments`,
+  warehouses: `${environment.base_uri}/warehouses`,
+  orders: `${environment.base_uri}/orders`,
+  orderItems: `${environment.base_uri}/orderProducts`,
+}
+
+export const DocsConstants = {
+  index: `${environment.docs_uri}`,
 }
 
 export const AppConstants = {
