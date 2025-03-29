@@ -7,6 +7,7 @@ import { ApiResponse } from '../shared/models/ApiResponse';
 import { BehaviorSubject, map, Observable, switchMap, tap } from 'rxjs';
 import { Client } from '../shared/models/Client';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { ClientRequest } from '../shared/models/ClientRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,24 @@ export class AuthService {
 
   constructor() {
     this.checkAuth();
+  }
+
+  createClient(request: ClientRequest): Observable<Client> {
+    return this._http.post<ApiResponse<Client>>(`${ApiConstants.clients}`, request).pipe(
+      map((response) => response.data),
+    );
+  }
+
+  registerNewClient(clientId: number, password: String): Observable<ApiResponse<{user: User, token: string}>> {
+    const userBody = { clientId, password };
+
+    return this._http.post<ApiResponse<{ user: User, token: string }>>(`${ApiConstants.auth}/register`, userBody).pipe(
+      tap((response) => {
+        localStorage.setItem(AppConstants.token_key, response.data.token);
+        this.isLoggedIn.set(true);
+        this.currentUser$.next(response.data.user);
+      })
+    );
   }
 
   login(credentials: AuthRequest): Observable<ApiResponse<{user: User, token: string}>> {
