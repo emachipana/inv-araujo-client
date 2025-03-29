@@ -1,0 +1,33 @@
+@use 'colors.scss' as *;
+
+input[type="checkbox"] {
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	border: 1px solid $taupe;
+	border-radius: 4px;
+	background-color: white;
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+}
+
+input[type="checkbox"]:checked {
+	background-color: $persian;
+	border-color: $persian;
+}
+
+input[type="checkbox"]::before {
+	content: "✔";
+	font-size: 16px;
+	color: white;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: none;
+}
+
+input[type="checkbox"]:checked::before {
+	display: block;
+}
