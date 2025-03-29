@@ -2,6 +2,8 @@
 @use 'reset.scss';
 @use 'layout.scss' as *;
 @use 'colors.scss' as *;
+@use 'radio.scss';
+@use 'checkbox.scss';
 
 .font-sm {
   font-size: 13px;
@@ -123,4 +125,17 @@
   &:hover {
     color: $red;
   }
+}
+
+.taupe {
+  color: $taupe;
+  
+  &:hover {
+    color: $taupe;
+  }
+}
+
+.link {
+  @include text($color: $persian, $hover_color: $persian, $decoration: underline);
+  cursor: pointer;
 }

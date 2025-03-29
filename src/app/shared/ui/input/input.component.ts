@@ -1,4 +1,4 @@
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, computed, forwardRef, input, Input, InputSignal, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'custom-input',
   standalone: true,
-  imports: [CommonModule, TitleCasePipe, MatIconModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',
   providers: [
@@ -29,9 +29,9 @@ export class InputComponent implements ControlValueAccessor {
   value: string = "";
   isFocused: WritableSignal<boolean> = signal(false);
   isTouched: WritableSignal<boolean> = signal(false);
-  color: Signal<'taupe' | 'persian' | 'red'> = computed(() => {
-    if(this.error() && this.isTouched()) return "red";
-    if(this.isTouched() || this.isFocused()) return "persian";
+  color: Signal<'taupe' | 'input-persian' | 'input-red'> = computed(() => {
+    if(this.error() && this.isTouched()) return "input-red";
+    if(this.isTouched() || this.isFocused()) return "input-persian";
     return "taupe";
   });
   
@@ -57,9 +57,9 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
   
-  setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-  }
+  // setDisabledState?(isDisabled: boolean): void {
+  //   this.isDisabled = isDisabled;
+  // }
 
   onInputChange(event: Event): void {
     const val = (event.target as HTMLInputElement).value;

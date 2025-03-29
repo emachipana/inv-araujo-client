@@ -1,0 +1,51 @@
+<div class="input-container">
+  @if(label) {
+    <label 
+      [htmlFor]="id"
+      [ngClass]="fontSize"
+      class="input-label"
+    >
+      {{ label  }}
+    </label>
+  }
+  <section
+    class="input-section"
+    [ngClass]="color()"
+  >
+    @if (isDisabled) {
+      <div class="disabled"></div>
+    }
+    @if (icon) {
+      <mat-icon 
+        class="input-icon" 
+        [ngClass]="color()"
+      >{{ icon }}</mat-icon>
+    }
+    <select
+      class="custom-input"
+      [id]="id"
+      [ngClass]="fontSize"
+      [disabled]="isDisabled"
+      (change)="onInputChange($event)"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+    >
+      <option disabled value="default" selected>Eligen una</option>
+      @for (option of options; track $index) {
+        <option 
+          [value]="option.id"
+          [selected]="option.id === +value"
+        >
+          {{ option.content }}
+        </option>
+      }
+    </select>
+  </section>
+  @if(error()) {
+    <p 
+      class="input-red font-md"
+    >
+      {{ error() }}
+    </p>
+  }
+</div>

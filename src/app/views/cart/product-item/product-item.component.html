@@ -1,0 +1,30 @@
+<td>
+  <div class="flex-row product-wrap">
+    <mat-icon 
+      class="red cursor-pointer"
+      (click)="_cartService.removeFromCart(product.id)"
+    >
+      cancel
+    </mat-icon>
+    <img 
+      class="img"
+      [alt]="product.name"
+      [src]="product.mainImg"
+    />
+    <p class="name">{{product.name}}</p>
+  </div>
+</td>
+<td>
+  <p class="discount-price">S/. {{product.discountPrice ?? product.price}}</p>
+</td>
+<td>
+  <app-quantity
+    [num]="product.quantity"
+    [maxQuantity]="product.maxQuantity"
+    (onMinus)="onChange($event)"
+    (onPlus)="onChange($event)"
+  />
+</td>
+<td>
+  <p class="discount-price">S/. {{((product.discountPrice ?? product.price) * product.quantity).toFixed(2)}}</p>
+</td>

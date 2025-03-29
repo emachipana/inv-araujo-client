@@ -2,7 +2,7 @@ import { FormGroup } from "@angular/forms";
 
 type errors = {
   minlength?: number,
-  maxlength?: number
+  maxlength?: number,
 }
 
 export const messageGenerator = (form: FormGroup, name: string, errors: errors): string => {
@@ -16,6 +16,8 @@ export const messageGenerator = (form: FormGroup, name: string, errors: errors):
   if(input.hasError("maxlength")) return `El máximo son ${errors.maxlength} caracteres`;
 
   if(input.hasError("email")) return "El formato es incorrecto";
+
+  if(input.hasError("pattern")) return "Solo se admiten números";
 
   if(name === "confirmPassword" && form.hasError("passwordMismatch")) return "Las contraseñas no coinciden";
 

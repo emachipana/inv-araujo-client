@@ -1,0 +1,130 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+.container {
+  width: 100%;
+  padding: 1rem;
+  min-height: 50vh;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.main-section {
+  width: 60%;
+  gap: 2rem;
+}
+
+.secondary-section {
+  width: 38%;
+}
+
+.cart-table {
+  width: 100%;
+  align-items: center;
+  justify-content: center;  
+}
+
+.cart-header {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.item {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: $white;
+  background-color: $taupe;
+  font-size: 18px;
+  font-weight: 700;
+
+  &:hover {
+    background-color: $gray;
+  }
+}
+
+.item.active {
+  background-color: $gray;
+}
+
+.nav-item {
+  color: $taupe;
+
+  &:hover {
+    color: $gray;
+  }
+}
+
+.nav-item.active {
+  color: $gray;
+}
+
+.header-title {
+  @include text($color: $taupe, $hover_color: $taupe, $weight: 700);
+  text-transform: uppercase;
+}
+
+.line {
+  width: 100%;
+  border: 0.2px solid $platinium;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid $platinium;
+}
+
+.text {
+  @include text($weight: 600);
+}
+
+.client {
+  width: 50%;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  align-items: center;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 8px 1px rgba(0, 0, 0, .3);
+  background-color: white;
+  font-size: 1rem;
+}
+
+.client-name {
+  @include text($weight: 600, $size: 17px);
+}
+
+.dest {
+  @include text($color: $taupe, $hover_color: $taupe);
+}
+
+.order {
+  width: 100%;
+  background-color: $smoke;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.order-title {
+  @include text($size: 17px, $weight: 700, $color: $persian, $hover_color: $persian);
+}
+
+.full-row {
+  width: 100%; 
+  justify-content: space-between;
+}
+
+.success-card {
+  width: 420px;
+  background-color: white;
+  box-shadow: 0px 4px 8px 1px rgba(0, 0, 0, .3);
+  border-radius: 1rem;
+  padding: 1rem;
+}

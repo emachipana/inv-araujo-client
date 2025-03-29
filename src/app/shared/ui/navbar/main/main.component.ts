@@ -25,7 +25,7 @@ export class MainComponent implements OnInit {
   router = inject(Router);
   isProfOpen = false;
   isCartOpen = false;
-  userFirstName = computed(() => this._authService.currentUser()?.fullName.split(" ")[0]);
+  userFirstName: String = "";
   cartTotal: number = 0;
 
   form = new FormGroup({
@@ -34,8 +34,12 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this._cartService.items$.subscribe((val) => {
-      this.cartTotal = val.reduce((acc, cur) => (cur.quantity * (cur.discountPrice ?? cur.price)) + acc, 0);
+      this.cartTotal = this._cartService.getTotal(val);
     });
+
+    this._authService.currentUser$.subscribe((val) => {
+      this.userFirstName = val?.fullName.split(" ")[0] ?? "";
+    })
   }
 
   handleProfileClick(action: "register" | "login", handler: VoidFunction): void {
@@ -50,13 +54,15 @@ export class MainComponent implements OnInit {
   }
 
   openCartMenu(handler: VoidFunction) {
+    if(this.router.url.includes("carrito")) return;
+
     handler();
     this.isCartOpen = true;
   }
 
-  closeCartMenu({redirectTo, handler}: {redirectTo: String, handler: VoidFunction}) {
+  closeCartMenu({redirectTo, handler, params = {}}: {redirectTo: String, handler: VoidFunction, params: any}) {
     handler();
-    this.router.navigate([redirectTo]);
+    this.router.navigate([redirectTo], {queryParams: params});
     this.isCartOpen = false;
   }
 }

@@ -20,6 +20,8 @@ export class CartModalComponent {
     name: "",
     price: -1,
     quantity: -1,
+    maxQuantity: 0,
+    productId: -1
   };
 
   _cartService = inject(CartService);
@@ -28,5 +30,10 @@ export class CartModalComponent {
   onClose(): void {
     this._cartService.cartModalIsOpen = false;
     this._cartService.productOnModal.set(null);
+  }
+
+  toCheckout(): void {
+    this.router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+    this.onClose();
   }
 }

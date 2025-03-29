@@ -6,7 +6,6 @@ import { SpinnerComponent } from '../../shared/ui/spinner/spinner.component';
 import { CategoryItemComponent } from "./category-item/category-item.component";
 import { ProductCardComponent } from '../../shared/ui/product-card/product-card.component';
 import { NgStyle } from '@angular/common';
-import { Category } from '../../shared/models/Category';
 import { parseCategory } from '../../shared/helpers/main';
 import { CartService } from '../../services/cart.service';
 import { PaginatorModule } from 'primeng/paginator';
