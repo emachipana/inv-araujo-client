@@ -5,13 +5,17 @@
       [ngClass]="fontSize"
       class="input-label"
     >
-      {{ label | titlecase }}
+      {{ label }}
     </label>
   }
   <section
+    [ngStyle]="{'pointer-events': isDisabled ? 'none' : null}"
     class="input-section"
     [ngClass]="color()"
   >
+    @if (isDisabled) {
+      <div class="disabled"></div>
+    }
     @if (icon) {
       <mat-icon 
         class="input-icon" 
@@ -22,7 +26,6 @@
       class="custom-input"
       [id]="id"
       [ngClass]="fontSize"
-      [disabled]="isDisabled"
       [placeholder]="placeholder"
       [type]="type"
       [value]="value"

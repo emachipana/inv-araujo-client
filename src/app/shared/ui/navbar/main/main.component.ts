@@ -34,7 +34,7 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this._cartService.items$.subscribe((val) => {
-      this.cartTotal = val.reduce((acc, cur) => (cur.quantity * (cur.discountPrice ?? cur.price)) + acc, 0);
+      this.cartTotal = this._cartService.getTotal(val);
     });
 
     this._authService.currentUser$.subscribe((val) => {

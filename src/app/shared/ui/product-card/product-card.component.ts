@@ -1,7 +1,5 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { Image } from '../../models/Image';
 import { Product } from '../../models/Product';
-import { ProductImage } from '../../models/ProductImage';
 import { NgClass } from '@angular/common';
 import { ButtonComponent } from "../buttons/button/button.component";
 import { ProductCart } from '../../models/ProductCart';
@@ -65,6 +63,7 @@ export class ProductCardComponent implements OnInit {
       discountPrice: this.product.discount?.price,
       mainImg: mainProductImg(this.product.images[0]),
       maxQuantity: this.product.stock,
+      productId: this.product.id,
     }
 
     this._cartService.addToCart(data);

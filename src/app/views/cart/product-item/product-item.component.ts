@@ -18,6 +18,7 @@ export class ProductItemComponent {
     name: "",
     price: -1,
     quantity: -1,
+    productId: -1,
   };
 
   _cartService = inject(CartService);

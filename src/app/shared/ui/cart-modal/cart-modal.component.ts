@@ -21,6 +21,7 @@ export class CartModalComponent {
     price: -1,
     quantity: -1,
     maxQuantity: 0,
+    productId: -1
   };
 
   _cartService = inject(CartService);

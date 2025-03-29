@@ -5,13 +5,16 @@
       [ngClass]="fontSize"
       class="input-label"
     >
-      {{ label | titlecase }}
+      {{ label  }}
     </label>
   }
   <section
     class="input-section"
     [ngClass]="color()"
   >
+    @if (isDisabled) {
+      <div class="disabled"></div>
+    }
     @if (icon) {
       <mat-icon 
         class="input-icon" 
