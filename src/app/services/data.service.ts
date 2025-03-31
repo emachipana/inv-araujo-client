@@ -69,7 +69,7 @@ export class DataService {
   }
 
   loadBanners(): Observable<Banner[]> {
-    return this._http.get<Banner[]>(ApiConstants.banners).pipe(
+    return this._http.get<Banner[]>(`${ApiConstants.banners}/used`).pipe(
       tap((response) => {
         this.banners.set(response);
         this.controller = {...this.controller, banners: true};
