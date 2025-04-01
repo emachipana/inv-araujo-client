@@ -136,6 +136,7 @@ export class PaymentComponent implements OnInit, AfterViewInit {
             department,
             clientId: finalClientId,
             shippingType: this.shipType,
+            total: this._cartService.getTotal(this._cartService.items$.value),
           };
           return this._dataService.createOrder(orderRequest, this._cartService.items$.value);
         })
