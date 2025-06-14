@@ -44,7 +44,16 @@ export class DataService {
           })
         );
 
-        return forkJoin(itemRequests).pipe(map(() => response.data));
+        return forkJoin(itemRequests).pipe(
+          map(() => {
+            // Disparar la request de finalización en segundo plano
+            this._http.post(`${ApiConstants.orders}/${orderId}/finalize`, {}).subscribe({
+              // No hacer nada con la respuesta, solo disparar la request
+              error: () => {} // Opcional: manejar errores si lo deseas
+            });
+            return response.data;
+          })
+        );
       }),
     );
   }
@@ -78,7 +87,7 @@ export class DataService {
   }
 
   loadProductsWithDiscounts(size: number = 5): Observable<Pageable<Product>> {
-    return this._http.get<Pageable<Product>>(`${ApiConstants.products}?withDiscounts=true&size=${size}`).pipe(
+    return this._http.get<Pageable<Product>>(`${ApiConstants.products}?withDiscount=true&size=${size}`).pipe(
       tap((response) => {
         this.discounts.set(response.content);
         this.controller = {...this.controller, discounts: true};

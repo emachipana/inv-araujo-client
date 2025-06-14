@@ -143,7 +143,7 @@
           <form class="form" [formGroup]="form">
             <h4 class="name">Detalles del pedido</h4>
             @if (!_authService.isLoggedIn()) {
-              <div class="flex-row" style="width: 100%; align-items: flex-start;">
+              <div class="input-section">
                 <app-select
                   formControlName="documentType"
                   style="max-width: 22%;"
@@ -169,7 +169,7 @@
                   [error]="errorMessage(form, 'rsocial', {})"
                 />
               </div>
-              <div class="flex-row" style="width: 100%; align-items: flex-start;">
+              <div class="input-section">
                 <custom-input
                   formControlName="email"
                   id="email"
@@ -197,7 +197,7 @@
                 }
               </div>
             }
-            <div class="flex-row" style="width: 100%; align-items: flex-start; justify-content: flex-start;">
+            <div class="input-section">
               @if (shipType$.value === "ENVIO_AGENCIA") {
                 <app-select 
                   formControlName="department"
@@ -243,7 +243,7 @@
                 <p class="text">¿Crear una cuenta?</p>
               </div>
               @if (createAccount) {
-                <div class="flex-row" style="width: 100%; align-items: flex-start;">
+                <div class="input-section">
                   <custom-input
                     formControlName="password"
                     id="password"

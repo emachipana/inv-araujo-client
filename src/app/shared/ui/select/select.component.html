@@ -9,6 +9,7 @@
     </label>
   }
   <section
+  [ngStyle]="{'pointer-events': isDisabled ? 'none' : null}"
     class="input-section"
     [ngClass]="color()"
   >

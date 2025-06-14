@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { InputComponent } from "./shared/ui/input/input.component";
 import { ButtonComponent } from "./shared/ui/buttons/button/button.component";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { messageGenerator } from './shared/ui/input/message-generator';
 import { matchPasswordValidator } from './shared/validators/matchpassword.validator';
 import { AuthRequest } from './shared/models/AuthRequest';
@@ -28,7 +28,7 @@ import { CartService } from './services/cart.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   _authService = inject(AuthService);
   _loginModalService = inject(LoginModalService);
   _dataService = inject(DataService);
@@ -40,22 +40,35 @@ export class AppComponent {
 
   form = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    confirmPassword: new FormControl('')
-  }, { validators: matchPasswordValidator(this._loginModalService)});
+    password: new FormControl('', []),
+  });
+
+  ngOnInit(): void {
+    
+    this._loginModalService.currentAction$.subscribe((action) => {
+      if (action === 'login') {
+        this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      } else {
+        this.form.get('password')?.clearValidators();
+      }
+      this.form.get('password')?.updateValueAndValidity();
+    });
+  }
+
 
   changeAction(action: "login" | "register"): void {
-    this._loginModalService.currentAction = action;
+    this._loginModalService.currentAction$.next(action);
   }
 
   errorMessage = messageGenerator;
 
   onSubmit(): void {
     if(this.form.invalid) return;
-    const { confirmPassword, ...credentials } = this.form.value;
+    const credentials = this.form.value;
     this.isLoading = true;
 
-    if(this._loginModalService.currentAction === "login") {
+    // login
+    if(this._loginModalService.currentAction$.value === "login") {
       this._authService.login(credentials as AuthRequest).subscribe({
         next: (response) => {
           this._loginModalService.close();
@@ -72,12 +85,13 @@ export class AppComponent {
       return;
     }
 
-    this._authService.register(credentials as AuthRequest).subscribe({
-      next: (response) => {
-        this._loginModalService.close();
+    // register
+    this._authService.generateCode(credentials.username || "").subscribe({
+      next: (_response) => {
         this.isLoading = false;
-        this.toast.success(response.message);
-        this.router.navigate(["/complete-register"]);
+        this.toast.success("El código de verificación fue enviado a tu correo");
+        this._loginModalService.close();
+        this.router.navigate(["/registro"]);
       },
       error: (error) => {
         console.log(error);

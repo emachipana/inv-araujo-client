@@ -1,15 +1,16 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginModalService {
   isOpen = false;
-  currentAction: "login" | "register" = "login";
+  currentAction$ = new BehaviorSubject<"login" | "register">("login");
 
   open(action: "login" | "register") {
     this.isOpen = true;
-    this.currentAction = action;
+    this.currentAction$.next(action);
   }
 
   close() {

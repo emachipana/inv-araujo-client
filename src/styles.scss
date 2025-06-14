@@ -139,3 +139,10 @@
   @include text($color: $persian, $hover_color: $persian, $decoration: underline);
   cursor: pointer;
 }
+
+.input-section {
+  @include flex-container($gap: 0.5rem);
+  width: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+}

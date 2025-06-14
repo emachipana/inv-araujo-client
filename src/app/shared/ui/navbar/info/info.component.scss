@@ -2,9 +2,9 @@
 @use 'layout.scss' as *;
 
 .container {
-  height: 30px;
+  height: 26px;
   background-color: $gray;
-  padding: 0.5rem;
+  padding: 2px 0.5rem;
   @include flex-container($justify: flex-end)
 }
 

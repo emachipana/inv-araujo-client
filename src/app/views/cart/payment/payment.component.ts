@@ -109,6 +109,7 @@ export class PaymentComponent implements OnInit, AfterViewInit {
         rsocial: this.formExt?.get("rsocial")?.value,
         phone: this.formExt?.get("phone")?.value,
         createdBy: "CLIENTE",
+        invoicePreference: "BOLETA",
       };
   
       clientObs = this._authService.createClient(clientBody).pipe(

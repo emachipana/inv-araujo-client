@@ -49,6 +49,8 @@ export class MainComponent implements OnInit {
   }
 
   openProfileMenu(handler: VoidFunction) {
+    if(this.router.url.includes("/registro")) return;
+
     handler();
     this.isProfOpen = true;
   }

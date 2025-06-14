@@ -69,7 +69,7 @@ export class CartComponent implements OnInit {
     warehouse: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl('')
-  }, { validators: matchPasswordValidator(this._loginModalService)});
+  }, { validators: matchPasswordValidator()});
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -158,8 +158,8 @@ export class CartComponent implements OnInit {
           ? `${response.nombres} ${response.apellidoPaterno} ${response.apellidoMaterno}`
           : `${response.razonSocial}`;
 
-          this.form.get('rsocial')?.setValue(rsocial);
-          this.isDocLoaded = true;
+        this.form.get('rsocial')?.setValue(rsocial);
+        this.isDocLoaded = true;
       },
       error: (error) => {
         console.error(error);
@@ -192,7 +192,7 @@ export class CartComponent implements OnInit {
 
   onCreateAccount(): void {
     this.createAccount = !this.createAccount;
-    this._loginModalService.currentAction = "register";
-    console.log(this._loginModalService.currentAction)
+    this._loginModalService.currentAction$.next("register");
+    console.log(this._loginModalService.currentAction$.value)
   }
 }
