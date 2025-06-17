@@ -4,23 +4,25 @@ import { InputComponent } from "../../input/input.component";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { LoginModalService } from '../../../../services/login-modal.service';
-import { NgClass } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { MenuItemComponent } from '../../buttons/menu-item/menu-item.component';
 import { Router } from '@angular/router';
 import { CartService } from '../../../../services/cart.service';
 import { MenuComponent } from "../../menu/menu.component";
 import { ButtonComponent } from "../../buttons/button/button.component";
+import { NotificationService } from '../../../../services/notification.service';
 
 @Component({
   selector: 'main-section',
   standalone: true,
-  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent],
+  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent, TitleCasePipe],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
 export class MainComponent implements OnInit {
   _authService = inject(AuthService);
   _loginModalService = inject(LoginModalService);
+  _notificationService = inject(NotificationService);
   _cartService = inject(CartService);
   router = inject(Router);
   isProfOpen = false;
@@ -49,7 +51,9 @@ export class MainComponent implements OnInit {
   }
 
   openProfileMenu(handler: VoidFunction) {
-    if(this.router.url.includes("/registro")) return;
+    const url = this.router.url;
+
+    if(url.includes("/registro") || url.includes("/perfil")) return;
 
     handler();
     this.isProfOpen = true;

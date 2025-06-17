@@ -1,0 +1,104 @@
+<div>
+  <h3 class="title">Información personal</h3>
+  <p class="sub">Actualiza tu información de perfil</p>
+</div>
+<form class="form" [formGroup]="profileForm" [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}">
+  @if(isGettingClient) {
+    <spinner 
+      size="md"
+    />
+  } @else {
+    <div class="flex-row" style="gap: 1rem;">
+      <img 
+        [src]="userImage"
+        alt="user-avatar"
+        class="avatar"
+      />
+      <app-button
+        fontSize="font-xl"
+        theme="secondary"
+        type="button"
+      >
+        Cambiar foto
+      </app-button>
+    </div>
+    <section class="input-section">
+      <app-select
+        formControlName="invoicePreference"
+        id="invoicePreference"
+        label="Preferencia de comprobante"
+        [options]="[{id: 'BOLETA', content: 'BOLETA'}, {id: 'FACTURA', content: 'FACTURA'}]"
+        [error]="errorMessage(profileForm, 'invoicePreference', {})"
+      />
+      <app-select
+        formControlName="documentType"
+        id="documentType"
+        label="Tipo documento"
+        [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
+        [error]="errorMessage(profileForm, 'documentType', {})"
+        [isDisabled]="!invoicePreference || disableDocumentType"
+      />
+    </section>
+    <section class="input-section">
+      <custom-input
+        formControlName="document"
+        id="document"
+        [isDisabled]="!documentType"
+        [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
+        [label]="documentType ? documentType : 'Documento'"
+        [error]="errorMessage(profileForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+      />
+      <custom-input
+        formControlName="rsocial"
+        id="rsocial"
+        label="Razón social"
+        [isDisabled]="isDocLoaded || !documentType"
+        placeholder="ej. Jhon Doe"
+        [error]="errorMessage(profileForm, 'rsocial', {})"
+      />
+    </section>
+    <section class="input-section">
+      <app-select 
+        formControlName="department"
+        id="department"
+        [options]="departmentOptions"
+        label="Departamento"
+        [error]="errorMessage(profileForm, 'document', {})"
+      />
+      <app-select
+        formControlName="city"
+        id="city"
+        [options]="provinceOptions"
+        [isDisabled]="currentDep <= 0"
+        label="Ciudad"
+        [error]="errorMessage(profileForm, 'city', {})"
+      />
+    </section>
+    <section class="input-section">
+      @if(_authService.currentClient$.value?.documentType === "RUC") {
+        <custom-input
+          formControlName="address"
+          id="address"
+          label="Dirección"
+          placeholder="ej. Av. Siempre Viva 123"
+          [error]="errorMessage(profileForm, 'address', {})"
+          [isDisabled]="true"
+        />
+      }
+      <custom-input
+        formControlName="phone"
+        id="phone"
+        label="Teléfono"
+        placeholder="ej. 987654321"
+        [error]="errorMessage(profileForm, 'phone', {})"
+      />
+    </section>
+    <app-button
+      type="submit"
+      [isDisabled]="profileForm.invalid"
+      style="margin-top: 1rem;"
+    >
+      Guardar cambios
+    </app-button>
+  }
+</form>

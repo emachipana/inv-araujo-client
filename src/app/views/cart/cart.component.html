@@ -149,7 +149,7 @@
                   style="max-width: 22%;"
                   id="documentType"
                   label="Tipo documento"
-                  [options]="[{id: 1, content: 'DNI'}, {id: 2, content: 'RUC'}]"
+                  [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
                   [error]="errorMessage(form, 'documentType', {})"
                 />
                 <custom-input
@@ -218,7 +218,7 @@
               @if (shipType$.value === "ENVIO_AGENCIA") {
                 <app-select
                   id="sha"
-                  [options]="[{id: 1, content: 'Shalom'}]"
+                  [options]="[{id: '1', content: 'Shalom'}]"
                   label="Agencia de envío"
                   value="1"
                   [isDisabled]="true"

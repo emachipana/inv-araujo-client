@@ -50,7 +50,7 @@
 }
 
 .main-description {
-  @include text($align: center, $color: $taupe, $hover_color: $taupe);
+  @include text($align: center, $color: $taupe);
 }
 
 .relative {
@@ -107,7 +107,7 @@
 }
 
 .price {
-  @include text($weight: 700, $color: $persian, $hover_color: $persian);
+  @include text($weight: 700, $color: $persian);
 }
 
 .price.hasDiscount {
@@ -116,7 +116,7 @@
 }
 
 .discount-price {
-  @include text($weight: 700, $color: $orange, $hover_color: $orange);
+  @include text($weight: 700, $color: $orange);
 }
 
 .red {
@@ -136,7 +136,7 @@
 }
 
 .link {
-  @include text($color: $persian, $hover_color: $persian, $decoration: underline);
+  @include text($color: $persian, $decoration: underline);
   cursor: pointer;
 }
 
@@ -145,4 +145,11 @@
   width: 100%;
   align-items: flex-start;
   justify-content: flex-start;
+}
+
+.border-type1 {
+  background-color: white;
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 0.75rem;
+  box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, .1);
 }

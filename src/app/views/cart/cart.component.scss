@@ -62,7 +62,7 @@
 }
 
 .header-title {
-  @include text($color: $taupe, $hover_color: $taupe, $weight: 700);
+  @include text($color: $taupe, $weight: 700);
   text-transform: uppercase;
 }
 
@@ -102,7 +102,7 @@ th, td {
 }
 
 .dest {
-  @include text($color: $taupe, $hover_color: $taupe);
+  @include text($color: $taupe);
 }
 
 .order {
@@ -113,7 +113,7 @@ th, td {
 }
 
 .order-title {
-  @include text($size: 17px, $weight: 700, $color: $persian, $hover_color: $persian);
+  @include text($size: 17px, $weight: 700, $color: $persian);
 }
 
 .full-row {

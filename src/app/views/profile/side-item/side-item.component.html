@@ -1,0 +1,8 @@
+<div 
+  class="container"
+  [ngClass]="{'active': currentTab === tabIdentifier}"
+  (click)="onTabChange()"
+>
+  <mat-icon class="icon">{{ icon }}</mat-icon>
+  <p class="name">{{ name }}</p>
+</div>

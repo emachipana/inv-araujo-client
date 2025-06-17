@@ -15,7 +15,7 @@
 }
 
 .item {
-  @include text($hover_color: $persian, $weight: 700, $cursor: pointer);
+  @include text($weight: 700, $cursor: pointer);
   text-transform: uppercase;
 }
 

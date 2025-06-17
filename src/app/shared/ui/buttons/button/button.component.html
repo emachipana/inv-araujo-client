@@ -3,6 +3,7 @@
   (click)="handleClick($event)"
   class="container"
   [ngClass]="[theme, fullSize ? 'full-size' : '']"
+  [type]="type"
 >
   @if(isLoading) {
     <spinner color="secondary"/>

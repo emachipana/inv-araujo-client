@@ -81,18 +81,17 @@ export class RegisterComponent implements OnInit {
     });
 
     this.registerForm.get("invoicePreference")?.valueChanges.subscribe((preference) => {
-      this.invoicePreference = +(preference ?? -1) === 1 ? "BOLETA" : "FACTURA";
+      this.invoicePreference = preference as "BOLETA" | "FACTURA";
       if (this.invoicePreference === "FACTURA") {
         this.registerForm.get('documentType')?.setValue("2");
         this.disableDocumentType = true;
       } else {
         this.disableDocumentType = false;
       }
-      // this.registerForm.get('documentType')?.updateValueAndValidity();
     });
 
     this.registerForm.get('documentType')?.valueChanges.subscribe((type) => {
-      this.documentType = +(type ?? -1) === 1 ? "DNI" : "RUC";
+      this.documentType = type as "DNI" | "RUC";
       this.registerForm.get('document')?.reset();
       this.registerForm.get('document')?.setValidators([
         Validators.required,
@@ -198,8 +197,8 @@ export class RegisterComponent implements OnInit {
     const clientBody: ClientRequest = {
       email: this._authService.userToValidate?.email || localStorage.getItem("emailToValidate") || "",
       document: formData.document || "",
-      documentType: formData.documentType === "1" ? "DNI" : "RUC",
-      invoicePreference: formData.invoicePreference === "1" ? "BOLETA" : "FACTURA",
+      documentType: formData.documentType as "DNI" | "RUC", 
+      invoicePreference: formData.invoicePreference as "BOLETA" | "FACTURA",
       rsocial: formData.rsocial ? formData.rsocial.replace(/["']/g, "") : "",
       createdBy: "CLIENTE",
       address: this.clientAddress || "",

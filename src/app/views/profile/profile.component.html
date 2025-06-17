@@ -1,1 +1,69 @@
-<p>profile works!</p>
+<div class="main">
+  <div class="sidebar border-type1" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}">
+    <section class="sidebar-header">
+      <img 
+        [src]="currentUser?.image?.url || 'default-avatar.jpg'"
+        alt=""
+        class="avatar"
+      >
+      <div class="flex-column">
+        <p class="name">{{ name | titlecase }}</p>
+        <p class="text">{{ currentUser?.username }}</p>
+      </div>
+    </section>
+    <section class="sidebar-body">
+      <app-side-item
+        icon="account_circle"
+        name="Mi cuenta"
+        [currentTab]="currentTab"
+        tabIdentifier="cuenta"
+        (tabChange)="onTabChange($event)"
+      />
+      <app-side-item
+        icon="shopping_bag"
+        name="Mis pedidos"
+        [currentTab]="currentTab"
+        tabIdentifier="pedidos"
+        (tabChange)="onTabChange($event)"
+      />
+      <app-side-item
+        icon="notifications"
+        name="Notificaciones"
+        [currentTab]="currentTab"
+        tabIdentifier="notificaciones"
+        (tabChange)="onTabChange($event)"
+      />
+      <app-side-item
+        icon="lock"
+        name="Cambiar contraseña"
+        [currentTab]="currentTab"
+        tabIdentifier="contraseña"
+        (tabChange)="onTabChange($event)"
+      />
+      <app-side-item
+        icon="logout"
+        name="Cerrar sesión"
+        (tabChange)="onTabChange('logout')"
+      />
+    </section>
+  </div>
+  <div class="content">
+    <div>
+      <h2 class="content-title">
+        {{ headerData[currentTab || "cuenta"].title }}
+      </h2>
+      <p class="content-sub">{{ headerData[currentTab || "cuenta"].subtitle }}</p>
+    </div>
+    <div class="content-body border-type1">
+      @if(currentTab === "cuenta") {
+        <app-account />
+      } @else if(currentTab === "pedidos") {
+        <app-orders />
+      } @else if(currentTab === "notificaciones") {
+        <app-notifications />
+      } @else if(currentTab === "contraseña") {
+        <app-update-password />
+      }
+    </div>
+  </div>
+</div>

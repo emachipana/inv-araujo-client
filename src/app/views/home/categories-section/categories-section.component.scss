@@ -39,5 +39,5 @@
   overflow: hidden;
   line-height: 16px;
   max-width: 228px;
-  @include text($size: 14px, $color: $taupe, $hover_color: $taupe);
+  @include text($size: 14px, $color: $taupe);
 }

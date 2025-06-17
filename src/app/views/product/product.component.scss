@@ -26,7 +26,7 @@
 }
 
 .text {
-  @include text($color: $taupe, $hover_color: $taupe, $weight: 600);
+  @include text($color: $taupe, $weight: 600);
 }
 
 .gray {

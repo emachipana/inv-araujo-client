@@ -19,21 +19,16 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> {
-    // Si ya está cargando, esperamos a que termine
     if (this.authService.isLoading()) {
       return this.authService.checkAuth().pipe(
         map(isAuthenticated => this.handleAuthCheck(isAuthenticated)),
-        // Si hay un error, permitir la navegación pero redirigir al inicio
         catchError(() => of(this.handleAuthCheck(false)))
       );
     }
 
-    // Si no está cargando, verificar el estado actual
     if (this.authService.isLoggedIn()) {
       return of(true);
     }
-
-    // Si no está autenticado, redirigir
     return of(this.handleAuthCheck(false));
   }
 
@@ -48,7 +43,6 @@ export class AuthGuard implements CanActivate {
   }
 }
 
-// Función de guardia para usar en las rutas
 export function authGuard(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
   return inject(AuthGuard).canActivate(route, state);
 }

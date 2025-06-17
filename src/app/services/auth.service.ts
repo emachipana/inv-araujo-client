@@ -4,9 +4,8 @@ import { User } from '../shared/models/User';
 import { AuthRequest } from '../shared/models/AuthRequest';
 import { ApiConstants, AppConstants } from '../constants/index.constants';
 import { ApiResponse } from '../shared/models/ApiResponse';
-import { BehaviorSubject, map, Observable, of, shareReplay, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { Client } from '../shared/models/Client';
-import { HotToastService } from '@ngxpert/hot-toast';
 import { ClientRequest } from '../shared/models/ClientRequest';
 import { ResetResponse } from '../shared/models/ResetResponse';
 
@@ -15,21 +14,32 @@ import { ResetResponse } from '../shared/models/ResetResponse';
 })
 export class AuthService {
   private _http = inject(HttpClient);
-  private toast = inject(HotToastService);
   currentUser$ = new BehaviorSubject<User | null>(null);
+  currentClient$ = new BehaviorSubject<Client | null>(null);
   userToValidate: ResetResponse | null = null;
   isLoading = signal(true);
   isLoggedIn = signal(false);
+  isClientLoaded = signal(false);
 
   constructor() {
-    // Suscribirse a checkAuth para verificar la autenticación al iniciar
-    // pero solo si hay un token presente
     const token = localStorage.getItem(AppConstants.token_key);
     if (token) {
       this.checkAuth().subscribe();
     } else {
       this.isLoading.set(false);
     }
+  }
+
+  getClient(id: number): Observable<Client | null> {
+    if(id === -1) return of(null);
+
+    return this._http.get<ApiResponse<Client>>(`${ApiConstants.clients}/${id}`).pipe(
+      tap((response) => {
+        this.currentClient$.next(response.data);
+        this.isClientLoaded.set(true);
+      }),
+      map((response) => response.data),
+    );
   }
 
   createClient(request: ClientRequest): Observable<Client> {
@@ -105,12 +115,13 @@ export class AuthService {
     localStorage.removeItem(AppConstants.token_key);
     this.isLoggedIn.set(false);
     this.currentUser$.next(null);
+    this.currentClient$.next(null);
+    this.isClientLoaded.set(false);
   }
 
   private authCheck$: Observable<boolean> | null = null;
 
   checkAuth(): Observable<boolean> {
-    // Si ya hay una verificación en curso, la reutilizamos
     if (this.authCheck$) {
       return this.authCheck$;
     }
@@ -133,13 +144,11 @@ export class AuthService {
         error: (error) => {
           console.error('Error en checkAuth:', error);
           this.isLoggedIn.set(false);
-          // Limpiar token inválido
           localStorage.removeItem(AppConstants.token_key);
         },
         finalize: () => this.isLoading.set(false)
       }),
       map(() => this.isLoggedIn()),
-      // Compartir el resultado para futuras suscripciones
       shareReplay(1)
     );
 

@@ -46,10 +46,8 @@ export class DataService {
 
         return forkJoin(itemRequests).pipe(
           map(() => {
-            // Disparar la request de finalización en segundo plano
             this._http.post(`${ApiConstants.orders}/${orderId}/finalize`, {}).subscribe({
-              // No hacer nada con la respuesta, solo disparar la request
-              error: () => {} // Opcional: manejar errores si lo deseas
+              error: () => {} 
             });
             return response.data;
           })

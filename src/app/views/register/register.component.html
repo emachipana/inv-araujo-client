@@ -1,5 +1,5 @@
 <div class="main">
-	<section [ngStyle]="{'width': action === 'register' ? '40%' : '350px'}" class="container" >
+	<section [ngStyle]="{'width': action === 'register' ? '40%' : '350px'}" class="container border-type1" >
 		@if(action === "code") {
 			<h2 class="title">Ingresa tu código de verificación</h2>
 			<section>
@@ -40,14 +40,14 @@
 						formControlName="invoicePreference"
 						id="invoicePreference"
 						label="Preferencia de comprobante"
-						[options]="[{id: 1, content: 'BOLETA'}, {id: 2, content: 'FACTURA'}]"
+						[options]="[{id: 'BOLETA', content: 'BOLETA'}, {id: 'FACTURA', content: 'FACTURA'}]"
 						[error]="errorMessage(registerForm, 'invoicePreference', {})"
 					/>
 					<app-select
 						formControlName="documentType"
 						id="documentType"
 						label="Tipo documento"
-						[options]="[{id: 1, content: 'DNI'}, {id: 2, content: 'RUC'}]"
+						[options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
 						[error]="errorMessage(registerForm, 'documentType', {})"
 						[isDisabled]="!invoicePreference || disableDocumentType"
 					/>

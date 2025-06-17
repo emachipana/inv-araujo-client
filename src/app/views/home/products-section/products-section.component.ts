@@ -25,7 +25,6 @@ export class ProductsSectionComponent implements OnInit {
 
     this._dataService.loadProductsWithDiscounts(this.size).subscribe({
       next: ((_response) => {
-        // setTimeout(() => this.isLoading = false, 3000);
         this.isLoading = false;
       }),
       error: ((error) => {

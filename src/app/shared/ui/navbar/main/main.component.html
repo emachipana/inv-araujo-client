@@ -1,5 +1,6 @@
 <section class="container">
-  <img 
+  <img
+    (click)="router.navigate(['/'])"
     src="/logo.png"
     class="image"
   />
@@ -19,13 +20,18 @@
           <br /> 
           <span style="font-weight: 700;">
             @if (_authService.isLoggedIn()) {
-              {{userFirstName}}
+              {{userFirstName.toLowerCase() | titlecase}}
             }@else {
               Iniciar sesión
             }
           </span>
         </p>
-        <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+        <div class="user-section">
+          <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+          @if(_authService.isLoggedIn() && _notificationService.notifications$.value.length > 0) {
+            <span class="notification-indicator">{{_notificationService.notifications$.value.length}}</span>
+          }
+        </div>
       </section>
       <app-menu #profile (onHide)="isProfOpen = false">
         <div class="flex-column">
@@ -35,9 +41,12 @@
             >
               Mi cuenta
             </menu-item>
-            <menu-item 
+            <menu-item
+              [isNotification]="true"
+              [notificationsCount]="_notificationService.notifications$.value.length"
+              (onClick)="router.navigate(['/perfil'], {queryParams: {tab: 'notificaciones'}})"
             >
-              Mis compras
+              Notificaciones
             </menu-item>
             <menu-item
               (onClick)="_authService.logout()"

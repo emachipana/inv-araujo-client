@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'menu-item',
@@ -9,6 +9,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class MenuItemComponent {
   @Output() onClick = new EventEmitter<void>();
+  @Input() isNotification: boolean = false;
+  @Input() notificationsCount: number = 0;
 
   handleClick() {
     this.onClick.emit();

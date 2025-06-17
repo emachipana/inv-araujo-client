@@ -43,7 +43,7 @@ export class CartComponent implements OnInit {
   igv: number = 0;
   toast = inject(HotToastService);
   private route = inject(ActivatedRoute);
-  departmentOptions: SelectOption[] = departments.map((dep) => ({id: +dep.id_ubigeo, content: dep.nombre_ubigeo}));
+  departmentOptions: SelectOption[] = departments.map((dep) => ({id: dep.id_ubigeo, content: dep.nombre_ubigeo}));
   currentDep: number = 0;
   provinceOptions: SelectOption[] = [];
   clientLogged: Client | undefined;
@@ -101,7 +101,7 @@ export class CartComponent implements OnInit {
     });
 
     this.form.get('documentType')?.valueChanges.subscribe((type) => {
-      this.documentType = +(type ?? -1) === 1 ? "DNI" : "RUC";
+      this.documentType = type as "DNI" | "RUC";
       this.form.get('document')?.reset();
       this.form.get('document')?.setValidators([
         Validators.required,
@@ -131,7 +131,7 @@ export class CartComponent implements OnInit {
 
       this._dataService.getWarehouses().subscribe({
         next: (response) => {
-          this.warehouses = response.map((war) => ({id: war.id, content: `${war.name} - ${war.address}`}));
+          this.warehouses = response.map((war) => ({id: String(war.id), content: `${war.name} - ${war.address}`}));
           this.isWarehouseLoaded = true;
         },
         error: (error) => {

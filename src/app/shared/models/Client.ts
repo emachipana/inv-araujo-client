@@ -4,8 +4,10 @@ export interface Client {
   city?: string,
   department?: string,
   phone?: string,
-  document?: string,
-  documentType: string,
+  document: string,
+  documentType: "RUC" | "DNI",
   rsocial: string,
-  createdBy: 'CLIENTE' | 'ADMINISTRADOR'
+  createdBy: 'CLIENTE' | 'ADMINISTRADOR',
+  invoicePreference: "BOLETA" | "FACTURA",
+  address?: string
 }

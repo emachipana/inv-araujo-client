@@ -26,5 +26,5 @@
 }
 
 .text {
-  @include text($size: 13px, $color: $white, $hover_color: $white);
+  @include text($size: 13px, $color: $white);
 }

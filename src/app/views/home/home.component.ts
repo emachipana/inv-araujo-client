@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
     this._dataService.isLoading.set(true);
     this._dataService.loadBanners().subscribe({
       next: (_response) => {
-        // console.log(response);
+
         this._dataService.isLoading.set(false);
       },
       error: (error) => {
