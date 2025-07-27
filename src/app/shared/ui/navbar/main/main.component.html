@@ -37,19 +37,19 @@
         <div class="flex-column">
           @if(_authService.isLoggedIn()) {
             <menu-item
-              (onClick)="router.navigate(['/perfil'])"
+              (onClick)="handleProfileMenu('/perfil', profile.hide)"
             >
               Mi cuenta
             </menu-item>
             <menu-item
               [isNotification]="true"
               [notificationsCount]="_notificationService.notifications$.value.length"
-              (onClick)="router.navigate(['/perfil'], {queryParams: {tab: 'notificaciones'}})"
+              (onClick)="handleProfileMenu('/perfil/notificaciones', profile.hide)"
             >
               Notificaciones
             </menu-item>
             <menu-item
-              (onClick)="_authService.logout()"
+              (onClick)="handleLogout(profile.hide)"
             >
               Cerrar sesión
             </menu-item>

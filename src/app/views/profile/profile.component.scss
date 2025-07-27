@@ -24,7 +24,7 @@
 }
 
 .content {
-  @include flex-container($direction: column, $gap: 1rem, $width: 75%, $align: flex-start, $justify: flex-start);
+  @include flex-container($direction: column, $gap: 0.75rem, $width: 75%, $align: flex-start, $justify: flex-start);
 }
 
 .name {
@@ -52,9 +52,4 @@
 
 .content-sub {
   @include text($color: $taupe, $size: 17px);
-}
-
-.content-body {
-  padding: 1rem;
-  width: 100%;
 }

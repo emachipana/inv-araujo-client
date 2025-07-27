@@ -9,8 +9,8 @@ export interface Order {
   total: number,
   department: String,
   city: String,
-  date: String,
-  maxShipDate: String,
+  date: Date | string,
+  maxShipDate: Date | string,
   shippingType: "RECOJO_ALMACEN" | "ENVIO_AGENCIA",
   warehouse?: Warehouse,
 }

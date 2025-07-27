@@ -10,9 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { InputComponent } from "./shared/ui/input/input.component";
 import { ButtonComponent } from "./shared/ui/buttons/button/button.component";
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { messageGenerator } from './shared/ui/input/message-generator';
-import { matchPasswordValidator } from './shared/validators/matchpassword.validator';
 import { AuthRequest } from './shared/models/AuthRequest';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { SpinnerComponent } from "./shared/ui/spinner/spinner.component";
@@ -36,6 +35,7 @@ export class AppComponent implements OnInit {
   router = inject(Router);
   toast = inject(HotToastService);
   isLoading = false;
+  isGoogleLoading = false;
   colors = Colors;
 
   form = new FormGroup({
@@ -43,8 +43,43 @@ export class AppComponent implements OnInit {
     password: new FormControl('', []),
   });
 
+  onGoogleSignIn(): void {
+    this.isGoogleLoading = true;
+    this._authService.loginWithGoogle().then((response) => {
+      if(response.data.action === "register") {
+        this._loginModalService.close();
+        this.router.navigate(["/registro"]);
+        this.isGoogleLoading = false;
+        this.toast.success("Completa tu registro");
+        return;
+      }
+
+      this.isGoogleLoading = false;
+      this.toast.success("Bienvenido nuevamente");
+      this._loginModalService.close();
+    }).catch((error) => {
+      let errorMessage = 'Error al iniciar sesión con Google. Por favor vuelve a intentarlo';
+      
+      if (error.code) {
+        switch (error.code) {
+          case 'auth/popup-closed-by-user':
+            errorMessage = 'Cerraste la ventana. Por favor vuelve a intentarlo';
+            break;
+          case 'auth/cancelled-popup-request':
+            errorMessage = 'Solicitud de autenticación cancelada. Por favor vuelve a intentarlo';
+            break;
+          case 'auth/popup-blocked':
+            errorMessage = 'El navegador está bloqueando la ventana emergente. Por favor, permite las ventanas emergentes para este sitio';
+            break;
+        }
+      }
+        
+      this.toast.error(errorMessage);
+      this.isGoogleLoading = false;
+    });
+  }
+
   ngOnInit(): void {
-    
     this._loginModalService.currentAction$.subscribe((action) => {
       if (action === 'login') {
         this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
@@ -70,10 +105,10 @@ export class AppComponent implements OnInit {
     // login
     if(this._loginModalService.currentAction$.value === "login") {
       this._authService.login(credentials as AuthRequest).subscribe({
-        next: (response) => {
+        next: (_response) => {
           this._loginModalService.close();
           this.isLoading = false;
-          this.toast.success(response.message);
+          this.toast.success("Bienvenido nuevamente");
         },
         error: (error) => {
           console.log(error);

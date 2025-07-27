@@ -1,1 +1,42 @@
-<p>orders works!</p>
+<div class="orders-container">
+  <!-- Loading State -->
+  @if (loading && orders.length === 0) {
+    <spinner
+      size="md"
+    />
+  }
+
+  <!-- Empty State -->
+  @if (!loading && orders.length === 0) {
+    <div class="empty-state text-center p-6">
+      <i class="pi pi-inbox text-6xl text-400 mb-4"></i>
+      <h3>No hay pedidos</h3>
+      <p class="text-600 mb-4">Aún no has realizado ningún pedido.</p>
+      <button pButton 
+              type="button" 
+              label="Ir a la tienda" 
+              icon="pi pi-shopping-bag" 
+              class="p-button-outlined"
+              routerLink="/tienda">
+      </button>
+    </div>
+  }
+
+  @for (order of orders; track order.id) {
+    <app-order-card 
+      [order]="order"
+    />
+  }
+
+  <!-- Pagination -->
+  <!-- @if (totalRecords > rows) { -->
+    <!-- <div class="pagination-container mt-4">
+      <p-paginator [first]="first" 
+                  [rows]="rows" 
+                  [totalRecords]="totalRecords" 
+                  [rowsPerPageOptions]="[5, 10, 20, 30]"
+                  (onPageChange)="onPageChange($event)">
+      </p-paginator>
+    </div> -->
+  <!-- } -->
+</div>

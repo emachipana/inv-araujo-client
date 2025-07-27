@@ -71,4 +71,17 @@ export class MainComponent implements OnInit {
     this.router.navigate([redirectTo], {queryParams: params});
     this.isCartOpen = false;
   }
+
+  handleLogout(handler: VoidFunction): void {
+    this._authService.logout();
+    this.isProfOpen = false;
+    handler();
+    this.router.navigate(['/']);
+  }
+
+  handleProfileMenu(redirectTo: String, handler: VoidFunction) {
+    this.router.navigate([redirectTo]);
+    this.isProfOpen = false;
+    handler();
+  }
 }

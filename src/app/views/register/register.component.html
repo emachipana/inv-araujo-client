@@ -1,6 +1,53 @@
 <div class="main">
-	<section [ngStyle]="{'width': action === 'register' ? '40%' : '350px'}" class="container border-type1" >
-		@if(action === "code") {
+	<section [ngStyle]="{'width': (action === 'register' || action === 'google') ? '40%' : '350px'}" class="container border-type1" >
+		@if(action === "google") {
+			<form class="form" [formGroup]="registerForm" (ngSubmit)="registerWithGoogle()">
+				<h4 class="form-title">Completa tu registro</h4>
+				<section class="input-section">
+					<app-select
+						formControlName="invoicePreference"
+						id="invoicePreference"
+						label="Preferencia de comprobante"
+						[options]="[{id: 'BOLETA', content: 'BOLETA'}, {id: 'FACTURA', content: 'FACTURA'}]"
+						[error]="errorMessage(registerForm, 'invoicePreference', {})"
+					/>
+					<app-select
+						formControlName="documentType"
+						id="documentType"
+						label="Tipo documento"
+						[options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
+						[error]="errorMessage(registerForm, 'documentType', {})"
+						[isDisabled]="!invoicePreference || disableDocumentType"
+					/>
+				</section>
+				<section class="input-section">
+					<custom-input
+						formControlName="document"
+						id="document"
+						[isDisabled]="!documentType"
+						[placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
+						[label]="documentType ? documentType : 'Documento'"
+						[error]="errorMessage(registerForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+					/>
+					<custom-input
+						formControlName="rsocial"
+						id="rsocial"
+						label="Razón social"
+						[isDisabled]="isDocLoaded || !documentType"
+						placeholder="ej. Jhon Doe"
+						[error]="errorMessage(registerForm, 'rsocial', {})"
+					/>
+				</section>
+				<app-button
+					style="margin-top: 1rem;"
+					[fullSize]="true"
+					[isLoading]="isCreating"
+					[isDisabled]="registerForm.invalid || isCreating"
+				>
+					Registrarme
+				</app-button>
+			</form>
+		}@else if(action === "code") {
 			<h2 class="title">Ingresa tu código de verificación</h2>
 			<section>
 				<ngx-otp-input

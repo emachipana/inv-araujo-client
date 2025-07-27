@@ -89,23 +89,37 @@
             [isDisabled]="form.invalid || isLoading"
           >
             @if (_loginModalService.currentAction$.value === "login") {
-              Iniciar sesión
-            }@else {
-              Registrarme
+              @if (isLoading) {
+                Iniciando...
+              } @else {
+                Iniciar sesión
+              }
+            } @else {
+              @if (isLoading) {
+                Registrando...
+              } @else {
+                Registrarme
+              }
             }
           </app-button>
         </form>
         <button
           class="flex-row button-google cursor-pointer"
           style="align-self: center;"
+          (click)="onGoogleSignIn()"
+          [disabled]="isGoogleLoading"
         >
           <img
             class="button-google-icon"
             alt="google-logo"
-            src="google.svg"
+            src="/google.svg"
           />
           <p class="button-google-text">
-            Continuar con Google
+            @if (isGoogleLoading) {
+              Ingresando...
+            } @else {
+              Continuar con Google
+            }
           </p>
         </button>
       </div>

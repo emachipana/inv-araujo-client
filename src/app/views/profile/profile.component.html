@@ -17,53 +17,56 @@
         name="Mi cuenta"
         [currentTab]="currentTab"
         tabIdentifier="cuenta"
-        (tabChange)="onTabChange($event)"
+        [routerLink]="'/perfil'"
+        (click)="onTabChange('')"
+      />
+      <app-side-item
+        icon="receipt"
+        name="Facturación"
+        [currentTab]="currentTab"
+        tabIdentifier="facturacion"
+        [routerLink]="'/perfil/facturacion'"
+        (click)="onTabChange('facturacion')"
       />
       <app-side-item
         icon="shopping_bag"
         name="Mis pedidos"
         [currentTab]="currentTab"
         tabIdentifier="pedidos"
-        (tabChange)="onTabChange($event)"
+        [routerLink]="'/perfil/pedidos'"
+        (click)="onTabChange('pedidos')"
       />
       <app-side-item
         icon="notifications"
         name="Notificaciones"
         [currentTab]="currentTab"
         tabIdentifier="notificaciones"
-        (tabChange)="onTabChange($event)"
+        [routerLink]="'/perfil/notificaciones'"
+        (click)="onTabChange('notificaciones')"
       />
       <app-side-item
         icon="lock"
         name="Cambiar contraseña"
         [currentTab]="currentTab"
-        tabIdentifier="contraseña"
-        (tabChange)="onTabChange($event)"
+        tabIdentifier="contrasena"
+        [routerLink]="'/perfil/contrasena'"
+        (click)="onTabChange('contrasena')"
       />
       <app-side-item
         icon="logout"
         name="Cerrar sesión"
-        (tabChange)="onTabChange('logout')"
+        tabIdentifier="logout"
+        (click)="onTabChange('logout')"
       />
     </section>
   </div>
   <div class="content">
     <div>
       <h2 class="content-title">
-        {{ headerData[currentTab || "cuenta"].title }}
+        {{ getHeaderData().title }}
       </h2>
-      <p class="content-sub">{{ headerData[currentTab || "cuenta"].subtitle }}</p>
+      <p class="content-sub">{{ getHeaderData().subtitle }}</p>
     </div>
-    <div class="content-body border-type1">
-      @if(currentTab === "cuenta") {
-        <app-account />
-      } @else if(currentTab === "pedidos") {
-        <app-orders />
-      } @else if(currentTab === "notificaciones") {
-        <app-notifications />
-      } @else if(currentTab === "contraseña") {
-        <app-update-password />
-      }
-    </div>
+    <router-outlet></router-outlet>
   </div>
 </div>

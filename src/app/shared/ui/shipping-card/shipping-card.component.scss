@@ -1,0 +1,32 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+  @include flex-container($width: 100%, $direction: column);
+}
+
+.container {
+  @include flex-container($width: 100%, $justify: space-between);
+  padding: 1rem;
+  border: 1px solid $platinium;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: .2s ease;
+
+  &:hover {
+    border-color: $persian;
+  }
+
+  &.active {
+    border-color: $persian;
+  }
+}
+
+.title {
+  @include text($weight: 700);
+}
+
+.subtitle {
+  @include text($size: 15px, $weight: 500, $color: $taupe);
+}

@@ -1,0 +1,57 @@
+<div class="chatbot-container" [class.open]="isOpen">
+  <button class="chatbot-toggle" (click)="toggleChat()">
+    @if (isOpen) {
+      <mat-icon class="icon">close</mat-icon>
+    } @else {
+      <mat-icon class="icon">comment</mat-icon>
+    }
+  </button>
+
+  @if (isOpen) {
+    <div class="chat-window">
+      <div class="chat-header">
+        <img [src]="botAvatar" alt="Asistente" class="header-avatar">
+        <h3>AgroBot</h3>
+      </div>
+
+      <div class="chat-messages">
+        @for (message of messages; track $index) {
+          <div class="message" [class.user]="message.isUser" [class.bot]="!message.isUser">
+            @if (message.isUser) {
+              <img [src]="userAvatar" alt="Usuario" class="message-avatar">
+            } @else {
+              <img [src]="botAvatar" alt="Bot" class="message-avatar">
+            }
+            
+            <div class="message-content">
+              @if (message.isLoading) {
+                <div class="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              } @else {
+                <div class="message-text">{{ message.text }}</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chat-input">
+        <input 
+          type="text" 
+          [(ngModel)]="userInput" 
+          (keyup.enter)="sendMessage()" 
+          placeholder="Escribe tu mensaje..."
+        >
+        <button (click)="sendMessage()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+</div>

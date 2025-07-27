@@ -46,7 +46,7 @@ export class RegisterComponent implements OnInit {
     showBlinkingCursor: true,
     regexp: /^[a-zA-Z0-9]+$/
   }
-  action: "code" | "register" = "code";
+  action: "code" | "register" | "google" = "code";
 
   registerForm = new FormGroup({
     documentType: new FormControl('', Validators.required),
@@ -64,9 +64,18 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this._route.queryParams.subscribe(params => {
+      const registerWithGoogle: boolean = localStorage.getItem("registerWithGoogle") === "true";
       const isCodeValidated: boolean = localStorage.getItem("isCodeValidated") === "true";
       const tab = params['tab'] || "code";
       
+      if(registerWithGoogle) {
+        this.action = "google";
+        this.registerForm.get('rsocial')?.setValue(this._authService.userGoogle?.rsocial || "");
+        this.registerForm.get('password')?.setValue("12345678");
+        this.registerForm.get('confirmPassword')?.setValue("12345678");
+        return;
+      }
+
       if(tab === "register" && !isCodeValidated) {
         this.action = "code";
         return;
@@ -83,7 +92,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm.get("invoicePreference")?.valueChanges.subscribe((preference) => {
       this.invoicePreference = preference as "BOLETA" | "FACTURA";
       if (this.invoicePreference === "FACTURA") {
-        this.registerForm.get('documentType')?.setValue("2");
+        this.registerForm.get('documentType')?.setValue("RUC");
         this.disableDocumentType = true;
       } else {
         this.disableDocumentType = false;
@@ -191,6 +200,44 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  registerWithGoogle(): void {
+    if (this.registerForm.invalid) return;
+    
+    this.isCreating = true;
+    const formData = this.registerForm.value;
+    
+    const clientRequest: ClientRequest = {
+      document: formData.document || '',
+      documentType: formData.documentType as "DNI" | "RUC",
+      rsocial: formData.rsocial || '',
+      email: '', // Will be provided by Google
+      createdBy: 'CLIENTE',
+      invoicePreference: formData.invoicePreference as "BOLETA" | "FACTURA" || 'BOLETA',
+      address: this.clientAddress || ''
+    };
+
+    this._authService.registerWithGoogle(clientRequest).subscribe({
+      next: (response) => {
+        this.isCreating = false;
+        if (response.data) {
+          if(this._loginModalService.getBackToCheckout) {
+            this._router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+            this._loginModalService.getBackToCheckout = false;
+            return;
+          }
+
+          this._router.navigate(['/perfil']);
+        }
+      },
+      error: (error) => {
+        console.error('Error registering with Google:', error);
+        this.isCreating = false;
+        const message = error.error?.message || 'Error al registrar con Google';
+        this.toast.error(message);
+      }
+    });
+  }
+
   register(): void {
     if (this.registerForm.invalid) return;
     const formData = this.registerForm.value;
@@ -203,8 +250,6 @@ export class RegisterComponent implements OnInit {
       createdBy: "CLIENTE",
       address: this.clientAddress || "",
     }
-
-    console.log(clientBody);
 
     this.isCreating = true;
     this._authService.createClient(clientBody).subscribe({
@@ -219,6 +264,12 @@ export class RegisterComponent implements OnInit {
             localStorage.removeItem("isCodeValidated");
             localStorage.removeItem("validateCodeId");
             this._authService.userToValidate = null;
+            if(this._loginModalService.getBackToCheckout) {
+              this._router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+              this._loginModalService.getBackToCheckout = false;
+              return;
+            }
+
             this._router.navigate(['/perfil']);
           },
           error: (error) => {

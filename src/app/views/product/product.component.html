@@ -80,7 +80,7 @@
                 }
               </div>
               <p class="text">{{product.description}}</p>
-              <p class="discount-price"><span class="text">Distribución: </span>{{product.unit.toLocaleLowerCase()}}</p>
+              <p class="discount-price"><span class="text">Distribución: </span>{{units[product.unit]}}</p>
             </section>
             <section class="flex-column">
               <p [ngClass]="{'text red': product.stock <= 0, 'text gray': product.stock > 0}">

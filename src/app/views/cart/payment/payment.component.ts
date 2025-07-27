@@ -11,13 +11,14 @@ import { PaymentService } from '../../../services/payment.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { ButtonComponent } from "../../../shared/ui/buttons/button/button.component";
 import { FormGroup } from '@angular/forms';
-import { ClientRequest } from '../../../shared/models/ClientRequest';
-import { departments, provinces } from '../../../data/places';
-import { AuthService } from '../../../services/auth.service';
 import { DataService } from '../../../services/data.service';
 import { OrderRequest } from '../../../shared/models/OrderRequest';
-import { map, Observable, of, switchMap } from 'rxjs';
 import { Order } from '../../../shared/models/Order';
+import { ReceiverInfoRequest } from '../../../shared/models/ReceiverInfoRequest';
+import { PickupInfoRequest } from '../../../shared/models/PickupInfoRequest';
+import { departments, provinces } from '../../../data/places';
+import { AuthService } from '../../../services/auth.service';
+import { InvoiceDetailRequest } from '../../../shared/models/InvoiceDetailRequest';
 
 @Component({
   selector: 'app-payment',
@@ -28,20 +29,25 @@ import { Order } from '../../../shared/models/Order';
 })
 export class PaymentComponent implements OnInit, AfterViewInit {
   @Output() onPay = new EventEmitter<Order>();
-  @Input({required: true}) formExt: FormGroup | null = null;
+  @Input({required: true}) invoiceDetailForm: FormGroup | null = null;
+  @Input({required: true}) pickupForm: FormGroup | null = null;
+  @Input({required: true}) agencyForm: FormGroup | null = null;
   @Input({required: true}) documentType: "DNI" | "RUC" = "DNI";
   @Input({required: true}) shipType: "ENVIO_AGENCIA" | "RECOJO_ALMACEN" = "RECOJO_ALMACEN";
-  @Input() createAccount: boolean = false;
-  @Input() isClientLoggedIn: boolean = false;
+  @Input() updateInvoiceDetail: boolean = false;
   @Input() clientId?: number;
+  @Input() invoiceDetailId?: number;
   @Input() currentTab?: string;
+  @Input() clientAddress?: string;
+  @Input() warehouseId: number | null = null;
+  @Input() isValid: boolean = false;
   @ViewChild(StripeElementsDirective, { static: false }) stripeElements!: StripeElementsDirective;
 
   private _cartService = inject(CartService);
   private _paymentService = inject(PaymentService);
   private _stripeService = inject(StripeService);
-  private _authService = inject(AuthService);
   private _dataService = inject(DataService);
+  private _authService = inject(AuthService);
   private toast = inject(HotToastService);
 
   isLoading: boolean = false;
@@ -89,68 +95,96 @@ export class PaymentComponent implements OnInit, AfterViewInit {
   }
 
   handlePay(): void {
-    this.isLoading = true;
-    let clientId: number = this.clientId ?? -1;
-    const depaVal: string = this.shipType === "RECOJO_ALMACEN" ? "3655" : this.formExt?.get("department")?.value;
-    const cityVal: string = this.shipType === "RECOJO_ALMACEN" ? "3656" : this.formExt?.get("city")?.value;
-  
-    const department: string = departments.find((dep) => dep.id_ubigeo === depaVal)?.nombre_ubigeo ?? "";
-    const city: string = provinces[String(depaVal)].find((prov) => prov.id_ubigeo === cityVal)?.nombre_ubigeo ?? "";
-  
-    let clientObs: Observable<number>;
-  
-    if (!this.isClientLoggedIn) {
-      const clientBody: ClientRequest = {
-        email: this.formExt?.get("email")?.value,
-        department,
-        city,
-        document: this.formExt?.get("document")?.value,
-        documentType: this.documentType,
-        rsocial: this.formExt?.get("rsocial")?.value,
-        phone: this.formExt?.get("phone")?.value,
-        createdBy: "CLIENTE",
-        invoicePreference: "BOLETA",
-      };
-  
-      clientObs = this._authService.createClient(clientBody).pipe(
-        switchMap((response) => {
-          const newClientId = response.id ?? 0;
-  
-          if (this.createAccount) {
-            return this._authService
-              .registerNewClient(newClientId, this.formExt?.get("password")?.value)
-              .pipe(map(() => newClientId));
-          }
-  
-          return of(newClientId);
-        })
-      );
-    } else {
-      clientObs = of(clientId);
+    if (!this.clientId) {
+      this.toast.error('No se pudo obtener el ID del cliente');
+      return;
     }
-  
-    clientObs
-      .pipe(
-        switchMap((finalClientId) => {
-          const orderRequest: OrderRequest = {
-            city,
-            department,
-            clientId: finalClientId,
-            shippingType: this.shipType,
-            total: this._cartService.getTotal(this._cartService.items$.value),
-          };
-          return this._dataService.createOrder(orderRequest, this._cartService.items$.value);
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          this.onPay.emit(response);
+
+    this.isLoading = true;
+
+    // 1. Si hay que actualizar la factura, lo intentamos
+    if (this.updateInvoiceDetail) {
+      const invoiceRequest: InvoiceDetailRequest = {
+        documentType: this.invoiceDetailForm?.get("documentType")?.value as "DNI" | "RUC",
+        document: this.invoiceDetailForm?.get("document")?.value || "",
+        rsocial: this.invoiceDetailForm?.get("rsocial")?.value || "",
+        invoicePreference: this.invoiceDetailForm?.get("invoicePreference")?.value as "BOLETA" | "FACTURA",
+        address: this.invoiceDetailForm?.get("address")?.value || "-"
+      };
+
+      // Usamos un temporizador para asegurar que createOrder se ejecute después
+      const updateSubscription = this._authService.updateInvoiceDetail(
+        invoiceRequest,
+        this.clientId,
+        this.invoiceDetailId || 0
+      ).subscribe({
+        next: () => {
+          console.log('Detalle de factura actualizado correctamente');
+          this.createOrder();
         },
         error: (error) => {
-          this.isLoading = false;
-          this.toast.error(error.error.message);
+          console.error('Error al actualizar detalle de factura:', error);
+          this.createOrder(); // Aseguramos que createOrder se ejecute
         }
       });
+    } else {
+      // Si no hay que actualizar la factura, creamos la orden directamente
+      this.createOrder();
+    }
+  }
+
+  private createOrder(): void {
+    this.prepareOrderRequest().then(orderRequest => {
+      this._dataService.createOrder(orderRequest, this._cartService.items$.value)
+        .subscribe({
+          next: (response) => {
+            this.onPay.emit(response);
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error al crear la orden:', error);
+            this.toast.error('Ocurrió un error al procesar el pago');
+            this.isLoading = false;
+          }
+        });
+    });
+  }
+
+  private prepareOrderRequest(): Promise<OrderRequest> {
+    return new Promise((resolve) => {
+      let receiverInfo: ReceiverInfoRequest | undefined;
+      let pickupInfo: PickupInfoRequest | undefined;
+      let department = "";
+      let city = "";
+
+      if (this.shipType === "ENVIO_AGENCIA") {
+        receiverInfo = {
+          fullName: this.agencyForm?.get('fullName')?.value,
+          document: this.agencyForm?.get('dni')?.value,
+          phone: this.agencyForm?.get('phone')?.value,
+        };
+
+        department = departments.find((dep) => dep.id_ubigeo === this.agencyForm?.get('department')?.value)?.nombre_ubigeo ?? "";
+        city = provinces[String(this.agencyForm?.get('department')?.value)]
+          .find((prov) => prov.id_ubigeo === this.agencyForm?.get('city')?.value)?.nombre_ubigeo ?? "";
+      } else if (this.shipType === "RECOJO_ALMACEN") {
+        pickupInfo = {
+          date: this.pickupForm?.get('date')?.value,
+          hour: this.pickupForm?.get('time')?.value,
+        };
+      }
+
+      const orderRequest: OrderRequest = {
+        clientId: this.clientId!,
+        shippingType: this.shipType,
+        warehouseId: this.warehouseId,
+        city,
+        department,
+        receiverInfo,
+        pickupInfo,
+      };
+
+      resolve(orderRequest);
+    });
   }
 }

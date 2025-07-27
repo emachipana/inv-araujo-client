@@ -23,6 +23,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() fontSize: 'font-sm' | 'font-md' | 'font-xl' | 'font-xxl' = "font-xl";
   @Input() icon?: string;
   @Input() isDisabled: boolean = false;
+  @Input() min?: string;
   @Input({required: true}) placeholder: string = "";
   @Input() type: string = "text";
   error: InputSignal<string> = input("");

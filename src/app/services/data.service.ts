@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { Category } from '../shared/models/Category';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, forkJoin, from } from 'rxjs';
+import { concatMap, map, switchMap, toArray, tap, retry } from 'rxjs/operators';
 import { ApiConstants } from '../constants/index.constants';
-import { forkJoin, map, Observable, retry, switchMap, tap } from 'rxjs';
+import { Category } from '../shared/models/Category';
 import { Banner } from '../shared/models/Banner';
 import { Product } from '../shared/models/Product';
 import { Pageable } from '../shared/models/Pageable';
@@ -10,8 +11,8 @@ import { ProductFilters } from '../shared/models/ProductFilters';
 import { ApiResponse } from '../shared/models/ApiResponse';
 import { Warehouse } from '../shared/models/Warehouse';
 import { OrderRequest } from '../shared/models/OrderRequest';
-import { Order } from '../shared/models/Order';
 import { ProductCart } from '../shared/models/ProductCart';
+import { Order } from '../shared/models/Order';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class DataService {
   products = signal<Pageable<Product>>({content: [], number: 0, pageable: {}, totalElements: 0, totalPages: 0, size: 0});
   discounts = signal<Product[]>([]);
   banners = signal<Banner[]>([]);
+  warehouses = signal<Warehouse[]>([]);
   isLoading = signal(false);
   isInfoNavbarVisible = true;
   cachedProducts: { [key: string]: Pageable<Product> } = {};
@@ -29,40 +31,67 @@ export class DataService {
   controller = {
     categories: false,
     banners: false,
-    discounts: false
+    discounts: false,
+    warehouses: false
   }
 
   createOrder(request: OrderRequest, items: ProductCart[]): Observable<any> {
     return this._http.post<ApiResponse<Order>>(`${ApiConstants.orders}`, request).pipe(
       switchMap((response) => {
         const orderId = response.data.id;
-        const itemRequests = items.map(item =>
-          this._http.post(`${ApiConstants.orderItems}`, { 
-            orderId, 
-            productId: item.productId, 
-            quantity: item.quantity 
-          })
+        
+        // Crear un observable que procese los items secuencialmente
+        const processItems$ = from(items).pipe(
+          concatMap((item: ProductCart) => 
+            this._http.post(`${ApiConstants.orderItems}`, {
+              orderId,
+              productId: item.productId,
+              quantity: item.quantity
+            })
+          ),
+          // Convertir a array para saber cuándo termina
+          toArray()
         );
 
-        return forkJoin(itemRequests).pipe(
-          map(() => {
-            this._http.post(`${ApiConstants.orders}/${orderId}/finalize`, {}).subscribe({
-              error: () => {} 
+        // Procesar items primero
+        return processItems$.pipe(
+          // Una vez que los items se procesan, devolvemos la respuesta de inmediato
+          // y ejecutamos las operaciones de segundo plano
+          tap(() => {
+            // Estas operaciones se ejecutan en segundo plano
+            // 1. Actualizar estado de la orden
+            this._http.put(
+              `${ApiConstants.orders}/${orderId}/status`, 
+              { status: "PAGADO", paymentType: "TARJETA_ONLINE" }
+            ).pipe(
+              // 2. Finalizar la orden después de actualizar el estado
+              switchMap(() => this._http.post(
+                `${ApiConstants.orders}/${orderId}/finalize`,
+                {}
+              ))
+            ).subscribe({
+              error: (error) => console.error('Error en operaciones de segundo plano:', error)
             });
-            return response.data;
-          })
+          }),
+          // Devolver los datos de la respuesta original sin esperar las operaciones de segundo plano
+          map(() => response.data)
         );
-      }),
+      })
     );
-  }
-
-  getWarehouses(): Observable<Warehouse[]> {
-    return this._http.get<Warehouse[]>(`${ApiConstants.warehouses}`);
   }
 
   getProductById(id: number): Observable<Product> {
     return this._http.get<ApiResponse<Product>>(`${ApiConstants.products}/${id}`).pipe(
       map((response) => response.data),
+    );
+  }
+
+  loadWarehouses(): Observable<Warehouse[]> {
+    return this._http.get<Warehouse[]>(`${ApiConstants.warehouses}`).pipe(
+      tap((response) => {
+        this.warehouses.set(response);
+        this.controller = {...this.controller, warehouses: true};
+      })
     );
   }
 
@@ -100,8 +129,6 @@ export class DataService {
   loadProducts(filters: ProductFilters = {minPrice: undefined, maxPrice: undefined, categoryId: undefined, page: 0}): Observable<Pageable<Product>> {
     const url = `${ApiConstants.products}${this.filterBuilder(filters.minPrice, filters.maxPrice, filters.categoryId, filters.page)}`
 
-    console.log(url);
-
     return this._http.get<Pageable<Product>>(url).pipe(
       tap((response) => {
         this.products.set(response);
@@ -130,5 +157,19 @@ export class DataService {
     }
 
     return result;
+  }
+
+  getOrderById(orderId: string): Observable<{ success: boolean; data: Order; message?: string }> {
+    return this._http.get<{ success: boolean; data: Order; message?: string }>(`${ApiConstants.orders}/${orderId}`);
+  }
+
+  getOrders(): Observable<{ success: boolean; data: Order[]; message: string }> {
+    return this._http.get<{ success: boolean; data: Order[]; message: string }>(ApiConstants.orders);
+  }
+
+  getAvailableHours(date: string): Observable<string[]> {
+    return this._http.get<ApiResponse<{date: string, hours: string[]}>>(`${ApiConstants.orders}/availableHours?date=${date}`).pipe(
+      map(response => response.data.hours)
+    );
   }
 }

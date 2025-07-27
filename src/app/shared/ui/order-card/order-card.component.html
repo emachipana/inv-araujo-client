@@ -1,0 +1,29 @@
+<div class="container" (click)="handleClick()">
+  <section class="header">
+    <h3 class="title">Pedido #{{ order?.id }}</h3>
+    <div class="flex-row">
+      <mat-icon class="icon smoke" style="font-size: 17px; width: 17px">calendar_month</mat-icon>
+      <p class="text smoke">{{ order?.date | date:"d 'de' MMMM 'de' yyyy" }}</p>
+    </div>
+  </section>
+  <div class="flex-row" style="padding: 0.5rem 1rem; width: 100%; justify-content: space-between;">
+    <div class="flex-column" style="align-items: center;">
+      <div class="flex-row" style="gap: 0.25rem">
+        <mat-icon class="icon dim">location_on</mat-icon>
+        <p class="text dim" style="font-size: 1rem; font-weight: 600">Destino</p>
+      </div>
+      <p class="text" style="font-size: 1rem">{{ order?.city }}</p>              
+    </div>
+    <div class="flex-column" style="align-items: center;">
+      <div class="flex-row" style="gap: 0.25rem">
+        <mat-icon class="icon dim">receipt</mat-icon>
+        <p class="text dim" style="font-size: 1rem; font-weight: 600">Total</p>
+      </div>
+      <p class="text" style="font-size: 1rem">S/. {{ order?.total?.toFixed(2) }}</p>
+    </div>
+  </div>
+  <section class="bottom">
+    <p class="text dim" style="font-size: 1rem">Estado</p>
+    <app-status-badge [status]="order?.status ?? 'PENDIENTE'"></app-status-badge>
+  </section>
+</div>

@@ -35,6 +35,17 @@ export class ProductComponent implements OnInit {
   private toast = inject(HotToastService);
   private numToAdd: number = 0;
 
+  units: { [key: string]: string } = {
+    "NIU": "Unidad",
+    "ZZ": "Servicio",
+    "SA": "Saco",
+    "KGM": "Kilogramo",
+    "LTR": "Litro",
+    "WG": "Galón",
+    "BJ": "Balde",
+    "BX": "Caja",
+  }
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const productId = +params['id'];

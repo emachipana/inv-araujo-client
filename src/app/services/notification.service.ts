@@ -5,5 +5,5 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class NotificationService {
-  notifications$ = new BehaviorSubject<any[]>([1, 2]);
+  notifications$ = new BehaviorSubject<any[]>([]);
 }

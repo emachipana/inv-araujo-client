@@ -1,0 +1,14 @@
+<div class="map-container">
+  <div #map id="map"></div>
+  
+  <div class="warehouse-info" *ngIf="warehouse">
+    <div class="address">
+      <mat-icon>location_on</mat-icon>
+      <span>{{ warehouse.address }}</span>
+    </div>
+    <div class="reference" *ngIf="warehouse.ref">
+      <mat-icon>info</mat-icon>
+      <span>{{ warehouse.ref }}</span>
+    </div>
+  </div>
+</div>

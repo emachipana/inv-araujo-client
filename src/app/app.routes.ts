@@ -7,6 +7,12 @@ import { RegisterComponent } from './views/register/register.component';
 import { registrationGuard } from './guards/registration.guard';
 import { ProfileComponent } from './views/profile/profile.component';
 import { authGuard } from './guards/auth.guard';
+import { AccountComponent } from './views/profile/tabs/account/account.component';
+import { OrdersComponent } from './views/profile/tabs/orders/orders.component';
+import { UpdatePasswordComponent } from './views/profile/tabs/update-password/update-password.component';
+import { NotificationsComponent } from './views/profile/tabs/notifications/notifications.component';
+import { OrderDetailComponent } from './views/profile/tabs/orders/order-detail/order-detail.component';
+import { InvoiceComponent } from './views/profile/tabs/invoice/invoice.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,6 +27,14 @@ export const routes: Routes = [
   {
     path: 'perfil',
     component: ProfileComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: AccountComponent },
+      { path: 'pedidos', component: OrdersComponent },
+      { path: 'pedidos/:id', component: OrderDetailComponent },
+      { path: 'contrasena', component: UpdatePasswordComponent },
+      { path: 'notificaciones', component: NotificationsComponent },
+      { path: 'facturacion', component: InvoiceComponent }
+    ]
   }
 ];

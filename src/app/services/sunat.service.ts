@@ -12,6 +12,7 @@ export class SunatService {
 
   getData = (type: "DNI" | "RUC", doc: string): Observable<any> => {
     const url = `${DocsConstants.index}/${type.toLowerCase()}/${doc}?token=${environment.docs_token}`;
+    console.log(url);
     return this._http.get<any>(url);
   }  
 }

@@ -15,7 +15,10 @@ export class RegistrationGuard {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
+    const registerWithGoogle = localStorage.getItem('registerWithGoogle');
     const validateCodeId = localStorage.getItem('validateCodeId');
+    
+    if(registerWithGoogle) return true;
     
     if (!validateCodeId) {
       this.router.navigate(['/']);

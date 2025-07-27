@@ -32,6 +32,7 @@
       (blur)="onBlur()"
       (focus)="onFocus()"
       (input)="onInputChange($event)"
+      [min]="min"
     />
   </section>
   @if(error()) {

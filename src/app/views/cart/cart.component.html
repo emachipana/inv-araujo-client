@@ -24,7 +24,7 @@
         (click)="changeTab('checkout')"
       >
         <div class="item flex-row" [ngClass]="{'active': currentTab === 'checkout'}">2</div>
-        <p class="name">DETALLES DE PAGO</p>
+        <p class="name">DETALLES DEL PEDIDO</p>
       </div>
       <mat-icon class="taupe" style="font-weight: 800;">chevron_right</mat-icon>
       <div 
@@ -35,7 +35,7 @@
         <p class="name">PEDIDO COMPLETADO</p>
       </div>
     </div>
-    <div class="flex-row" style="width: 100%; align-items: flex-start; gap: 1rem;">
+    <div class="flex-row" style="width: 100%; align-items: flex-start; gap: 2rem;">
       @if (currentTab === "cart") {
         <section class="main-section flex-column">
           <table>
@@ -80,7 +80,7 @@
           </div>
         </section>
         <section class="secondary-section flex-column">
-          <p class="header-title">TOTAL PEDIDO</p>
+          <p class="header-title">RESUMEN DEL PEDIDO</p>
           <hr class="line" />
           <section class="flex-column" style="width: 100%; gap: 0.25rem;">
             <div class="flex-row full-row">
@@ -97,26 +97,6 @@
             </div>
           </section>
           <hr class="line" />
-          <p class="header-title">ENVÍO</p>
-          <div class="flex-column">
-            <label 
-              (click)="onShipChange('RECOJO_ALMACEN')"
-              class="flex-row"
-            >
-              <input class="input-radio" type="radio" name="option" value="1" [checked]="shipType$.value === 'RECOJO_ALMACEN'">
-              <span class="custom-radio"></span>
-              <p class="text">Recojo en almacén (Sin costo)</p>
-            </label>
-            <label 
-              (click)="onShipChange('ENVIO_AGENCIA')"
-              class="flex-row"
-            >
-              <input class="input-radio" type="radio" name="option" value="2" [checked]="shipType$.value === 'ENVIO_AGENCIA'">
-              <span class="custom-radio"></span>
-              <p class="text">Envío por agencia (Pago contra entrega)</p>
-            </label>
-          </div>
-          <hr class="line" />
           <app-button
             [fullSize]="true"
             (onClick)="changeTab('checkout')"
@@ -124,150 +104,194 @@
             Finalizar compra
           </app-button>
         </section>
-      } @else if (currentTab === "checkout") {
+      }@else if (currentTab === "checkout") {
         <section class="main-section flex-column" style="position: sticky;" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}">
-          @if (!_authService.isLoggedIn()) {
-            <div class="flex-column" style="width: 100%; gap: 0.5rem;">
+          <div class="main-card border-type1">
+            <div class="flex-row">
+              <mat-icon>forklift</mat-icon>
+              <h4 class="name">Tipo de entrega</h4>
+            </div>
+            <app-shipping-card
+              [options]="shippingOptions"
+              (selected)="onShipChange($event)"
+            />
+          </div>
+          @if (shipType$.value === "ENVIO_AGENCIA") {
+            <div class="main-card border-type1">
               <div class="flex-row">
-                <p class="text">¿Ya eres cliente?</p>
-                <p 
-                  class="link"
-                  (click)="_loginModalService.open('login')"
-                >
-                  Inicia sesión
-                </p>
+                <mat-icon>local_shipping</mat-icon>
+                <h4 class="name">Datos de envío</h4>
               </div>
-              <hr class="line" />
+              <form class="form" [formGroup]="agencyForm">
+                <section class="input-section">
+                  <app-select 
+                    formControlName="department"
+                    id="department"
+                    [options]="departmentOptions"
+                    label="Departamento"
+                    [error]="errorMessage(agencyForm, 'department', {})"
+                  />
+                  <app-select
+                    formControlName="city"
+                    id="city"
+                    [options]="provinceOptions"
+                    [isDisabled]="currentDep <= 0"
+                    label="Ciudad"
+                    [error]="errorMessage(agencyForm, 'city', {})"
+                  />
+                </section>
+                <custom-input
+                  formControlName="fullName"
+                  id="fullName"
+                  label="Nombre completo"
+                  placeholder="ej. Jhon Doe"
+                  [error]="errorMessage(agencyForm, 'fullName', {})"
+                />
+                <section class="input-section">
+                  <custom-input
+                    formControlName="dni"
+                    id="dni"
+                    placeholder="ej. 12345678"
+                    label="DNI"
+                    [error]="errorMessage(agencyForm, 'dni', {minlength: 8, maxlength: 8})"
+                  />
+                  <custom-input
+                    formControlName="phone"
+                    id="phone"
+                    placeholder="ej. 912345678"
+                    label="Teléfono"
+                    [error]="errorMessage(agencyForm, 'phone', {minlength: 9, maxlength: 9})"
+                  />
+                </section>
+              </form>
+            </div>
+          }@else if(shipType$.value === "RECOJO_ALMACEN") {
+            <div class="main-card border-type1">
+              <div class="flex-row">
+                <mat-icon>edit_calendar</mat-icon>
+                <h4 class="name">Programar recojo</h4>
+              </div>
+              <div class="warehouse-card">
+                <div class="flex-row">
+                  <mat-icon 
+                    class="dim"
+                    style="font-size: 1.5rem"
+                  >
+                    location_on
+                  </mat-icon>
+                  <h5 class="warehouse-title dim">Almacen {{warehouseSelected?.name}}</h5>
+                </div>
+                <div 
+                  class="flex-column"
+                  style="gap: 0.2rem; width: 100%;"
+                >
+                  <p class="warehouse-text">{{warehouseSelected?.address}}</p>
+                  <div class="flex-row" style="width: 100%; justify-content: space-between">
+                    <p class="warehouse-text">Horario: Lunes a Sábado 8:00 AM - 6:00 PM</p>
+                    <app-button
+                      theme="secondary"
+                      fontSize="font-md"
+                      (onClick)="showMapDialog()"
+                    >
+                      Ver en mapa
+                    </app-button>
+                  </div>
+                </div>
+              </div>
+              <form class="form" [formGroup]="warehouseForm">
+                <section class="input-section">
+                  <custom-input
+                    type="date"
+                    formControlName="date"
+                    id="date"
+                    [min]="minDate"
+                    label="Fecha"
+                    placeholder="Seleccione una fecha"
+                    [error]="errorMessage(warehouseForm, 'date', {})"
+                  />
+                  <app-select 
+                    formControlName="time"
+                    id="time"
+                    [options]="availableHours"
+                    label="Hora"
+                    [error]="errorMessage(warehouseForm, 'time', {})"
+                    placeholder="Seleccione una hora"
+                    [isDisabled]="!warehouseForm.get('time')?.enabled"
+                  />
+                </section>
+              </form>
             </div>
           }
-          <form class="form" [formGroup]="form">
-            <h4 class="name">Detalles del pedido</h4>
-            @if (!_authService.isLoggedIn()) {
-              <div class="input-section">
+          <div class="main-card border-type1">
+            <div class="flex-row" style="width: 100%; justify-content: space-between">
+              <div class="flex-row">
+                <mat-icon>article</mat-icon>
+                <h4 class="name">Datos de factura</h4>
+              </div>
+              <div class="flex-row cursor-pointer" (click)="updateInvoiceDetail = !updateInvoiceDetail">
+                <input
+                  type="checkbox"
+                  [checked]="updateInvoiceDetail"
+                />
+                <p class="text">¿Actualizar datos de factura?</p>
+              </div>
+            </div>
+            <form class="form" [formGroup]="invoiceDetailForm">
+              <section class="input-section">
+                <app-select
+                  formControlName="invoicePreference"
+                  id="invoicePreference"
+                  label="Tipo de comprobante"
+                  [options]="[{id: 'BOLETA', content: 'BOLETA'}, {id: 'FACTURA', content: 'FACTURA'}]"
+                  [error]="errorMessage(invoiceDetailForm, 'invoicePreference', {})"
+                  [isDisabled]="!updateInvoiceDetail"
+                />
                 <app-select
                   formControlName="documentType"
-                  style="max-width: 22%;"
                   id="documentType"
                   label="Tipo documento"
                   [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
-                  [error]="errorMessage(form, 'documentType', {})"
+                  [error]="errorMessage(invoiceDetailForm, 'documentType', {})"
+                  [isDisabled]="!updateInvoiceDetail || !invoicePreference || disableDocumentType"
                 />
-                <custom-input
-                  formControlName="document"
-                  id="document"
-                  [isDisabled]="!documentType"
-                  [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
-                  [label]="documentType ? documentType : 'Documento'"
-                  [error]="errorMessage(form, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
-                />
+              </section>
+              <section class="input-section">
+                <div 
+                  (click)="isInitialLoad = false"
+                  style="width: 100%;"
+                >
+                  <custom-input
+                    formControlName="document"
+                    id="document"
+                    [isDisabled]="!updateInvoiceDetail || !documentType"
+                    [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
+                    [label]="documentType ? documentType : 'Documento'"
+                    [error]="errorMessage(invoiceDetailForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+                  />
+                </div>
                 <custom-input
                   formControlName="rsocial"
                   id="rsocial"
                   label="Razón social"
-                  [isDisabled]="isDocLoaded"
+                  [isDisabled]="!updateInvoiceDetail || isDocLoaded || !documentType"
                   placeholder="ej. Jhon Doe"
-                  [error]="errorMessage(form, 'rsocial', {})"
+                  [error]="errorMessage(invoiceDetailForm, 'rsocial', {})"
                 />
-              </div>
-              <div class="input-section">
-                <custom-input
-                  formControlName="email"
-                  id="email"
-                  label="Correo"
-                  placeholder="john@doe.com"
-                  [error]="errorMessage(form, 'email', {})"
-                />
-                <custom-input 
-                  id="phone"
-                  formControlName="phone"
-                  placeholder="123456789"
-                  label="Teléfono"
-                  [error]="errorMessage(form, 'phone', {})"
-                />
-              </div>
-            }@else {
-              <div class="client flex-column" [ngStyle]="{'align-items': isGettingClient ? 'center' : 'flex-start'}">
-                @if (isGettingClient) {
-                  <spinner
-                    size="sm"
-                  />
-                }@else {
-                  <p class="client-name">{{clientLogged?.document}} - {{_authService.currentUser$.value?.fullName}}</p>
-                  <p class="dest">Destino habitual: {{clientLogged?.city}}, {{clientLogged?.department}}</p>
-                }
-              </div>
-            }
-            <div class="input-section">
-              @if (shipType$.value === "ENVIO_AGENCIA") {
-                <app-select 
-                  formControlName="department"
-                  id="department"
-                  [options]="departmentOptions"
-                  label="Departamento"
-                  [error]="errorMessage(form, 'document', {})"
-                />
-                <app-select
-                  formControlName="city"
-                  id="city"
-                  [options]="provinceOptions"
-                  [isDisabled]="currentDep <= 0"
-                  label="Ciudad"
-                  [error]="errorMessage(form, 'city', {})"
-                />
-              }
-              @if (shipType$.value === "ENVIO_AGENCIA") {
-                <app-select
-                  id="sha"
-                  [options]="[{id: '1', content: 'Shalom'}]"
-                  label="Agencia de envío"
-                  value="1"
-                  [isDisabled]="true"
-                />
-              } @else if(shipType$.value === "RECOJO_ALMACEN") {
-                <app-select
-                  style="max-width: 33.3%; align-self: flex-start;"
-                  formControlName="warehouse"
-                  id="warehouse"
-                  [options]="warehouses"
-                  label="Almacén de recojo"
-                  [error]="errorMessage(form, 'warehouse', {})"
-                />
-              }
-            </div>
-            @if (!_authService.isLoggedIn()) {
-              <div class="flex-row cursor-pointer" (click)="onCreateAccount()">
-                <input
-                  type="checkbox"
-                  [checked]="createAccount"
-                />
-                <p class="text">¿Crear una cuenta?</p>
-              </div>
-              @if (createAccount) {
-                <div class="input-section">
-                  <custom-input
-                    formControlName="password"
-                    id="password"
-                    label="Contraseña"
-                    placeholder="*********"
-                    type="password"
-                    [error]="errorMessage(form, 'password', {minlength: 6})"
-                  />
-                  <custom-input
-                    formControlName="confirmPassword"
-                    id="confirmPassword"
-                    label="Confirmar contraseña"
-                    placeholder="*********"
-                    type="password"
-                    [error]="errorMessage(form, 'confirmPassword', {})"
-                  />
-                </div>
-              }
-            }
-          </form>
+              </section>
+              <custom-input 
+                id="address"
+                formControlName="address"
+                placeholder="Ingresa tu dirección de facturación"
+                label="Dirección"
+                [error]="errorMessage(invoiceDetailForm, 'address', {})"
+                [isDisabled]="!updateInvoiceDetail"
+              />
+            </form>
+          </div>
         </section>
-        <section class="secondary-section">
-          <div class="order flex-column">
-            <h5 class="order-title">TU PEDIDO</h5>
+        <section class="secondary-section" style="position: sticky;" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '160px' : '130px'}">
+          <div class="order flex-column border-type1">
+            <h5 class="order-title">RESUMEN DE TU PEDIDO</h5>
             <div class="flex-row full-row">
               <p class="header-title">PRODUCTO</p>
               <p class="header-title">SUBTOTAL</p>
@@ -295,66 +319,88 @@
               </div>
             </section>
             <hr class="line" />
-            <p class="header-title">ENVÍO</p>
-            <div class="flex-column">
-              <label 
-                (click)="onShipChange('RECOJO_ALMACEN')"
-                class="flex-row"
-              >
-                <input class="input-radio" type="radio" name="option" value="1" [checked]="shipType$.value === 'RECOJO_ALMACEN'">
-                <span class="custom-radio"></span>
-                <p class="text">Recojo en almacén (Sin costo)</p>
-              </label>
-              <label 
-                (click)="onShipChange('ENVIO_AGENCIA')"
-                class="flex-row"
-              >
-                <input class="input-radio" type="radio" name="option" value="2" [checked]="shipType$.value === 'ENVIO_AGENCIA'">
-                <span class="custom-radio"></span>
-                <p class="text">Envío por agencia (Pago contra entrega)</p>
-              </label>
-            </div>
-            <hr class="line" />
             <p class="header-title">PAGAR CON TARJETA</p>
             <app-payment 
               (onPay)="onPay($event)"
-              [formExt]="form"
+              [invoiceDetailForm]="invoiceDetailForm"
+              [updateInvoiceDetail]="updateInvoiceDetail"
+              [pickupForm]="warehouseForm"
+              [agencyForm]="agencyForm"
               [documentType]="documentType ?? 'DNI'"
-              [shipType]="shipType$.value"
+              [shipType]="shipType$.value || 'RECOJO_ALMACEN'"
               [clientId]="clientLogged?.id"
-              [createAccount]="createAccount"
-              [isClientLoggedIn]="_authService.isLoggedIn()"
               [currentTab]="currentTab"
+              [warehouseId]="shipType$.value === 'RECOJO_ALMACEN' ? (warehouseSelected?.id || 0) : null"
+              [isValid]="invoiceDetailForm.valid && (shipType$.value === 'RECOJO_ALMACEN' ? warehouseForm.valid : agencyForm.valid)"
+              [clientAddress]="clientAddress"
+              [invoiceDetailId]="clientLogged?.invoiceDetail?.id"
             />
           </div>
         </section>
       } @else if (currentTab === "success") {
-        <div class="success-card flex-column">
-          <h5 class="order-title" style="font-size: 1.3rem;">Tu pedido se ha generado correctamente</h5>
-          <p class="dest"><li>Tu pedido será entregado en un plazo de 1 a 3 días</li></p>
-          <div style="align-self: center;">
-            @if (createAccount || clientLogged) {
-              <app-button>
-                Ver detalle
-              </app-button>
-            }@else {
-              <div class="flex-column" style="align-items: center;">
-                <p class="dest"><li>Comunícate con la empresa para obtener más detalles de tu pedido</li></p>
-                <app-button
-                  icon="call"
-                >
-                  <a
-                    [href]="redirectionLink"
-                    target="_blank"
-                  >
-                    Comunicarme
-                  </a>
-                </app-button>
-              </div>
-            }
+        <div class="success-card border-type1">
+          <div class="success-icon">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <h2 class="success-title">¡Pedido Confirmado!</h2>
+          <p class="success-message">Tu pedido se ha generado correctamente</p>
+          
+          <div class="delivery-info flex-column">
+            <div class="flex-row info-item">
+              <span class="material-icons">local_shipping</span>
+              <p>Entrega en 1-3 días hábiles</p>
+            </div>
+            <div class="flex-row info-item">
+              <span class="material-icons">
+                visibility
+              </span>
+              <p>
+                Revisa el detalle de tu pedido en nuestra plataforma
+              </p>
+            </div>
+          </div>
+          <div class="flex-row">
+            <app-button
+              [icon]="'visibility'"
+              fontSize="font-xl"
+              (onClick)="onOrderDetail()"
+            >
+              Ver detalle
+            </app-button>
+            <app-button 
+              (onClick)="router.navigate(['/tienda'])"
+              fontSize="font-xl"
+              theme="secondary"
+            >
+              Seguir comprando
+            </app-button>
           </div>
         </div>
       }
     </div>
   }
+
+  <!-- Diálogo del Mapa -->
+  <p-dialog 
+    header="Ubicación del Almacén" 
+    [(visible)]="displayMapDialog" 
+    [style]="{width: '90vw', maxWidth: '800px'}"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [dismissableMask]="true"
+  >
+    <div class="map-dialog-content" *ngIf="warehouseSelected">
+      <app-map [warehouse]="warehouseSelected"></app-map>
+    </div>
+    <ng-template pTemplate="footer">
+      <app-button 
+        (click)="displayMapDialog = false" 
+        theme="primary"
+        fontSize="font-md"
+      >
+        Cerrar
+      </app-button>
+    </ng-template>
+  </p-dialog>
 </div>

@@ -1,0 +1,63 @@
+<div class="content-body border-type1">
+  <div style="margin-bottom: 1.5rem;">
+    <h3 class="title">Datos de facturación</h3>
+    <p class="sub">Actualiza tu información de facturación</p>
+  </div>
+  <form class="form" [formGroup]="invoiceDetailForm" [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}">
+    @if(isGettingClient) {
+      <spinner
+        size="md"
+      />
+    } @else {
+      <section class="input-section">
+        <app-select
+          formControlName="invoicePreference"
+          id="invoicePreference"
+          label="Preferencia de comprobante"
+          [options]="[{id: 'BOLETA', content: 'BOLETA'}, {id: 'FACTURA', content: 'FACTURA'}]"
+          [error]="errorMessage(invoiceDetailForm, 'invoicePreference', {})"
+        />
+        <app-select
+          formControlName="documentType"
+          id="documentType"
+          label="Tipo documento"
+          [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
+          [error]="errorMessage(invoiceDetailForm, 'documentType', {})"
+          [isDisabled]="disableDocumentType"
+        />
+      </section>
+      <section class="input-section">
+        <custom-input
+          formControlName="document"
+          id="document"
+          [isDisabled]="!documentType"
+          [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
+          [label]="documentType ? documentType : 'Documento'"
+          [error]="errorMessage(invoiceDetailForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+        />
+        <custom-input
+          formControlName="rsocial"
+          id="rsocial"
+          label="Razón social"
+          [isDisabled]="isDocLoaded || !documentType"
+          placeholder="ej. Jhon Doe"
+          [error]="errorMessage(invoiceDetailForm, 'rsocial', {})"
+        />
+      </section>
+      <custom-input
+        formControlName="address"
+        id="address"
+        label="Dirección"
+        placeholder="ej. 987654321"
+        [error]="errorMessage(invoiceDetailForm, 'address', {})"
+      />
+      <app-button
+        type="submit"
+        [isDisabled]="invoiceDetailForm.invalid"
+        style="margin-top: 1rem;"
+      >
+        Guardar cambios
+      </app-button>
+    }
+  </form>
+</div>

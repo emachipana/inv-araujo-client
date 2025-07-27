@@ -1,0 +1,79 @@
+<!-- <div class="order-detail">
+  <button (click)="goBack()" class="back-button">
+    <span class="material-icons">arrow_back</span> Volver a mis pedidos
+  </button>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando detalles del pedido...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !error && order" class="order-content">
+    <div class="order-header">
+      <h2>Pedido #{{ order.orderNumber }}</h2>
+      <span class="status" [ngClass]="(order.status || 'pendiente').toLowerCase()">
+        {{ order.status || 'Pendiente' }}
+      </span>
+    </div>
+
+    <div class="order-info">
+      <div class="info-section">
+        <h3>Información del pedido</h3>
+        <p><strong>Fecha:</strong> {{ order.createdAt | date:'medium' }}</p>
+        <p><strong>Estado:</strong> {{ order.status }}</p>
+        <p><strong>Método de Pago:</strong> {{ order.paymentMethod || 'No especificado' }}</p>
+      </div>
+
+      <div class="info-section">
+        <h3>Información de envío</h3>
+        <p><strong>Cliente:</strong> {{ order.client.rsocial }}</p>
+        <p><strong>Documento:</strong> {{ order.client.documentType }} {{ order.client.document }}</p>
+        <p><strong>Correo:</strong> {{ order.client.email }}</p>
+        <p><strong>Teléfono:</strong> {{ order.client.phone }}</p>
+        <p *ngIf="order.client.address"><strong>Dirección:</strong> {{ order.client.address }}</p>
+        <p><strong>Dirección:</strong> {{ order.shippingAddress?.address || 'No especificada' }}</p>
+        <p><strong>Ciudad:</strong> {{ order.shippingAddress?.city || 'No especificada' }}</p>
+        <p><strong>Región:</strong> {{ order.shippingAddress?.region || 'No especificada' }}</p>
+        <p><strong>País:</strong> {{ order.shippingAddress?.country || 'No especificado' }}</p>
+      </div>
+    </div>
+
+    <div class="order-items">
+      <h3>Productos</h3>
+      <div class="items-list">
+        <div *ngFor="let item of order.items || []" class="order-item">
+          <img [src]="(item.product.image?.url) || 'assets/images/placeholder.png'" 
+               [alt]="item.product.name" 
+               class="item-image">
+          <div class="item-details">
+            <h4>{{ item.product.name }}</h4>
+            <p *ngIf="item.product.code">Código: {{ item.product.code }}</p>
+            <p>Cantidad: {{ item.quantity }}</p>
+            <p>Precio unitario: S/ {{ item.price | number:'1.2-2' }}</p>
+          </div>
+          <div class="item-total">
+            <p>S/ {{ (item.price * item.quantity) | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <div class="summary-row">
+        <span>Subtotal:</span>
+        <span>S/ {{ order.subTotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-row">
+        <span>IGV (18%):</span>
+        <span>S/ {{ order.igv | number:'1.2-2' }}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total:</span>
+        <span>S/ {{ order.total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+</div> -->
