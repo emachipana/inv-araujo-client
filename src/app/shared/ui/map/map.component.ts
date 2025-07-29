@@ -29,18 +29,26 @@ export class MapComponent implements AfterViewInit {
   private initMap(): void {
     if (!this.warehouse?.latitude || !this.warehouse?.longitude) return;
 
-    // Configuración del mapa
     this.map = L.map(this.mapContainer.nativeElement).setView(
       [this.warehouse.latitude, this.warehouse.longitude], 
       15
     );
 
-    // Añadir capa de OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    }).addTo(this.map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(this.map);
 
-    // Añadir marcador
-    this.marker = L.marker([this.warehouse.latitude, this.warehouse.longitude])
+    const customIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+      shadowSize: [41, 41]
+    });
+
+    this.marker = L.marker(
+      [this.warehouse.latitude, this.warehouse.longitude],
+      { icon: customIcon }
+    )
       .addTo(this.map)
       .bindPopup(this.warehouse.name || 'Ubicación de recogida');
   }

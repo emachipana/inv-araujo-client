@@ -10,8 +10,6 @@ import { SpinnerComponent } from '../../../../shared/ui/spinner/spinner.componen
 import { OrderCardComponent } from '../../../../shared/ui/order-card/order-card.component';
 
 type OrderStatus = 'ENTREGADO' | 'PENDIENTE';
-type OrderLocation = 'ALMACEN' | 'AGENCIA';
-type ShippingType = 'RECOJO_ALMACEN' | 'ENVIO_AGENCIA';
 
 @Component({
   selector: 'app-orders',
@@ -33,7 +31,7 @@ export class OrdersComponent implements OnInit {
   orders: Order[] = [];
   loading = true;
   first: number = 0;
-  rows: number = 5;
+  rows: number = 16;
   totalRecords: number = 0;
 
   getStatusSeverity(status: OrderStatus | string): 'success' | 'info' | 'warn' | 'danger' | 'contrast' | 'secondary' | undefined {

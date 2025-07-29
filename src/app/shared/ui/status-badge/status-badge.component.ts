@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Colors } from '../../../constants/index.constants';
 
-type StatusType = 'PENDIENTE' | 'PAGADO' | 'ENTREGADO' | 'CANCELADO' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN';
+type StatusType = 'PENDIENTE' | 'PAGADO' | 'ENTREGADO' | 'CANCELADO' | 'PRODUCT' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN' | 'CARD_ENVIO_AGENCIA' | 'CARD_RECOJO_ALMACEN';
 
 interface StatusConfig {
   text: string;
@@ -18,7 +18,8 @@ interface StatusConfig {
   styleUrls: ['./status-badge.component.scss']
 })
 export class StatusBadgeComponent {
-  @Input() status: StatusType = 'PENDIENTE';
+  @Input() status: StatusType = "PENDIENTE";
+  @Input() text: string = "";
 
   statusConfig: Record<StatusType, StatusConfig> = {
     PENDIENTE: {
@@ -43,13 +44,28 @@ export class StatusBadgeComponent {
     },
     ENVIO_AGENCIA: {
       text: 'Traslado sin costo',
-      bgColor: Colors.persian_light,
-      textColor: Colors.persian,
+      bgColor: Colors.purple_light,
+      textColor: Colors.purple,
     },
     RECOJO_ALMACEN: {
       text: 'Sin costo adicional',
       bgColor: Colors.blue_light,
       textColor: Colors.blue,
+    },
+    CARD_ENVIO_AGENCIA: {
+      text: 'Envío agencia',
+      bgColor: Colors.purple_light,
+      textColor: Colors.purple,
+    },
+    CARD_RECOJO_ALMACEN: {
+      text: 'Recojo almacén',
+      bgColor: Colors.blue_light,
+      textColor: Colors.blue,
+    },
+    PRODUCT: {
+      text: this.text,
+      bgColor: Colors.persian_light,
+      textColor: Colors.persian,
     }
   };
 

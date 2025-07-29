@@ -20,9 +20,12 @@ export class SideItemComponent {
   constructor(private router: Router) {}
 
   isActive(): boolean {
-    // Special case for account tab (empty path)
     if (this.tabIdentifier === 'cuenta') {
       return !this.currentTab || this.currentTab === '';
+    }
+    
+    if (this.tabIdentifier === 'pedidos') {
+      return this.currentTab === 'pedidos' || this.currentTab.startsWith('pedidos/');
     }
     return this.currentTab === this.tabIdentifier;
   }

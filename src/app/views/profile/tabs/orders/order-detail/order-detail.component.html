@@ -1,79 +1,538 @@
-<!-- <div class="order-detail">
-  <button (click)="goBack()" class="back-button">
-    <span class="material-icons">arrow_back</span> Volver a mis pedidos
-  </button>
-
-  <div *ngIf="isLoading" class="loading">
-    <p>Cargando detalles del pedido...</p>
-  </div>
-
-  <div *ngIf="error" class="error">
-    <p>{{ error }}</p>
-  </div>
-
-  <div *ngIf="!isLoading && !error && order" class="order-content">
-    <div class="order-header">
-      <h2>Pedido #{{ order.orderNumber }}</h2>
-      <span class="status" [ngClass]="(order.status || 'pendiente').toLowerCase()">
-        {{ order.status || 'Pendiente' }}
-      </span>
-    </div>
-
-    <div class="order-info">
-      <div class="info-section">
-        <h3>Información del pedido</h3>
-        <p><strong>Fecha:</strong> {{ order.createdAt | date:'medium' }}</p>
-        <p><strong>Estado:</strong> {{ order.status }}</p>
-        <p><strong>Método de Pago:</strong> {{ order.paymentMethod || 'No especificado' }}</p>
-      </div>
-
-      <div class="info-section">
-        <h3>Información de envío</h3>
-        <p><strong>Cliente:</strong> {{ order.client.rsocial }}</p>
-        <p><strong>Documento:</strong> {{ order.client.documentType }} {{ order.client.document }}</p>
-        <p><strong>Correo:</strong> {{ order.client.email }}</p>
-        <p><strong>Teléfono:</strong> {{ order.client.phone }}</p>
-        <p *ngIf="order.client.address"><strong>Dirección:</strong> {{ order.client.address }}</p>
-        <p><strong>Dirección:</strong> {{ order.shippingAddress?.address || 'No especificada' }}</p>
-        <p><strong>Ciudad:</strong> {{ order.shippingAddress?.city || 'No especificada' }}</p>
-        <p><strong>Región:</strong> {{ order.shippingAddress?.region || 'No especificada' }}</p>
-        <p><strong>País:</strong> {{ order.shippingAddress?.country || 'No especificado' }}</p>
-      </div>
-    </div>
-
-    <div class="order-items">
-      <h3>Productos</h3>
-      <div class="items-list">
-        <div *ngFor="let item of order.items || []" class="order-item">
-          <img [src]="(item.product.image?.url) || 'assets/images/placeholder.png'" 
-               [alt]="item.product.name" 
-               class="item-image">
-          <div class="item-details">
-            <h4>{{ item.product.name }}</h4>
-            <p *ngIf="item.product.code">Código: {{ item.product.code }}</p>
-            <p>Cantidad: {{ item.quantity }}</p>
-            <p>Precio unitario: S/ {{ item.price | number:'1.2-2' }}</p>
+<div class="container" [ngStyle]="{ alignItems: isLoading ? 'center' : 'flex-start' }">
+  @if (isLoading) {
+    <spinner
+      size="md"
+    />
+  }
+  @else {
+    <section 
+      class="flex-row"
+      (click)="goBack()"
+      style="cursor: pointer;"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      <p class="text">Volver a mis pedidos</p>
+    </section>
+    @if (!order) {
+      <p>No se encontro el pedido</p>
+    }
+    @else {
+      <div class="wrapper">
+        <div class="main-section">
+          <div class="card border-type1">
+            <section
+              class="flex-row"
+              style="justify-content: space-between; width: 100%;"
+            >
+              <div class="flex-row">
+                <mat-icon>shopping_bag</mat-icon>
+                <p class="name">Pedido #{{order.id}}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem; align-items: flex-end;"
+              >
+                <app-status-badge
+                  [status]="order.status"
+                />
+                <p class="header-text">{{order.paymentType === 'TARJETA_ONLINE' ? 'Tarjeta Online' : 'Yape'}}</p>
+              </div>
+            </section>
+            <section class="card-section">
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Fecha de pedido</p>
+                <p class="text">{{ order.date | date:"d 'de' MMMM 'de' yyyy" }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Tipo de entrega</p>
+                <app-status-badge [status]="order.shippingType === 'ENVIO_AGENCIA' ? 'CARD_ENVIO_AGENCIA' : 'CARD_RECOJO_ALMACEN'"/>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Ubicación del pedido</p>
+                <p class="text">{{ order.location === "ALMACEN" ? "En almacén" : "En agencia" }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Serie de {{order.invoice?.invoiceType?.toLocaleLowerCase()}}</p>
+                <p class="text">{{ order.invoice?.serie }}-{{ order.invoice?.id }}</p>
+              </div>
+            </section>
           </div>
-          <div class="item-total">
-            <p>S/ {{ (item.price * item.quantity) | number:'1.2-2' }}</p>
+          <div class="card border-type1" style="align-items: flex-start">
+            <div class="flex-row">
+              <mat-icon>shopping_basket</mat-icon>
+              <p class="name">Productos</p>
+            </div>
+            @for (item of orderItems; track item.id) {
+              <app-product-card
+                [product]="item.product"
+                [quantity]="item.quantity"
+                [productPrice]="item.price"
+              />
+            }
+          </div>
+          <div class="card border-type1" style="align-items: flex-start;">
+            <div class="flex-row" style="width: 100%; justify-content: space-between">
+              <div class="flex-row">
+                <mat-icon>
+                  @if(order.shippingType === 'ENVIO_AGENCIA') {
+                    local_shipping
+                  } @else {
+                    warehouse
+                  }
+                </mat-icon>
+                <p class="name" style="white-space: nowrap;">
+                  @if(order.shippingType === 'ENVIO_AGENCIA') {
+                    Datos de envío (Shalom)
+                  } @else {
+                    Datos de recojo (Sapallanga)
+                  }
+                </p>
+              </div>
+              @if(order.shippingType === "RECOJO_ALMACEN") {
+                <app-button
+                  fontSize="font-md"
+                  (onClick)="showMapDialog()"
+                >
+                  Ver en mapa
+                </app-button>
+              }
+            </div>
+            @if(order.shippingType === 'ENVIO_AGENCIA') {
+              <section class="card-section">
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Destino</p>
+                  <p class="text">{{ order.city }}, {{ order.department }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">A nombre de</p>
+                  <p class="text">{{ order.receiverInfo?.fullName }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">DNI</p>
+                  <p class="text">{{ order.receiverInfo?.document }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Teléfono</p>
+                  <p class="text">{{ order.receiverInfo?.phone }}</p>
+                </div>
+              </section>
+            }@else {
+              <section
+                class="card-section"
+                style="justify-content: flex-start; gap: 2rem;"
+              >
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Fecha de recojo</p>
+                  <p class="text">{{ order.pickupInfo?.date| date:"d 'de' MMMM 'de' yyyy" }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Hora de recojo</p>
+                  <p class="text">{{ formatTime(order.pickupInfo?.hour) }}</p>
+                </div>
+              </section>
+            }
+            @if(order.location === "AGENCIA" && order.shippingType === "ENVIO_AGENCIA") {
+              <section 
+                class="card-section"
+                style="justify-content: flex-start; gap: 2rem;"
+              >
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Código tracking</p>
+                  <p class="text">{{ order.receiverInfo?.trackingCode }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Código de recojo</p>
+                  <p class="text">{{ order.receiverInfo?.code }}</p>
+                </div>
+              </section>
+            }
+            @if(!pendingRequest && (order.location !== "AGENCIA" || order.status !== "ENTREGADO")) {
+              <section 
+                class="card-section"
+                style="justify-content: center;"
+              >
+                <app-button
+                  theme="warning"
+                  fontSize="font-md"
+                  (onClick)="showEditShippingDialog()"
+                  icon="edit"
+                >
+                  @if(order.shippingType === "ENVIO_AGENCIA") {
+                    Editar datos de envío
+                  } @else {
+                    Editar datos de recojo
+                  }
+                </app-button>
+              </section>
+            }
+          </div>
+        </div>
+        <div 
+          class="second-section" 
+          style="position: sticky;" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}"
+        >
+          <div 
+            class="card border-type1"
+            style="align-items: flex-start; gap: 0.8rem;"
+          >
+            <div class="flex-row">
+              <mat-icon>wallet</mat-icon>
+              <p class="name">Resumen del pedido</p>
+            </div>
+            <section
+              class="flex-column"
+              style="gap: 0.3rem; width: 100%;"
+            >
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">Subtotal</p>
+                <p class="text">S/. {{ totalWithoutIGV.toFixed(2) }}</p>
+              </div>
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">IGV</p>
+                <p class="text">S/. {{ igv.toFixed(2) }}</p>
+              </div>
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">Total</p>
+                <p class="text blue">S/. {{ order.total.toFixed(2) }}</p>
+              </div>
+            </section>
+            <hr class="line" />
+            <app-button
+              fontSize="font-md"
+              theme="secondary"
+              [fullSize]="true"
+              icon="receipt"
+              (onClick)="openInvoiceDialog()"
+            >
+              Ver {{ order.invoice?.invoiceType?.toLocaleLowerCase() }}
+            </app-button>
+            <app-button
+              fontSize="font-md"
+              theme="danger"
+              [fullSize]="true"
+              [icon]="pendingRequest ? 'visibility' : 'cancel'"
+              (onClick)="displayCancelDialog = true"
+            >
+              @if (pendingRequest) {
+                Ver solicitud de cancelación
+              } @else {
+                Solicitar cancelación
+              }
+            </app-button>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="order-summary">
-      <div class="summary-row">
-        <span>Subtotal:</span>
-        <span>S/ {{ order.subTotal | number:'1.2-2' }}</span>
-      </div>
-      <div class="summary-row">
-        <span>IGV (18%):</span>
-        <span>S/ {{ order.igv | number:'1.2-2' }}</span>
-      </div>
-      <div class="summary-row total">
-        <span>Total:</span>
-        <span>S/ {{ order.total | number:'1.2-2' }}</span>
-      </div>
-    </div>
-  </div>
-</div> -->
+    }
+    <p-dialog
+      [(visible)]="displayMapDialog" 
+      [style]="{width: '90vw', maxWidth: '800px'}"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [dismissableMask]="true"
+    >
+      @if(warehouseSelected) {
+        <ng-template #headless>
+          <app-map [warehouse]="warehouseSelected"></app-map>
+        </ng-template>
+      }
+    </p-dialog>
+    <p-dialog 
+      [(visible)]="editShippingDialog"
+      [modal]="true"
+      [dismissableMask]="true"
+      [closable]="true"
+      (onHide)="editShippingDialog = false"
+      [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+    >
+      <ng-template #headless>
+        <mat-icon 
+          class="close-icon cursor-pointer"
+          (click)="editShippingDialog = false"
+        >
+          close
+        </mat-icon>
+        @if (order?.shippingType === 'ENVIO_AGENCIA') {
+          <form class="form" [formGroup]="shippingForm" (ngSubmit)="onShippingSubmit()">
+            <h5 class="form-title">Editar datos de envío</h5>
+            <section class="input-section">
+              <app-select
+                formControlName="department"
+                id="department"
+                [options]="departmentOptions"
+                label="Departamento"
+                [error]="errorMessage(shippingForm, 'department', {})"
+              />
+              <app-select
+                formControlName="city"
+                id="city"
+                [options]="provinceOptions"
+                [isDisabled]="currentDep <= 0"
+                label="Ciudad"
+                [error]="errorMessage(shippingForm, 'city', {})"
+              />
+            </section>
+            <custom-input
+              formControlName="fullName"
+              id="fullName"
+              label="Nombre completo"
+              placeholder="ej. Jhon Doe"
+              [error]="errorMessage(shippingForm, 'fullName', {minlength: 3})"
+            />
+            <section class="input-section">
+              <custom-input
+                formControlName="document"
+                id="document"
+                placeholder="ej. 12345678"
+                label="DNI"
+                [error]="errorMessage(shippingForm, 'document', {minlength: 8, maxlength: 8})"
+              />
+              <custom-input
+                formControlName="phone"
+                id="phone"
+                placeholder="ej. 912345678"
+                label="Teléfono"
+                [error]="errorMessage(shippingForm, 'phone', {minlength: 9, maxlength: 9})"
+              />
+            </section>
+            <app-button
+              type="button"
+              theme="warning"
+              fontSize="font-xl"
+              (onClick)="onShippingSubmit()"
+              [isDisabled]="shippingForm.invalid || isFormSubmitting"
+              [isLoading]="isFormSubmitting"
+              style="align-self: center; margin-top: 1rem;"
+            >
+              Actualizar datos
+            </app-button>
+          </form>
+        } @else {
+          <form [formGroup]="pickupForm" (ngSubmit)="onPickupSubmit()" class="form">
+            <h5 class="form-title">Editar datos de recojo</h5>
+            <section class="input-section">
+              <custom-input
+                type="date"
+                formControlName="date"
+                id="date"
+                [min]="minDate"
+                label="Fecha"
+                placeholder="Seleccione una fecha"
+                [error]="errorMessage(pickupForm, 'date', {})"
+              />
+              <app-select 
+                formControlName="time"
+                id="time"
+                [options]="availableHours"
+                label="Hora"
+                [error]="errorMessage(pickupForm, 'time', {})"
+                placeholder="Seleccione una hora"
+                [isDisabled]="!pickupForm.get('time')?.enabled"
+              />
+            </section>
+            <app-button
+              type="button"
+              theme="warning"
+              fontSize="font-xl"
+              (onClick)="onPickupSubmit()"
+              [isDisabled]="pickupForm.invalid || isFormSubmitting"
+              [isLoading]="isFormSubmitting"
+              style="align-self: center; margin-top: 1rem;"
+            >
+              Actualizar datos
+            </app-button>
+          </form>
+        }
+      </ng-template>
+    </p-dialog>
+    <p-dialog 
+      [(visible)]="displayInvoiceDialog"
+      [modal]="true"
+      [dismissableMask]="true"
+      [closable]="true"
+      (onHide)="displayInvoiceDialog = false"
+      [style]="{'width': '90vw', 'maxWidth': '1000px', 'height': '90vh'}"
+      [contentStyle]="{'height': '100%', 'padding': '0', 'overflow': 'hidden'}"
+    >
+      <ng-template #headless>
+        <mat-icon 
+          class="close-icon cursor-pointer"
+          (click)="displayInvoiceDialog = false"
+          style="position: absolute; right: 10px; top: 10px; z-index: 1000; background: white; border-radius: 50%;"
+        >
+          close
+        </mat-icon>
+        @if (isInvoiceLoading) {
+          <div class="invoice-loader">
+            <spinner size="xl"></spinner>
+            <p>Cargando {{ order?.invoice?.invoiceType?.toLocaleLowerCase() }}...</p>
+          </div>
+        }
+        @if (safePdfUrl) {
+          <iframe
+            title="factura"
+            [src]="safePdfUrl"
+            width="100%"
+            height="100%"
+            style="border: none"
+            (load)="onLoadInvoice()"
+          ></iframe>
+        } @else {
+          <div class="flex items-center justify-center h-full">
+            <p>No se pudo cargar el documento.</p>
+          </div>
+        }
+      </ng-template>
+    </p-dialog>
+    <p-dialog 
+      [(visible)]="displayCancelDialog"
+      [modal]="true"
+      [dismissableMask]="true"
+      [closable]="true"
+      (onHide)="displayCancelDialog = false"
+      [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+    >
+      <ng-template #headless>
+        <mat-icon 
+          class="close-icon cursor-pointer"
+          (click)="displayCancelDialog = false"
+          style="position: absolute; right: 1rem; top: 1rem; cursor: pointer;"
+        >
+          close
+        </mat-icon>
+        @if (pendingRequest) {
+          <h5 
+            class="form-title"
+            style="margin-bottom: 1rem;"
+          >
+            Solicitudes de cancelación
+          </h5>
+          @for (request of cancelRequests; track $index) {
+            <div class="cancel-card">
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Motivo</p>
+                <p class="text">{{ request.reason }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Fecha</p>
+                <p class="text">{{ request.createdAt | date:"MM/dd/yy HH:mm" }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Estado</p>
+                <app-status-badge 
+                  [status]="request.accepted ? 'ENTREGADO' : request.rejected ? 'CANCELADO' : 'PENDIENTE'"
+                  [text]="request.accepted ? 'Entregado' : request.rejected ? 'Cancelado' : 'Pendiente'"
+                />
+              </div>
+            </div>
+          }
+        }@else {
+          <div 
+            class="form"
+            [formGroup]="cancelForm"
+          >
+            <h5 class="form-title">¿Por qué deseas cancelar el pedido?</h5>
+            <div>
+              @for (reason of cancelReasons; track reason) {
+                <label 
+                  class="flex-row" 
+                  style="width: 100%; padding: 0.5rem; justify-content: flex-start; cursor: pointer;"
+                  (click)="selectCancelReason(reason)"
+                >
+                  <div class="flex-row" style="align-items: center; gap: 0.75rem;">
+                    <input 
+                      class="input-radio" 
+                      type="radio"
+                      name="cancel-reason" 
+                      [checked]="cancelForm.get('reason')?.value === reason"
+                      (click)="$event.stopPropagation()"
+                    >
+                    <span class="custom-radio"></span>
+                    <span class="text">{{ reason }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+            @if (showOtherReason) {
+              <div 
+                style="width: 100%; padding-left: 1rem;"
+              >
+                <custom-input
+                  formControlName="otherReason"
+                  id="otherReason"
+                  placeholder="Por favor, describe el motivo de la cancelación"
+                  [error]="errorMessage(cancelForm, 'otherReason', {})"
+                />
+              </div>
+            }
+            <app-button
+              type="button"
+              theme="danger"
+              fontSize="font-xl"
+              (onClick)="onCancelOrder()"
+              [isDisabled]="cancelForm.invalid || isFormSubmitting"
+              [isLoading]="isFormSubmitting"
+              style="align-self: center;"
+            >
+              Enviar solicitud
+            </app-button>
+          </div>
+        }
+      </ng-template>
+    </p-dialog>
+  }
+</div>

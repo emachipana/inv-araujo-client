@@ -380,9 +380,7 @@
     </div>
   }
 
-  <!-- Diálogo del Mapa -->
   <p-dialog 
-    header="Ubicación del Almacén" 
     [(visible)]="displayMapDialog" 
     [style]="{width: '90vw', maxWidth: '800px'}"
     [modal]="true"
@@ -390,17 +388,10 @@
     [resizable]="false"
     [dismissableMask]="true"
   >
-    <div class="map-dialog-content" *ngIf="warehouseSelected">
-      <app-map [warehouse]="warehouseSelected"></app-map>
-    </div>
-    <ng-template pTemplate="footer">
-      <app-button 
-        (click)="displayMapDialog = false" 
-        theme="primary"
-        fontSize="font-md"
-      >
-        Cerrar
-      </app-button>
+    <ng-template #headless>
+      @if(warehouseSelected) {
+        <app-map [warehouse]="warehouseSelected"></app-map>
+      }
     </ng-template>
   </p-dialog>
 </div>

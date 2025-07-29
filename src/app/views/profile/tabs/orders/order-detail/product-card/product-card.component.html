@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="flex-row">
+    <img 
+      [src]="getImage(product.images[0])"
+      [alt]="product.name"
+      class="image"
+    >
+    <div class="flex-column" style="gap: 0.1rem">
+      <h5 class="name">{{ product.name }}</h5>
+      <p class="text">Cantidad: {{ quantity }}</p>
+      <p 
+        class="price"
+        style="margin-top: 0.5rem;"
+      >
+        S/. {{ productPrice.toFixed(2) }}
+      </p>
+    </div>
+  </div>
+  <div
+    class="flex-column"
+    style="gap: 0.1rem; height: 100%; justify-content: space-between;"
+  >
+    <app-status-badge
+      status="PRODUCT"
+      [text]="product.brand"
+    />
+    <p class="price persian">
+      S/. {{ (productPrice * quantity).toFixed(2) }}
+    </p>
+  </div>
+</div>

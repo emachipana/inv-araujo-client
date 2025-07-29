@@ -1,0 +1,72 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($gap: 1rem, $width: 100%, $direction: column, $align: flex-start);
+  min-height: 50vh;
+}
+
+.text {
+  @include text($weight: 600);
+}
+
+.name {
+  @include text($weight: 700, $size: 17px);
+}
+
+.wrapper {
+  @include flex-container($gap: 2rem, $width: 100%, $align: flex-start, $justify: space-between);
+}
+
+.main-section {
+  @include flex-container($gap: 1rem, $width: 65%, $direction: column, $align: flex-start);
+}
+
+.second-section {
+  @include flex-container($gap: 1rem, $width: 35%, $direction: column, $align: flex-start);
+}
+
+.card {
+  @include flex-container($gap: 1rem, $width: 100%, $direction: column);
+  padding: 1rem;
+}
+
+.header-text {
+  @include text($weight: 500, $size: 14px, $color: $taupe);
+}
+
+.card-section {
+  @include flex-container($gap: 1.2rem, $width: 100%, $justify: space-between);
+  flex-wrap: wrap;
+}
+
+.taupe {
+  color: $taupe;
+}
+
+.blue {
+  color: $orange;
+}
+
+.line {
+  width: 100%;
+  border: 0.2px solid $platinium
+}
+
+.form-title {
+  @include text($weight: 700, $size: 20px, $color: $persian);
+  text-align: center;
+  align-self: center;
+}
+
+.cancel-card {
+  @include flex-container($gap: 1rem, $width: 100%, $justify: space-between);
+  height: 80px;
+  padding: 1rem;
+  border: 1px solid $platinium;
+  border-radius: 0.75rem;
+}

@@ -31,10 +31,15 @@ export const routes: Routes = [
     children: [
       { path: '', component: AccountComponent },
       { path: 'pedidos', component: OrdersComponent },
-      { path: 'pedidos/:id', component: OrderDetailComponent },
       { path: 'contrasena', component: UpdatePasswordComponent },
       { path: 'notificaciones', component: NotificationsComponent },
-      { path: 'facturacion', component: InvoiceComponent }
+      { path: 'facturacion', component: InvoiceComponent },
+      { path: 'pedidos/:id', component: OrderDetailComponent }
     ]
-  }
+  },
+  // { 
+  //   path: 'perfil/pedidos/:id',
+  //   component: OrderDetailComponent,
+  //   canActivate: [authGuard]
+  // },
 ];

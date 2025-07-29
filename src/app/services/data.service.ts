@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, from } from 'rxjs';
-import { concatMap, map, switchMap, toArray, tap, retry } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
+import { concatMap, map, switchMap, toArray, tap } from 'rxjs/operators';
 import { ApiConstants } from '../constants/index.constants';
 import { Category } from '../shared/models/Category';
 import { Banner } from '../shared/models/Banner';
@@ -13,6 +13,11 @@ import { Warehouse } from '../shared/models/Warehouse';
 import { OrderRequest } from '../shared/models/OrderRequest';
 import { ProductCart } from '../shared/models/ProductCart';
 import { Order } from '../shared/models/Order';
+import { OrderItem } from '../shared/models/OrderItem';
+import { PickupInfoRequest } from '../shared/models/PickupInfoRequest';
+import { UpdateReceiverInfoRequest } from '../shared/models/UpdateReceiverInfoRequest';
+import { CancelRequest } from '../shared/models/CancelRequest';
+import { CancelOrderRequest } from '../shared/models/CancelOrderRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +45,6 @@ export class DataService {
       switchMap((response) => {
         const orderId = response.data.id;
         
-        // Crear un observable que procese los items secuencialmente
         const processItems$ = from(items).pipe(
           concatMap((item: ProductCart) => 
             this._http.post(`${ApiConstants.orderItems}`, {
@@ -49,22 +53,15 @@ export class DataService {
               quantity: item.quantity
             })
           ),
-          // Convertir a array para saber cuándo termina
           toArray()
         );
 
-        // Procesar items primero
         return processItems$.pipe(
-          // Una vez que los items se procesan, devolvemos la respuesta de inmediato
-          // y ejecutamos las operaciones de segundo plano
           tap(() => {
-            // Estas operaciones se ejecutan en segundo plano
-            // 1. Actualizar estado de la orden
             this._http.put(
               `${ApiConstants.orders}/${orderId}/status`, 
               { status: "PAGADO", paymentType: "TARJETA_ONLINE" }
             ).pipe(
-              // 2. Finalizar la orden después de actualizar el estado
               switchMap(() => this._http.post(
                 `${ApiConstants.orders}/${orderId}/finalize`,
                 {}
@@ -73,7 +70,6 @@ export class DataService {
               error: (error) => console.error('Error en operaciones de segundo plano:', error)
             });
           }),
-          // Devolver los datos de la respuesta original sin esperar las operaciones de segundo plano
           map(() => response.data)
         );
       })
@@ -159,17 +155,60 @@ export class DataService {
     return result;
   }
 
-  getOrderById(orderId: string): Observable<{ success: boolean; data: Order; message?: string }> {
-    return this._http.get<{ success: boolean; data: Order; message?: string }>(`${ApiConstants.orders}/${orderId}`);
+  getOrderById(orderId: number): Observable<Order> {
+    return this._http.get<ApiResponse<Order>>(`${ApiConstants.orders}/${orderId}`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  getProductsByOrderId(orderId: number): Observable<OrderItem[]> {
+    return this._http.get<OrderItem[]>(`${ApiConstants.orderItems}/order/${orderId}`);
   }
 
   getOrders(): Observable<{ success: boolean; data: Order[]; message: string }> {
     return this._http.get<{ success: boolean; data: Order[]; message: string }>(ApiConstants.orders);
   }
 
-  getAvailableHours(date: string): Observable<string[]> {
+  getAvailableHours(date: string, filterPastHours: boolean = true): Observable<string[]> {
     return this._http.get<ApiResponse<{date: string, hours: string[]}>>(`${ApiConstants.orders}/availableHours?date=${date}`).pipe(
-      map(response => response.data.hours)
+      map(response => {
+        if (!filterPastHours) return response.data.hours;
+        
+        const now = new Date();
+        const currentDate = now.toISOString().split('T')[0];
+        const currentHour = now.getHours();
+        const currentMinutes = now.getMinutes();
+
+        return response.data.hours.filter(hour => {
+          if (date !== currentDate) return true;
+          
+          const [hourValue, minuteValue] = hour.split(':').map(Number);
+          return hourValue > currentHour || 
+                (hourValue === currentHour && minuteValue >= currentMinutes);
+        });
+      })
     );
+  }
+
+  updatePickupInfo(orderId: number, pickupInfo: PickupInfoRequest): Observable<Order> {
+    return this._http.put<ApiResponse<Order>>(`${ApiConstants.orders}/${orderId}/updatePickupInfo`, pickupInfo).pipe(
+      map(response => response.data)
+    );
+  }
+
+  updateReceiverInfo(orderId: number, receiverInfo: UpdateReceiverInfoRequest): Observable<Order> {
+    return this._http.put<ApiResponse<Order>>(`${ApiConstants.orders}/${orderId}/updateReceiverInfo`, receiverInfo).pipe(
+      map(response => response.data)
+    );
+  }
+
+  cancelOrderRequest(cancelOrderRequest: CancelRequest): Observable<CancelOrderRequest> {
+    return this._http.post<ApiResponse<CancelOrderRequest>>(`${ApiConstants.cancelOrder}`, cancelOrderRequest).pipe(
+      map(response => response.data)
+    );
+  }
+
+  loadCancelRequests(orderId: number): Observable<CancelOrderRequest[]> {
+    return this._http.get<CancelOrderRequest[]>(`${ApiConstants.cancelOrder}/order/${orderId}`);
   }
 }

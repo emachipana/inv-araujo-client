@@ -11,7 +11,8 @@ export const ApiConstants = {
   warehouses: `${environment.base_uri}/warehouses`,
   orders: `${environment.base_uri}/orders`,
   orderItems: `${environment.base_uri}/orderProducts`,
-  chatbot: `${environment.base_uri}/chatbot/question`
+  chatbot: `${environment.base_uri}/chatbot/question`,
+  cancelOrder: `${environment.base_uri}/cancel-order`
 }
 
 export const DocsConstants = {

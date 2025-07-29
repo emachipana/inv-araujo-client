@@ -68,10 +68,18 @@ export class ProfileComponent implements OnInit {
     const profileIndex = urlSegments.findIndex(segment => segment === 'perfil');
     
     if (profileIndex === -1 || profileIndex === urlSegments.length - 1) {
-      // This is the base profile route (/perfil)
       this.currentTab = '';
     } else {
-      this.currentTab = urlSegments[profileIndex + 1];
+      // Get the segment after 'perfil'
+      const nextSegment = urlSegments[profileIndex + 1];
+      
+      // Special handling for order details
+      if (nextSegment === 'pedidos' && urlSegments.length > profileIndex + 2) {
+        // This is a nested route like 'pedidos/123'
+        this.currentTab = `pedidos/${urlSegments[profileIndex + 2]}`;
+      } else {
+        this.currentTab = nextSegment;
+      }
     }
   }
 
@@ -82,7 +90,6 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // For empty tab (account), navigate to base profile URL
     if (tab === '') {
       this._router.navigate(['/perfil']);
     } else {
@@ -91,13 +98,11 @@ export class ProfileComponent implements OnInit {
   }
 
   getHeaderData() {
-    // Check for order detail route first
     if (this.currentTab.startsWith('pedidos/')) {
       return this.headerData['pedidos/:id'] || this.headerData['pedidos'];
     }
-    // For empty tab (account), use 'cuenta' as the key
+    
     const tabKey = this.currentTab === '' ? 'cuenta' : this.currentTab;
-    console.log(tabKey);
     return this.headerData[tabKey] || this.headerData['cuenta'];
   }
 }

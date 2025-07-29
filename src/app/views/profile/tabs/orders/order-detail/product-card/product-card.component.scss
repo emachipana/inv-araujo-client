@@ -1,0 +1,33 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($gap: 1rem, $width: 100%, $justify: space-between);
+  height: 125px;
+  padding: 1rem;
+  border: 1px solid $platinium;
+  border-radius: 0.75rem;
+}
+
+.image {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.text {
+  @include text($size: 15px, $color: $taupe);
+}
+
+.price {
+  @include text($size: 17px, $color: $blue, $weight: 700);
+}
+
+.persian {
+  color: $orange;
+}

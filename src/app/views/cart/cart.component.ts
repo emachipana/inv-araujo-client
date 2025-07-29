@@ -25,6 +25,7 @@ import { ShippingCardComponent } from "../../shared/ui/shipping-card/shipping-ca
 import { ShippingOption } from '../../shared/models/ShippingOption';
 import { Warehouse } from '../../shared/models/Warehouse';
 import { MapComponent } from '../../shared/ui/map/map.component';
+import { formattedTime } from '../../shared/helpers/main';
 
 @Component({
   selector: 'app-cart',
@@ -135,6 +136,8 @@ export class CartComponent implements OnInit {
     this.displayMapDialog = true;
   }
 
+  formatTime = formattedTime;
+
   ngOnInit(): void {
     this.warehouseForm.get('date')?.valueChanges.subscribe((date) => {
       const timeControl = this.warehouseForm.get('time');
@@ -144,11 +147,15 @@ export class CartComponent implements OnInit {
       if (date) {
         this._dataService.getAvailableHours(date).subscribe({
           next: (hours: string[]) => {
-            this.availableHours = hours.map((hour) => ({id: hour, content: hour}));
-            if (hours.length > 0) {
+            this.availableHours = hours.map(hour => ({
+              id: hour,
+              content: this.formatTime(hour)
+            }));
+            
+            if (this.availableHours.length > 0) {
               timeControl?.enable();
             } else {
-              this.toast.warning('No hay horarios disponibles para la fecha seleccionada');
+              this.toast.warning('No hay más horarios disponibles para hoy');
             }
           },
           error: (error) => {
