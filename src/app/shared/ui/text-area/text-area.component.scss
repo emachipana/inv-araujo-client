@@ -1,0 +1,77 @@
+@use 'input.scss';
+@use 'colors.scss' as *;
+@use 'fonts.scss' as *;
+@use 'layout.scss' as *;
+
+:host { 
+  width: 100%;
+  display: block;
+}
+
+.custom-textarea {
+  width: 100%;
+  min-height: 100px;
+  font-weight: 600; /* Aseguramos que coincida con el input */
+  border: none;
+  outline: none;
+  color: $gray;
+  background-color: transparent; /* Transparent como el input */
+  font-family: $font_primary;
+  resize: vertical;
+  padding: 0.5rem; /* Ajustamos el padding para que coincida */
+  line-height: 1.5;
+  font-size: 15px;
+  border-radius: 0.5rem;
+  
+  &::placeholder {
+    color: lighten($gray, 30%);
+  }
+}
+
+/* Aseguramos que el contenedor tenga el outline */
+:host ::ng-deep {
+  .input-section {
+    @include flex-container($width: 100%, $gap: 0.8rem);
+    height: auto;
+    min-height: 100px;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.5rem;
+    outline: 1px solid $taupe;
+    position: relative;
+    align-items: flex-start;
+    transition: outline-color 0.2s ease;
+    
+    &:focus-within {
+      outline-color: $persian;
+    }
+    
+    .custom-textarea {
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+  }
+  
+  /* Icono */
+  .input-icon {
+    font-size: 24px;
+    color: $dim;
+    margin-top: 0.5rem;
+  }
+  
+  /* Estado de error */
+  .input-red {
+    outline-color: $red;
+    
+    &:focus-within {
+      outline-color: $red;
+    }
+  }
+  
+  /* Estado deshabilitado */
+  .disabled {
+    background-color: rgba(245, 245, 245, 0.8);
+    outline-color: $dim;
+  }
+}

@@ -5,6 +5,7 @@ import { Pageable } from '../shared/models/Pageable';
 import { Observable, tap, switchMap, of } from 'rxjs';
 import { ApiConstants } from '../constants/index.constants';
 import { AuthService } from './auth.service';
+import { InvitroOrder } from '../shared/models/InvitroOrder';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,8 @@ export class ProfileService {
   
   orders = signal<Order[]>([]);
   cachedOrders: { [key: string]: Pageable<Order> } = {};
+  vitroOrders = signal<InvitroOrder[]>([]);
+  cachedVitroOrders: { [key: string]: Pageable<InvitroOrder> } = {};
 
   loadOrders(page: number = 0, size: number = 10): Observable<Pageable<Order>> {
     const cacheKey = `${page}-${size}`;

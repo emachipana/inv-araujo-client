@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Colors } from '../../../constants/index.constants';
 
-type StatusType = 'PENDIENTE' | 'PAGADO' | 'ENTREGADO' | 'CANCELADO' | 'PRODUCT' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN' | 'CARD_ENVIO_AGENCIA' | 'CARD_RECOJO_ALMACEN';
+type StatusType = 'PENDIENTE' | 'PAGADO' | 'ENTREGADO' | 'CANCELADO' | 'PRODUCT' | 'ENVIADO' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN' | 'CARD_ENVIO_AGENCIA' | 'CARD_RECOJO_ALMACEN';
 
 interface StatusConfig {
   text: string;
@@ -41,6 +41,11 @@ export class StatusBadgeComponent {
       text: 'Cancelado',
       bgColor: Colors.red_light,
       textColor: Colors.red,
+    },
+    ENVIADO: {
+      text: 'Enviado',
+      bgColor: Colors.purple_light,
+      textColor: Colors.purple,
     },
     ENVIO_AGENCIA: {
       text: 'Traslado sin costo',

@@ -116,59 +116,6 @@ th, td {
   @include text($size: 17px, $weight: 700, $color: $persian);
 }
 
-.full-row {
-  width: 100%; 
-  justify-content: space-between;
-}
-
-.success-card {
-  padding: 1.5rem 1rem;
-  background: white;
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-
-  .success-icon {
-    margin-bottom: 1.5rem;
-    
-    .material-icons {
-      font-size: 4rem;
-      color: $persian;
-    }
-  }
-
-  .success-title {
-    @include text($size: 1.75rem, $weight: 700, $align: center);
-    margin-bottom: 0.75rem;
-  }
-
-  .success-message {
-    @include text($color: $taupe, $size: 1.1rem, $align: center);
-    margin-bottom: 2rem;
-  }
-
-  .delivery-info {
-    background: $smoke;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin: 1.5rem 0;
-    text-align: left;
-
-    .info-item {
-      gap: 0.5rem;
-
-      p {
-        @include text($weight: 600, $color: $dim);
-      }
-
-      .material-icons {
-        color: $dim;
-        font-size: 1.5rem;
-      }
-    }
-  }
-}
-
 .maps-container {
   @include flex-container($width: 100%, $justify: space-between);
   flex-wrap: wrap;

@@ -7,11 +7,13 @@ import { BehaviorSubject } from 'rxjs';
 export class LoginModalService {
   isOpen = false;
   getBackToCheckout: boolean = false;
+  redirectTo: string = "";
   currentAction$ = new BehaviorSubject<"login" | "register">("login");
 
-  open(action: "login" | "register", redirectAtFinish: boolean = false) {
+  open(action: "login" | "register", redirectAtFinish: boolean = false, redirectTo: string = "") {
     this.isOpen = true;
     this.getBackToCheckout = redirectAtFinish;
+    this.redirectTo = redirectTo;
     this.currentAction$.next(action);
   }
 

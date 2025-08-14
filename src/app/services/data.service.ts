@@ -18,12 +18,13 @@ import { PickupInfoRequest } from '../shared/models/PickupInfoRequest';
 import { UpdateReceiverInfoRequest } from '../shared/models/UpdateReceiverInfoRequest';
 import { CancelRequest } from '../shared/models/CancelRequest';
 import { CancelOrderRequest } from '../shared/models/CancelOrderRequest';
+import { MessageRequest } from '../shared/models/MessageRequest';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private _http = inject(HttpClient); 
+  private _http = inject(HttpClient);
   categories = signal<Category[]>([]);
   products = signal<Pageable<Product>>({content: [], number: 0, pageable: {}, totalElements: 0, totalPages: 0, size: 0});
   discounts = signal<Product[]>([]);
@@ -210,5 +211,11 @@ export class DataService {
 
   loadCancelRequests(orderId: number): Observable<CancelOrderRequest[]> {
     return this._http.get<CancelOrderRequest[]>(`${ApiConstants.cancelOrder}/order/${orderId}`);
+  }
+
+  sendMessage(message: MessageRequest): Observable<MessageRequest> {
+    return this._http.post<ApiResponse<MessageRequest>>(`${ApiConstants.messages}`, message).pipe(
+      map(response => response.data)
+    );
   }
 }

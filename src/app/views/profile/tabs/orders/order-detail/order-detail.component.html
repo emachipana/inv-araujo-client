@@ -139,6 +139,22 @@
                   <p class="header-text">Teléfono</p>
                   <p class="text">{{ order.receiverInfo?.phone }}</p>
                 </div>
+                @if(order.location === "AGENCIA" && order.shippingType === "ENVIO_AGENCIA") {
+                  <div
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Código tracking</p>
+                    <p class="text">{{ order.receiverInfo?.trackingCode }}</p>
+                  </div>
+                  <div
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Código de recojo</p>
+                    <p class="text">{{ order.receiverInfo?.code }}</p>
+                  </div>
+                }
               </section>
             }@else {
               <section
@@ -161,8 +177,8 @@
                 </div>
               </section>
             }
-            @if(order.location === "AGENCIA" && order.shippingType === "ENVIO_AGENCIA") {
-              <section 
+            @if(order.evidence) {
+              <section
                 class="card-section"
                 style="justify-content: flex-start; gap: 2rem;"
               >
@@ -170,19 +186,23 @@
                   class="flex-column"
                   style="gap: 0.1rem"
                 >
-                  <p class="header-text">Código tracking</p>
-                  <p class="text">{{ order.receiverInfo?.trackingCode }}</p>
+                  <p class="header-text">{{ order.shippingType === "ENVIO_AGENCIA" ? "Puesto en agencia" : "Entregado en almacén" }}</p>
+                  <p class="text">{{ order.deliveredAt| date:"d 'de' MMMM 'de' yyyy,  h:mm a" }}</p>
                 </div>
                 <div
                   class="flex-column"
-                  style="gap: 0.1rem"
+                  style="gap: 0.1rem; margin-top: -1rem"
                 >
-                  <p class="header-text">Código de recojo</p>
-                  <p class="text">{{ order.receiverInfo?.code }}</p>
+                  <p class="header-text">{{ order.shippingType === "ENVIO_AGENCIA" ? "Evidencia de envío" : "Evidencia de recojo" }}</p>
+                  <img
+                    [src]="order.evidence.url"
+                    alt="Evidencia de envío"
+                    class="evidence"
+                  />
                 </div>
               </section>
             }
-            @if(!pendingRequest && (order.location !== "AGENCIA" || order.status !== "ENTREGADO")) {
+            @if(!pendingRequest && (order.location !== "AGENCIA" && order.status !== "ENTREGADO" && order.status !== "CANCELADO")) {
               <section 
                 class="card-section"
                 style="justify-content: center;"
@@ -241,29 +261,33 @@
                 <p class="text blue">S/. {{ order.total.toFixed(2) }}</p>
               </div>
             </section>
-            <hr class="line" />
-            <app-button
-              fontSize="font-md"
-              theme="secondary"
-              [fullSize]="true"
-              icon="receipt"
-              (onClick)="openInvoiceDialog()"
-            >
-              Ver {{ order.invoice?.invoiceType?.toLocaleLowerCase() }}
-            </app-button>
-            <app-button
-              fontSize="font-md"
-              theme="danger"
-              [fullSize]="true"
-              [icon]="pendingRequest ? 'visibility' : 'cancel'"
-              (onClick)="displayCancelDialog = true"
-            >
-              @if (pendingRequest) {
-                Ver solicitud de cancelación
-              } @else {
-                Solicitar cancelación
-              }
-            </app-button>
+            @if(order.invoice) {
+              <hr class="line" />
+              <app-button
+                fontSize="font-md"
+                theme="secondary"
+                [fullSize]="true"
+                icon="receipt"
+                (onClick)="openInvoiceDialog()"
+              >
+                Ver {{ order.invoice.invoiceType.toLocaleLowerCase() }}
+              </app-button>
+            }
+            @if(order.location !== "AGENCIA" && (order.status !== "ENTREGADO" && order.status !== "CANCELADO")) {
+              <app-button
+                fontSize="font-md"
+                theme="danger"
+                [fullSize]="true"
+                [icon]="pendingRequest ? 'visibility' : 'cancel'"
+                (onClick)="displayCancelDialog = true"
+              >
+                @if (pendingRequest) {
+                  Ver solicitud de cancelación
+                } @else {
+                  Solicitar cancelación
+                }
+              </app-button>
+            }
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { environment } from "../../environments/environment";
 
 export const ApiConstants = {
+  tubers: `${environment.base_uri}/tubers`,
+  varieties: `${environment.base_uri}/varieties`,
   auth: `${environment.base_uri}/auth`,
   users: `${environment.base_uri}/users`,
   clients: `${environment.base_uri}/clients`,
@@ -12,7 +14,11 @@ export const ApiConstants = {
   orders: `${environment.base_uri}/orders`,
   orderItems: `${environment.base_uri}/orderProducts`,
   chatbot: `${environment.base_uri}/chatbot/question`,
-  cancelOrder: `${environment.base_uri}/cancel-order`
+  cancelOrder: `${environment.base_uri}/cancel-order`,
+  messages: `${environment.base_uri}/messages`,
+  invitro: `${environment.base_uri}/vitroOrders`,
+  orderVariety: `${environment.base_uri}/orderVarieties`,
+  advances: `${environment.base_uri}/advances`
 }
 
 export const DocsConstants = {

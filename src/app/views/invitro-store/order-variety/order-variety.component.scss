@@ -1,0 +1,25 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($gap: 1rem, $justify: space-between, $width: 100%);
+  padding: 1rem;
+  border: 1px solid $platinium;
+  border-radius: 0.75rem;
+}
+
+.name {
+  @include text($weight: 600);
+}
+
+.text {
+  @include text($weight: 500, $color: $taupe, $size: 14px);
+}
+
+.blue {
+  color: $blue;
+}

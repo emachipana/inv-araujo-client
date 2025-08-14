@@ -221,8 +221,9 @@ export class RegisterComponent implements OnInit {
         this.isCreating = false;
         if (response.data) {
           if(this._loginModalService.getBackToCheckout) {
-            this._router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+            this._router.navigate([`/${this._loginModalService.redirectTo}`], {queryParams: {tab: "checkout"}});
             this._loginModalService.getBackToCheckout = false;
+            this._loginModalService.redirectTo = "";
             return;
           }
 
@@ -265,8 +266,9 @@ export class RegisterComponent implements OnInit {
             localStorage.removeItem("validateCodeId");
             this._authService.userToValidate = null;
             if(this._loginModalService.getBackToCheckout) {
-              this._router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+              this._router.navigate([`/${this._loginModalService.redirectTo}`], {queryParams: {tab: "checkout"}});
               this._loginModalService.getBackToCheckout = false;
+              this._loginModalService.redirectTo = "";
               return;
             }
 

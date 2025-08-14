@@ -1,0 +1,31 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.title {
+  @include text($size: 24px, $weight: 700, $color: $white);
+}
+
+.banner-text {
+  @include text($size: 15px, $weight: 500, $color: $platinium);
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.icon {
+  width: 35px;
+  height: 35px;
+  font-size: 35px;
+  color: $white;
+  animation: float 1s ease-in-out infinite;
+  display: inline-block;
+}

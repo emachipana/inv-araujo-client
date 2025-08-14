@@ -323,7 +323,7 @@ export class CartComponent implements OnInit {
 
   changeTab(tab: "cart" | "checkout" | "success"): void {
     if(!this._authService.isLoggedIn() && tab === "checkout") {
-      this._loginModalService.open('login', true);
+      this._loginModalService.open('login', true, "carrito");
       this.toast.warning("Primero inicia sesión o registrate");
       this.router.navigate([], {queryParams: {tab: "cart"}});
       return;
@@ -354,7 +354,7 @@ export class CartComponent implements OnInit {
 
   onOrderDetail(): void {
     if(this.clientLogged) {
-      this.router.navigate([`/perfil/pedidos`]);
+      this.router.navigate([`/perfil/pedidos/${this.orderId}`]);
     }
   }
 }

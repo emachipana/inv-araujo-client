@@ -1,0 +1,44 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+.header {
+  @include flex-container($gap: 1rem, $direction: column, $width: 100%);
+  padding: 1.5rem 1rem;
+}
+
+.title {
+  @include text($weight: 700, $size: 24px, $align: center);
+}
+
+.persian {
+  color: $persian;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  font-size: 28px;
+  color: $persian;
+}
+
+.text {
+  @include text($weight: 500, $color: $taupe);
+}
+
+.weight-md {
+  font-weight: 700;
+}
+
+.between-row {
+  @include flex-container($gap: 1rem, $justify: space-around, $width: 100%, $align: flex-start);
+}
+
+.video {
+  width: 40%;
+  height: 300px;
+  border-radius: 1rem;
+}
+
+.variety {
+  @include text($weight: 600, $color: $dim, $size: 15px);
+}

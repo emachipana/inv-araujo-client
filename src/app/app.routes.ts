@@ -13,12 +13,27 @@ import { UpdatePasswordComponent } from './views/profile/tabs/update-password/up
 import { NotificationsComponent } from './views/profile/tabs/notifications/notifications.component';
 import { OrderDetailComponent } from './views/profile/tabs/orders/order-detail/order-detail.component';
 import { InvoiceComponent } from './views/profile/tabs/invoice/invoice.component';
+import { InvitroComponent } from './views/invitro/invitro.component';
+import { ContactComponent } from './views/contact/contact.component';
+import { InvitroStoreComponent } from './views/invitro-store/invitro-store.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'tienda', component: StoreComponent },
-  { path: 'tienda/productos/:id', component: ProductComponent },
-  { path: 'carrito', component: CartComponent },
+  { 
+    path: '',
+    component: HomeComponent
+  },
+  { 
+    path: 'tienda', 
+    component: StoreComponent
+  },
+  { 
+    path: 'tienda/productos/:id', 
+    component: ProductComponent 
+  },
+  { 
+    path: 'carrito', 
+    component: CartComponent 
+  },
   { 
     path: 'registro', 
     component: RegisterComponent,
@@ -37,9 +52,16 @@ export const routes: Routes = [
       { path: 'pedidos/:id', component: OrderDetailComponent }
     ]
   },
-  // { 
-  //   path: 'perfil/pedidos/:id',
-  //   component: OrderDetailComponent,
-  //   canActivate: [authGuard]
-  // },
+  {
+    path: 'invitro',
+    component: InvitroComponent
+  },
+  {
+    path: 'contactanos',
+    component: ContactComponent
+  },
+  {
+    path: 'invitro/pedido',
+    component: InvitroStoreComponent
+  }
 ];

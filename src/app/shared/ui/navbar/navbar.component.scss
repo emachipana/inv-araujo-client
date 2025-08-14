@@ -17,6 +17,10 @@
 .item {
   @include text($weight: 700, $cursor: pointer);
   text-transform: uppercase;
+
+  &:hover {
+    color: $persian;
+  }
 }
 
 .active {
