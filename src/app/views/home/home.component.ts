@@ -8,6 +8,7 @@ import { ButtonComponent } from "../../shared/ui/buttons/button/button.component
 import { CategoriesSectionComponent } from './categories-section/categories-section.component';
 import { ProductsSectionComponent } from "./products-section/products-section.component";
 import { ChatbotComponent } from "../../shared/ui/chatbot/chatbot.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit {
   _dataService = inject(DataService);
   toast = inject(HotToastService);
   colors = Colors;
+  _router = inject(Router);
 
   ngOnInit(): void {
     if(this._dataService.controller.banners) return;
@@ -38,4 +40,5 @@ export class HomeComponent implements OnInit {
       }
     })
   }
+
 }

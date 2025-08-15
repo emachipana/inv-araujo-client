@@ -1,5 +1,6 @@
 @use 'colors.scss' as *;
 @use 'layout.scss' as *;
+@use 'sass:map';
 
 .container {
   @include flex-container($width: 100%, $justify: space-between);
@@ -110,7 +111,6 @@
 .product-img {
 	width: 70px;
 	height: 70px;
-	// height: 100%;
 	object-fit: contain;
 	mix-blend-mode: multiply;
 }
@@ -128,4 +128,38 @@
 	@include text($color: $white, $weight: 700, $size: 14px);
 	@include flex-container($align: center, $justify: center, $width: 20px);
 	height: 20px;
+}
+
+.search-container {
+  position: relative;
+  margin: 0 1rem;
+	@include flex-container($width: 100%);
+	max-width: 600px;
+}
+
+.search-results-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 5px;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+  border: 1px solid $platinium;
+  width: 100%;
+}
+
+.search-results-content {
+  padding: 0.5rem 1rem;
+	@include flex-container($gap: 0.75rem, $width: 100%, $direction: column);
+}
+
+.not-found-text {
+	@include text($size: 17px, $weight: 600);
 }

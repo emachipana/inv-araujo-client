@@ -4,14 +4,40 @@
     src="/logo.png"
     class="image"
   />
-  <form [formGroup]="form">
-    <custom-input
-      formControlName="search"
-      id="search"
-      placeholder="Busca un producto..."
-      icon="search"
-    />
-  </form>
+  <div class="search-container" (click)="$event.stopPropagation()">
+    <form 
+      [formGroup]="form"
+      style="max-width: 250px;"
+    >
+      <custom-input
+        formControlName="search"
+        id="search"
+        placeholder="Busca un producto..."
+        icon="search"
+      />
+    </form>
+    @if (isOpenSearch) {
+      <div class="search-results-container">
+        <div class="search-results-content">
+          @if(isSearching) {
+            <spinner size="md"/>
+          }@else {
+            @for (product of searchedProducts; track $index) {
+              <app-product
+                [product]="product"
+                (onClick)="closeSearch()"
+              />
+            }@empty {
+              <div class="flex-row">
+                <mat-icon>trolley</mat-icon>
+                <p class="not-found-text">No se encontraron resultados</p>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
   <div class="section">
     <div class="relative">
       <section class="section cursor-pointer" style="gap: 0.3rem" (mouseenter)="openProfileMenu(profile.show)">

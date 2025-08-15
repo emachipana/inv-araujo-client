@@ -85,7 +85,7 @@
             <section class="flex-column">
               <p [ngClass]="{'text red': product.stock <= 0, 'text gray': product.stock > 0}">
                 @if (product.stock <= 0) {
-                  Sin stock
+                  Agotado
                 } @else {
                   {{product.stock}} disponibles
                 }

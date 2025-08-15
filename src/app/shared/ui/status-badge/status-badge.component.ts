@@ -20,6 +20,7 @@ interface StatusConfig {
 export class StatusBadgeComponent {
   @Input() status: StatusType = "PENDIENTE";
   @Input() text: string = "";
+  @Input() fontSize: number = 13;
 
   statusConfig: Record<StatusType, StatusConfig> = {
     PENDIENTE: {
@@ -78,3 +79,4 @@ export class StatusBadgeComponent {
     return this.statusConfig[this.status];
   }
 }
+ 

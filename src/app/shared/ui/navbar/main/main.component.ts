@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { InputComponent } from "../../input/input.component";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,15 +11,18 @@ import { CartService } from '../../../../services/cart.service';
 import { MenuComponent } from "../../menu/menu.component";
 import { ButtonComponent } from "../../buttons/button/button.component";
 import { NotificationService } from '../../../../services/notification.service';
+import { Product } from '../../../models/Product';
+import { SpinnerComponent } from "../../spinner/spinner.component";
+import { ProductComponent } from "./product/product.component";
 
 @Component({
   selector: 'main-section',
   standalone: true,
-  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent, TitleCasePipe],
+  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent, TitleCasePipe, SpinnerComponent, ProductComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   _authService = inject(AuthService);
   _loginModalService = inject(LoginModalService);
   _notificationService = inject(NotificationService);
@@ -29,6 +32,9 @@ export class MainComponent implements OnInit {
   isCartOpen = false;
   userFirstName: String = "";
   cartTotal: number = 0;
+  isOpenSearch: boolean = false;
+  isSearching: boolean = false;
+  searchedProducts: Product[] = [];
 
   form = new FormGroup({
     search: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -41,7 +47,29 @@ export class MainComponent implements OnInit {
 
     this._authService.currentUser$.subscribe((val) => {
       this.userFirstName = val?.fullName.split(" ")[0] ?? "";
-    })
+    });
+
+    document.addEventListener('click', this.handleClickOutside.bind(this));
+
+    this.form.get("search")?.valueChanges.subscribe((val) => {
+      if ((val || "").length >= 3) {
+        this.isOpenSearch = true;
+        this.isSearching = true;
+        this._cartService.searchProducts(val || "").subscribe({
+          next: (products) => {
+            this.searchedProducts = products;
+            this.isSearching = false;
+          },
+          error: (error) => {
+            this.isSearching = false;
+            this.searchedProducts = [];
+          }
+        });
+      } else {
+        this.isOpenSearch = false;
+        this.searchedProducts = [];
+      }
+    });
   }
 
   handleProfileClick(action: "register" | "login", handler: VoidFunction): void {
@@ -83,5 +111,25 @@ export class MainComponent implements OnInit {
     this.router.navigate([redirectTo]);
     this.isProfOpen = false;
     handler();
+  }
+
+  closeSearch(event?: Event) {
+    if (event) event.stopPropagation();
+    
+    this.isOpenSearch = false;
+    this.form.get('search')?.reset();
+  }
+
+  private handleClickOutside = (event: MouseEvent) => {
+    const searchElement = document.querySelector('.search-container');
+    const target = event.target as HTMLElement;
+    
+    if (searchElement && !searchElement.contains(target)) {
+      this.closeSearch();
+    }
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.handleClickOutside);
   }
 }

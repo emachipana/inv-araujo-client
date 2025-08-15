@@ -1,7 +1,11 @@
-import { Injectable, signal } from '@angular/core';
-import { AppConstants } from '../constants/index.constants';
+import { inject, Injectable, signal } from '@angular/core';
+import { ApiConstants, AppConstants } from '../constants/index.constants';
 import { ProductCart } from '../shared/models/ProductCart';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
+import { Observable } from 'rxjs';
+import { Product } from '../shared/models/Product';
+import { HttpClient } from '@angular/common/http';
+import { Pageable } from '../shared/models/Pageable';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +14,7 @@ export class CartService {
   items$ = new BehaviorSubject<ProductCart[]>([]);
   productOnModal = signal<ProductCart | null>(null);
   cartModalIsOpen = false;
+  private _http = inject(HttpClient);
 
   constructor() {
     this.loadCart();
@@ -55,5 +60,11 @@ export class CartService {
 
   findItemOnCart(id: number): ProductCart | undefined {
     return this.items$.value.find((item) => item.id === id);
+  }
+
+  searchProducts(param: string): Observable<Product[]> {
+    return this._http.get<Pageable<Product>>(`${ApiConstants.products}/search?param=${param}`).pipe(
+      map((response) => response.content)
+    );
   }
 }
