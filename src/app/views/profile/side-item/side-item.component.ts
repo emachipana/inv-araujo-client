@@ -16,6 +16,8 @@ export class SideItemComponent {
   @Input() currentTab: string = '';
   @Input() tabIdentifier: string = '';
   @Input() routerLink: string | string[] = '';
+  @Input() isNotification: boolean = false;
+  @Input() notifications: number = 0;
 
   constructor(private router: Router) {}
 

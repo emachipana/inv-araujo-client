@@ -1294,46 +1294,6 @@ export const provinces: Record<string, any[]> = {
       "id_padre_ubigeo": "3655"
     },
     {
-      "id_ubigeo": "3778",
-      "nombre_ubigeo": "Chupaca",
-      "codigo_ubigeo": "09",
-      "etiqueta_ubigeo": "Chupaca, Junin",
-      "buscador_ubigeo": "chupaca junin",
-      "numero_hijos_ubigeo": "9",
-      "nivel_ubigeo": "2",
-      "id_padre_ubigeo": "3655"
-    },
-    {
-      "id_ubigeo": "3685",
-      "nombre_ubigeo": "Concepcion",
-      "codigo_ubigeo": "02",
-      "etiqueta_ubigeo": "Concepcion, Junin",
-      "buscador_ubigeo": "concepcion junin",
-      "numero_hijos_ubigeo": "15",
-      "nivel_ubigeo": "2",
-      "id_padre_ubigeo": "3655"
-    },
-    {
-      "id_ubigeo": "3656",
-      "nombre_ubigeo": "Huancayo",
-      "codigo_ubigeo": "01",
-      "etiqueta_ubigeo": "Huancayo, Junin",
-      "buscador_ubigeo": "huancayo junin",
-      "numero_hijos_ubigeo": "28",
-      "nivel_ubigeo": "2",
-      "id_padre_ubigeo": "3655"
-    },
-    {
-      "id_ubigeo": "3708",
-      "nombre_ubigeo": "Jauja",
-      "codigo_ubigeo": "04",
-      "etiqueta_ubigeo": "Jauja, Junin",
-      "buscador_ubigeo": "jauja junin",
-      "numero_hijos_ubigeo": "34",
-      "nivel_ubigeo": "2",
-      "id_padre_ubigeo": "3655"
-    },
-    {
       "id_ubigeo": "3743",
       "nombre_ubigeo": "Junin",
       "codigo_ubigeo": "05",

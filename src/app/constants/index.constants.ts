@@ -18,7 +18,9 @@ export const ApiConstants = {
   messages: `${environment.base_uri}/messages`,
   invitro: `${environment.base_uri}/vitroOrders`,
   orderVariety: `${environment.base_uri}/orderVarieties`,
-  advances: `${environment.base_uri}/advances`
+  advances: `${environment.base_uri}/advances`,
+  notifications: `${environment.base_uri}/notifications`,
+  images: `${environment.base_uri}/images`
 }
 
 export const DocsConstants = {

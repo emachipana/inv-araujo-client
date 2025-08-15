@@ -2,13 +2,13 @@
   <div class="sidebar border-type1" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}">
     <section class="sidebar-header">
       <img 
-        [src]="currentUser?.image?.url || 'default-avatar.jpg'"
+        [src]="this._authService.currentUser$.value?.image?.url || 'default-avatar.jpg'"
         alt=""
         class="avatar"
       >
       <div class="flex-column">
-        <p class="name">{{ name | titlecase }}</p>
-        <p class="text">{{ currentUser?.username }}</p>
+        <p class="name">{{ this._authService.currentUser$.value?.fullName?.split(" ")?.slice(0, 3)?.join(" ") | titlecase }}</p>
+        <p class="text">{{ this._authService.currentUser$.value?.username }}</p>
       </div>
     </section>
     <section class="sidebar-body">
@@ -43,6 +43,8 @@
         tabIdentifier="notificaciones"
         [routerLink]="'/perfil/notificaciones'"
         (click)="onTabChange('notificaciones')"
+        [isNotification]="true"
+        [notifications]="_notiService.notifications$.value.length"
       />
       <app-side-item
         icon="lock"

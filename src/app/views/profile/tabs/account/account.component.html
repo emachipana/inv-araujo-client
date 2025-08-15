@@ -3,7 +3,12 @@
     <h3 class="title">Información personal</h3>
     <p class="sub">Actualiza tu información de perfil</p>
   </div>
-  <form class="form" [formGroup]="profileForm" [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}">
+  <form 
+    class="form" 
+    [formGroup]="profileForm" 
+    (submit)="onSubmit()"
+    [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}"
+  >
     @if(isGettingClient) {
       <spinner 
         size="md"
@@ -11,7 +16,7 @@
     } @else {
       <div class="flex-row" style="gap: 1rem;">
         <img 
-          [src]="userImage"
+          [src]="imagePreview || userImage"
           alt="user-avatar"
           class="avatar"
         />
@@ -19,6 +24,8 @@
           fontSize="font-xl"
           theme="secondary"
           type="button"
+          (onClick)="openFilePicker()"
+          [isDisabled]="isLoading"
         >
           Cambiar foto
         </app-button>
@@ -30,7 +37,6 @@
           label="Tipo documento"
           [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
           [error]="errorMessage(profileForm, 'documentType', {})"
-          [isDisabled]="disableDocumentType"
         />
         <custom-input
           formControlName="document"
@@ -38,7 +44,7 @@
           [isDisabled]="!documentType"
           [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
           [label]="documentType ? documentType : 'Documento'"
-          [error]="errorMessage(profileForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+          [error]="errorMessage(profileForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11, maxlength: documentType === 'DNI' ? 8 : 11 })"
         />
       </section>
       <section class="input-section">
@@ -55,15 +61,20 @@
           id="phone"
           label="Teléfono"
           placeholder="ej. 987654321"
-          [error]="errorMessage(profileForm, 'phone', {})"
+          [error]="errorMessage(profileForm, 'phone', {minlength: 9, maxlength: 9})"
         />
       </section>
       <app-button
         type="submit"
-        [isDisabled]="profileForm.invalid"
+        [isDisabled]="profileForm.invalid || isLoading"
+        [isLoading]="isLoading"
         style="margin-top: 1rem;"
       >
-        Guardar cambios
+        @if(isLoading) {
+          Actualizando...
+        } @else {
+          Guardar cambios
+        }
       </app-button>
     }
   </form>

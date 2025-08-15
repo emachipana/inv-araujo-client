@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { SideItemComponent } from "./side-item/side-item.component";
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { DataService } from '../../services/data.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-profile',
@@ -24,11 +25,9 @@ export class ProfileComponent implements OnInit {
   _route = inject(ActivatedRoute);
   _router = inject(Router);
   _dataService = inject(DataService);
+  _notiService = inject(NotificationService);
 
   currentTab: string = '';
-  currentUser = this._authService.currentUser$.value;
-  name: string = this.currentUser?.fullName.toLocaleLowerCase().split(" ").slice(0, 3).join(" ") || "";
-
   headerData: { [key: string]: { title: string; subtitle: string } } = {
     'cuenta': {
       title: "Mi cuenta",

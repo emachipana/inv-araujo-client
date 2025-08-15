@@ -8,7 +8,7 @@
 .container {
   width: 100%;
   padding: 0.5rem;
-  @include flex-container($gap: .75rem, $justify: flex-start);
+  @include flex-container($gap: .75rem, $justify: space-between);
   color: $dim;
   cursor: pointer;
   transition: .3s ease-in;
@@ -27,4 +27,13 @@
 .active {
   color: $white;
   background-color: $persian;
+}
+
+.notifications {
+  height: 25px;
+  border-radius: 50%;
+  background-color: $red;
+  color: white;
+  @include flex-container($width: 25px);
+  font-weight: 700;
 }

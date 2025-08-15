@@ -6,7 +6,13 @@
   role="button"
   tabindex="0"
   (keydown.enter)="onTabChange()"
-  (keydown.space)="$event.preventDefault(); onTabChange()">
-  <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
-  <span class="name">{{ name }}</span>
+  (keydown.space)="$event.preventDefault(); onTabChange()"
+>
+  <div class="flex-row">
+    <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
+    <span class="name">{{ name }}</span>
+  </div>
+  @if(isNotification) {
+    <div class="notifications">{{ notifications }}</div>
+  }
 </a>

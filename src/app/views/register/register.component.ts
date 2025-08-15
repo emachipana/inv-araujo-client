@@ -124,11 +124,11 @@ export class RegisterComponent implements OnInit {
     this._sunatService.getData(type, document).subscribe({
       next: (response) => {
         if(type === "DNI" && !response.success) {
-          this.toast.error("El DNI no existe");
+          this.toast.error("No se encontró información");
           return;
         }
         if(type === "RUC" && !response.razonSocial) {
-          this.toast.error("El RUC no existe");
+          this.toast.error("No se encontró información");
           return;
         }
 

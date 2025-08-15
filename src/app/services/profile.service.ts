@@ -2,10 +2,15 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Order } from '../shared/models/Order';
 import { Pageable } from '../shared/models/Pageable';
-import { Observable, tap, switchMap, of } from 'rxjs';
+import { Observable, tap, switchMap, of, map } from 'rxjs';
 import { ApiConstants } from '../constants/index.constants';
 import { AuthService } from './auth.service';
 import { InvitroOrder } from '../shared/models/InvitroOrder';
+import { Image } from '../shared/models/Image';
+import { ApiResponse } from '../shared/models/ApiResponse';
+import { UpdateProfileRequest } from '../shared/models/UpdateProfileRequest';
+import { Client } from '../shared/models/Client';
+import { User } from '../shared/models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +26,7 @@ export class ProfileService {
 
   loadOrders(page: number = 0, size: number = 10): Observable<Pageable<Order>> {
     const cacheKey = `${page}-${size}`;
-    
-    // Return cached data if available
+
     if (this.cachedOrders[cacheKey]) {
       this.orders.set(this.cachedOrders[cacheKey].content);
       return new Observable(observer => {
@@ -31,7 +35,6 @@ export class ProfileService {
       });
     }
 
-    // Get client ID from AuthService
     return this._authService.currentClient$.pipe(
       switchMap(client => {
         if (!client || !client.id) {
@@ -45,18 +48,39 @@ export class ProfileService {
           } as Pageable<Order>);
         }
 
-        // If not in cache, fetch from API with clientId filter
         return this._http.get<Pageable<Order>>(
           `${ApiConstants.orders}?clientId=${client.id}&page=${page}&size=${size}`
         ).pipe(
           tap(response => {
-            // Update cache
             this.cachedOrders[cacheKey] = response;
-            // Update the signal with the new orders
             this.orders.set(response.content);
           })
         );
       })
+    );
+  }
+
+  addImage(file: File): Observable<Image> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    
+    return this._http.post<ApiResponse<Image>>(
+      `${ApiConstants.images}`, 
+      formData
+    ).pipe(
+      map((response: ApiResponse<Image>) => response.data)
+    );
+  }
+
+  updateUser(imageId: number, userId: number): Observable<User> {
+    return this._http.put<ApiResponse<User>>(`${ApiConstants.users}/${userId}`, {imageId}).pipe(
+      map((response: ApiResponse<User>) => response.data)
+    );
+  }
+
+  updateProfile(request: UpdateProfileRequest, clientId: number): Observable<Client> {
+    return this._http.put<ApiResponse<Client>>(`${ApiConstants.clients}/${clientId}`, request).pipe(
+      map((response: ApiResponse<Client>) => response.data)
     );
   }
 }
