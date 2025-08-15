@@ -131,6 +131,10 @@
   color: $taupe;
 }
 
+.persian {
+  color: $persian;
+}
+
 .link {
   @include text($color: $persian, $decoration: underline);
   cursor: pointer;

@@ -16,6 +16,7 @@ import { InvoiceComponent } from './views/profile/tabs/invoice/invoice.component
 import { InvitroComponent } from './views/invitro/invitro.component';
 import { ContactComponent } from './views/contact/contact.component';
 import { InvitroStoreComponent } from './views/invitro-store/invitro-store.component';
+import { AboutComponent } from './views/about/about.component';
 
 export const routes: Routes = [
   { 
@@ -63,5 +64,9 @@ export const routes: Routes = [
   {
     path: 'invitro/pedido',
     component: InvitroStoreComponent
+  },
+  {
+    path: 'nosotros',
+    component: AboutComponent
   }
 ];
