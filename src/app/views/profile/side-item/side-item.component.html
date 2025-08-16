@@ -12,7 +12,7 @@
     <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
     <span class="name">{{ name }}</span>
   </div>
-  @if(isNotification) {
+  @if(isNotification && notifications > 0) {
     <div class="notifications">{{ notifications }}</div>
   }
 </a>

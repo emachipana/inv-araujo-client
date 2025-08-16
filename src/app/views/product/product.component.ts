@@ -106,12 +106,10 @@ export class ProductComponent implements OnInit {
 
   onMinus(num: number): void {
     this.numToAdd = num;
-    console.log(num);
   }
 
   onPlus(num: number): void {
     this.numToAdd = num;
-    console.log(num);
   }
 
   addToCart(): void {

@@ -74,7 +74,6 @@ export class CartComponent implements OnInit {
   isDocLoaded: boolean = false;
   isWarehouseLoaded: boolean = false;
   clientAddress: string = "";
-  isInitialLoad: boolean = true;
   warehouseSelected: Warehouse | null = null;
   orderId: number = 0;
   availableHours: SelectOption[] = [];
@@ -182,7 +181,11 @@ export class CartComponent implements OnInit {
         const clientAddress = client.invoiceDetail?.address || '';
         this.isDocLoaded = true;
         this.documentType = client.invoiceDetail?.documentType as "RUC" | "DNI";
+        if(this.documentType === "RUC") this.disableDocumentType = true;
+
         this.invoicePreference = client.invoiceDetail?.invoicePreference as "BOLETA" | "FACTURA";
+
+        this.invoiceDetailForm.disable({ emitEvent: false });
 
         this.invoiceDetailForm.patchValue({
           documentType: client.invoiceDetail?.documentType,
@@ -190,6 +193,14 @@ export class CartComponent implements OnInit {
           rsocial: client.invoiceDetail?.rsocial || '',
           invoicePreference: client.invoiceDetail?.invoicePreference || 'BOLETA',
           address: clientAddress === "-" ? "" : clientAddress
+        }, { emitEvent: false });
+
+        this.invoiceDetailForm.enable({ emitEvent: false });
+
+        this.agencyForm.patchValue({
+          fullName: client.rsocial || '',
+          dni: client.document || '',
+          phone: client.phone || ''
         });
       }
     });
@@ -232,8 +243,6 @@ export class CartComponent implements OnInit {
     });
 
     this.invoiceDetailForm.get("invoicePreference")?.valueChanges.subscribe((preference) => {
-      // if(this.isInitialLoad) return;
-
       this.invoicePreference = preference as "BOLETA" | "FACTURA";
       if (this.invoicePreference === "FACTURA") {
         this.invoiceDetailForm.get('documentType')?.setValue("RUC");
@@ -244,8 +253,6 @@ export class CartComponent implements OnInit {
     });
 
     this.invoiceDetailForm.get('documentType')?.valueChanges.subscribe((type) => {
-      if(this.isInitialLoad) return;
-
       this.documentType = type as "DNI" | "RUC";
       const documentField = this.invoiceDetailForm.get('document');
       const addressField = this.invoiceDetailForm.get('address');
@@ -270,8 +277,6 @@ export class CartComponent implements OnInit {
     });
 
     this.invoiceDetailForm.get('document')?.valueChanges.subscribe((value) => {
-      if (this.isInitialLoad) return;
-      
       if (value?.length === (this.documentType === 'DNI' ? 8 : 11)) {
         this.getData(this.documentType ?? "DNI", value);
       } else {

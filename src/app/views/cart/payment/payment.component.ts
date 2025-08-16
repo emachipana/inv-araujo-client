@@ -102,7 +102,6 @@ export class PaymentComponent implements OnInit, AfterViewInit {
 
     this.isLoading = true;
 
-    // 1. Si hay que actualizar la factura, lo intentamos
     if (this.updateInvoiceDetail) {
       const invoiceRequest: InvoiceDetailRequest = {
         documentType: this.invoiceDetailForm?.get("documentType")?.value as "DNI" | "RUC",
@@ -112,23 +111,20 @@ export class PaymentComponent implements OnInit, AfterViewInit {
         address: this.invoiceDetailForm?.get("address")?.value || "-"
       };
 
-      // Usamos un temporizador para asegurar que createOrder se ejecute después
       const updateSubscription = this._authService.updateInvoiceDetail(
         invoiceRequest,
         this.clientId,
         this.invoiceDetailId || 0
       ).subscribe({
         next: () => {
-          console.log('Detalle de factura actualizado correctamente');
           this.createOrder();
         },
         error: (error) => {
           console.error('Error al actualizar detalle de factura:', error);
-          this.createOrder(); // Aseguramos que createOrder se ejecute
+          this.createOrder();
         }
       });
     } else {
-      // Si no hay que actualizar la factura, creamos la orden directamente
       this.createOrder();
     }
   }

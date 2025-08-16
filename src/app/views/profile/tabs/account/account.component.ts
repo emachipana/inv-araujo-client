@@ -37,7 +37,6 @@ export class AccountComponent implements OnInit {
   isDocLoaded: boolean = false;
   imagePreview: string | ArrayBuffer | null = null;
   file: File | null = null;
-  firstTry: number = 0;
 
   profileForm = new FormGroup({
     documentType: new FormControl('', Validators.required),
@@ -52,6 +51,7 @@ export class AccountComponent implements OnInit {
   ngOnInit(): void {
     if(this._authService.isClientLoaded()) {
       this.setValueToForm(this._authService.currentClient$.value);
+      this.setupFormListeners();
       return;
     }
     this.isGettingClient = true;
@@ -59,6 +59,7 @@ export class AccountComponent implements OnInit {
       next: (client) => {
         this.isGettingClient = false;
         this.setValueToForm(client);
+        this.setupFormListeners();
       },
       error: (error) => {
         this.isGettingClient = false;
@@ -66,43 +67,46 @@ export class AccountComponent implements OnInit {
       }
     });
 
+
+  }
+
+  private setupFormListeners(): void {
     this.profileForm.get('documentType')?.valueChanges.subscribe((type) => {
       this.documentType = type as "DNI" | "RUC";
-      if(this.firstTry > 0) {
-        this.profileForm.get('document')?.reset();
-        this.profileForm.get('rsocial')?.reset();
-      }
+      this.profileForm.get('document')?.reset('', { emitEvent: false });
+      this.profileForm.get('rsocial')?.reset('', { emitEvent: false });
       this.profileForm.get('document')?.setValidators([
         Validators.required,
         Validators.minLength(this.documentType === 'DNI' ? 8 : 11),
         Validators.maxLength(this.documentType === 'DNI' ? 8 : 11)
       ]);
-      this.profileForm.get('document')?.updateValueAndValidity();
-      this.firstTry++;
+      this.profileForm.get('document')?.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     });
 
     this.profileForm.get('document')?.valueChanges.subscribe((value) => {
       if (value?.length === (this.documentType === 'DNI' ? 8 : 11)) {
-        if(this.firstTry > 0) this.getData(this.documentType ?? "DNI", value);
-
-        this.firstTry++;
+        this.getData(this.documentType ?? "DNI", value);
       } else {
-        this.profileForm.get('rsocial')?.setValue('');
+        this.profileForm.get('rsocial')?.setValue('', { emitEvent: false });
         this.isDocLoaded = false;
       }
     });
   }
 
   setValueToForm(client: Client | null): void {
-    if(!client) return;
+    this.profileForm.disable({ emitEvent: false });
+    
+    this.profileForm.patchValue({
+      document: client?.document || "",
+      rsocial: client?.rsocial || "",
+      documentType: client?.documentType || "",
+      phone: client?.phone || ""
+    }, { emitEvent: false });
 
+    this.documentType = client?.documentType as "DNI" | "RUC" | undefined;
     this.isDocLoaded = true;
-    this.profileForm.get("document")?.setValue(client.document);
-    this.profileForm.get("rsocial")?.setValue(client.rsocial);
-    this.profileForm.get("documentType")?.setValue(client.documentType || "");
-    this.profileForm.get("phone")?.setValue(client.phone || "");
-    this.documentType = client.documentType;
-    this.isDocLoaded = true;
+
+    this.profileForm.enable({ emitEvent: false });
   }
 
   openFilePicker(): void {

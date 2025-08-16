@@ -256,19 +256,14 @@
                 />
               </section>
               <section class="input-section">
-                <div 
-                  (click)="isInitialLoad = false"
-                  style="width: 100%;"
-                >
-                  <custom-input
-                    formControlName="document"
-                    id="document"
-                    [isDisabled]="!updateInvoiceDetail || !documentType"
-                    [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
-                    [label]="documentType ? documentType : 'Documento'"
-                    [error]="errorMessage(invoiceDetailForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
-                  />
-                </div>
+                <custom-input
+                  formControlName="document"
+                  id="document"
+                  [isDisabled]="!updateInvoiceDetail || !documentType"
+                  [placeholder]="'Ingresa tu ' + (documentType ? documentType : 'documento')"
+                  [label]="documentType ? documentType : 'Documento'"
+                  [error]="errorMessage(invoiceDetailForm, 'document', {minlength: documentType === 'DNI' ? 8 : 11 })"
+                />
                 <custom-input
                   formControlName="rsocial"
                   id="rsocial"

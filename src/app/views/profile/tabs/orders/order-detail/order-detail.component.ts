@@ -243,7 +243,6 @@ export class OrderDetailComponent implements OnInit {
   }
 
   openInvoiceDialog() {
-    console.log(this.order);
     if (this.order?.invoice?.pdfUrl) {
       this.displayInvoiceDialog = true;
       setTimeout(() => {
@@ -273,7 +272,6 @@ export class OrderDetailComponent implements OnInit {
 
   onLoadInvoice() {
     this.isInvoiceLoading = false;
-    console.log("asdasdasd")
   }
 
   ngOnInit(): void {
@@ -344,7 +342,6 @@ export class OrderDetailComponent implements OnInit {
       finalize(() => this.isLoading = false)
     ).subscribe(([order, products, cancelRequests]) => {
       this.order = order;
-      console.log(order);
       this.orderItems = products || [];
       this.cancelRequests = cancelRequests.sort((a, b) => b.id - a.id);
       this.pendingRequest = !!cancelRequests.find(request => request.rejected === false && request.accepted === false);

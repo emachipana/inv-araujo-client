@@ -11,6 +11,7 @@ import { ApiResponse } from '../shared/models/ApiResponse';
 import { UpdateProfileRequest } from '../shared/models/UpdateProfileRequest';
 import { Client } from '../shared/models/Client';
 import { User } from '../shared/models/User';
+import { InvoiceDetail } from '../shared/models/InvoiceDetail';
 
 @Injectable({
   providedIn: 'root'
@@ -81,6 +82,12 @@ export class ProfileService {
   updateProfile(request: UpdateProfileRequest, clientId: number): Observable<Client> {
     return this._http.put<ApiResponse<Client>>(`${ApiConstants.clients}/${clientId}`, request).pipe(
       map((response: ApiResponse<Client>) => response.data)
+    );
+  }
+
+  updateInvoiceDetail(request: InvoiceDetail, clientId: number): Observable<InvoiceDetail> {
+    return this._http.put<ApiResponse<InvoiceDetail>>(`${ApiConstants.clients}/${clientId}/invoiceDetails/${request.id}`, request).pipe(
+      map((response: ApiResponse<InvoiceDetail>) => response.data)
     );
   }
 }

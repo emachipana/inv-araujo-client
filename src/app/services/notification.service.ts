@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ApiResponse } from '../shared/models/ApiResponse';
 import { Notification } from '../shared/models/Notification';
+import { ApiConstants } from '../constants/index.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +67,6 @@ export class NotificationService implements OnDestroy {
         `/topic/notifications/${userId}`,
         (message: IMessage) => {
           const notification = JSON.parse(message.body);
-          console.log(notification);
           this.addNotification(notification);
         }
       );
@@ -87,11 +87,11 @@ export class NotificationService implements OnDestroy {
     }
   }
 
-  private loadUserNotifications(): void {
-    this._http.get<ApiResponse<Notification[]>>(`${environment.base_uri}/notifications/getByUser`)
+  loadUserNotifications(): void {
+    this._http.get<ApiResponse<Notification[]>>(`${ApiConstants.notifications}/getByUser`)
       .subscribe({
         next: (notifications) => {
-          this.notifications$.next(notifications.data || []);
+          this.notifications$.next(notifications.data.reverse() || []);
         },
         error: (error) => {
           console.error('Error loading notifications:', error);
@@ -112,11 +112,11 @@ export class NotificationService implements OnDestroy {
   }
 
   markAsRead(notificationId: number): void {
-    this._http.put(`${environment.base_uri}/notifications/${notificationId}/read`, {})
+    this._http.put(`${ApiConstants.notifications}/${notificationId}`, {})
       .subscribe({
         next: () => {
           const updated = this.notifications$.getValue().map(n => 
-            n.id === notificationId ? { ...n, read: true } : n
+            n.id === notificationId ? { ...n, isRead: true } : n
           );
           this.notifications$.next(updated);
         },

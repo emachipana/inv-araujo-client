@@ -3,7 +3,12 @@
     <h3 class="title">Datos de facturación</h3>
     <p class="sub">Actualiza tu información de facturación</p>
   </div>
-  <form class="form" [formGroup]="invoiceDetailForm" [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}">
+  <form 
+    class="form" 
+    [formGroup]="invoiceDetailForm" 
+    (submit)="onSubmit()"
+    [ngStyle]="{'justify-content': isGettingClient ? 'center' : 'flex-start', 'align-items': isGettingClient ? 'center' : 'flex-start'}"
+  >
     @if(isGettingClient) {
       <spinner
         size="md"
@@ -23,7 +28,7 @@
           label="Tipo documento"
           [options]="[{id: 'DNI', content: 'DNI'}, {id: 'RUC', content: 'RUC'}]"
           [error]="errorMessage(invoiceDetailForm, 'documentType', {})"
-          [isDisabled]="disableDocumentType"
+          [isDisabled]="!invoicePreference || disableDocumentType"
         />
       </section>
       <section class="input-section">
@@ -48,15 +53,21 @@
         formControlName="address"
         id="address"
         label="Dirección"
-        placeholder="ej. 987654321"
+        placeholder="ej. Jr. San Bernardo"
         [error]="errorMessage(invoiceDetailForm, 'address', {})"
+        [isDisabled]="isDocLoaded && invoicePreference === 'FACTURA'"
       />
       <app-button
         type="submit"
-        [isDisabled]="invoiceDetailForm.invalid"
+        [isDisabled]="invoiceDetailForm.invalid || isLoading"
         style="margin-top: 1rem;"
+        [isLoading]="isLoading"
       >
-        Guardar cambios
+        @if(isLoading) {
+          Actualizando...
+        }@else {
+          Guardar cambios
+        }
       </app-button>
     }
   </form>

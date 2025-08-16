@@ -111,7 +111,7 @@ export class AppComponent implements OnInit {
           this.toast.success("Bienvenido nuevamente");
         },
         error: (error) => {
-          console.log(error);
+          console.error(error);
           const message: string = error.error.message;
           this.toast.error(message.includes("Bad credentials") ? "Credenciales incorrectas" : message);
           this.isLoading = false;
@@ -129,7 +129,7 @@ export class AppComponent implements OnInit {
         this.router.navigate(["/registro"]);
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
         const message: string = error.error.message;
         this.toast.error(message);
         this.isLoading = false;

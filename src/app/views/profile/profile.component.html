@@ -44,7 +44,7 @@
         [routerLink]="'/perfil/notificaciones'"
         (click)="onTabChange('notificaciones')"
         [isNotification]="true"
-        [notifications]="_notiService.notifications$.value.length"
+        [notifications]="unreadCount"
       />
       <app-side-item
         icon="lock"

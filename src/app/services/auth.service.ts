@@ -244,4 +244,15 @@ export class AuthService {
 
     return this.authCheck$;
   }
+
+  updatePassword(currentPassword: string, newPassword: string): Observable<User> {
+    const body = {
+      currentPassword,
+      newPassword
+    }
+    
+    return this._http.put<ApiResponse<User>>(`${ApiConstants.users}/profile/change-password`, body).pipe(
+      map((response) => response.data)
+    );
+  }
 }

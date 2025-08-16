@@ -66,7 +66,6 @@ export class InvitroStoreComponent implements OnInit {
       if(tab === "checkout" && this.varietiesSelected.value.length === 0) {
         tab = "varieties";
         this._toast.warning("Elige almenos una variedad");
-        console.log("desde el query params subscribe");
       }
 
       if(tab === "success" && this.orderId <= 0) tab = "checkout";
@@ -80,7 +79,6 @@ export class InvitroStoreComponent implements OnInit {
         this.currentTab = "varieties";
         this.router.navigate([], {queryParams: {tab: this.currentTab}});
         this._toast.warning("Elige almenos una variedad");
-        console.log("Desde el subscribe de la lista de vitroorders")
         return;
       }
 
@@ -95,7 +93,6 @@ export class InvitroStoreComponent implements OnInit {
   changeTab(tab: "varieties" | "checkout") {
     if(tab === "checkout" && this.varietiesSelected.value.length === 0) {
       this._toast.warning("Elige almenos una variedad");
-      console.log("desde change tab");
       return;
     }
 

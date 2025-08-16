@@ -55,7 +55,7 @@ export class RegisterComponent implements OnInit {
     invoicePreference: new FormControl('', Validators.required),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: new FormControl('')
-  }, { validators: matchPasswordValidator()});
+  }, { validators: matchPasswordValidator('password', 'confirmPassword')});
 
   // to register
   documentType: "DNI" | "RUC" | undefined;
@@ -138,8 +138,7 @@ export class RegisterComponent implements OnInit {
           : `${response.razonSocial}`;
 
         if(type === "RUC") this.clientAddress = response.direccion;
-        console.log(response.direccion);
-
+        
         this.registerForm.get('rsocial')?.setValue(rsocial);
         this.isDocLoaded = true;
       },
@@ -192,7 +191,7 @@ export class RegisterComponent implements OnInit {
         this.toast.success("El código de verificación fue reenviado");
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
         const message: string = error.error.message;
         this.toast.error(message);
         this.isResending = false;
@@ -275,7 +274,7 @@ export class RegisterComponent implements OnInit {
             this._router.navigate(['/perfil']);
           },
           error: (error) => {
-            console.log(error);
+            console.error(error);
             const message: string = error.error.message;
             this.toast.error(message);
           }
@@ -284,7 +283,7 @@ export class RegisterComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
         const message: string = error.error.message;
         this.toast.error(message);
         this.isCreating = false;

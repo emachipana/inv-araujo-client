@@ -1,1 +1,12 @@
-<p>notifications works!</p>
+<div class="container">
+  @for (notification of _notiService.notifications$.value; track notification.id) {
+    <app-notification
+      [notification]="notification"
+    />
+  }@empty {
+    <div class="flex-row">
+      <mat-icon class="icon">comments_disabled</mat-icon>
+      <p class="text">Aún no tienes notificaciones</p>
+    </div>
+  }
+</div>

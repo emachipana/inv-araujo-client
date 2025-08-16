@@ -1,26 +1,42 @@
-import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { InputComponent } from "../../input/input.component";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { LoginModalService } from '../../../../services/login-modal.service';
-import { NgClass, TitleCasePipe } from '@angular/common';
-import { MenuItemComponent } from '../../buttons/menu-item/menu-item.component';
-import { Router } from '@angular/router';
+import { NotificationService } from '../../../../services/notification.service';
 import { CartService } from '../../../../services/cart.service';
+import { Router } from '@angular/router';
+import { MenuItemComponent } from '../../buttons/menu-item/menu-item.component';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
+import { Product } from '../../../models/Product';
+import { Notification as AppNotification } from '../../../models/Notification';
+import { InputComponent } from "../../input/input.component";
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { MenuComponent } from "../../menu/menu.component";
 import { ButtonComponent } from "../../buttons/button/button.component";
-import { NotificationService } from '../../../../services/notification.service';
-import { Product } from '../../../models/Product';
 import { SpinnerComponent } from "../../spinner/spinner.component";
 import { ProductComponent } from "./product/product.component";
 
 @Component({
   selector: 'main-section',
   standalone: true,
-  imports: [MatIconModule, InputComponent, ReactiveFormsModule, NgClass, MenuItemComponent, MenuComponent, ButtonComponent, TitleCasePipe, SpinnerComponent, ProductComponent],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    InputComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    NgClass,
+    MenuItemComponent,
+    MenuComponent,
+    ButtonComponent,
+    TitleCasePipe,
+    SpinnerComponent,
+    ProductComponent
+  ],
   templateUrl: './main.component.html',
-  styleUrl: './main.component.scss'
+  styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit, OnDestroy {
   _authService = inject(AuthService);
@@ -30,18 +46,28 @@ export class MainComponent implements OnInit, OnDestroy {
   router = inject(Router);
   isProfOpen = false;
   isCartOpen = false;
-  userFirstName: String = "";
+  userFirstName: string = "";
   cartTotal: number = 0;
+  unreadCount: number = 0;
   isOpenSearch: boolean = false;
   isSearching: boolean = false;
   searchedProducts: Product[] = [];
-
-  form = new FormGroup({
-    search: new FormControl('', [Validators.required, Validators.minLength(3)]),
+  form: FormGroup = new FormGroup({
+    search: new FormControl('', [Validators.required, Validators.minLength(3)])
   });
+  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this._cartService.items$.subscribe((val) => {
+    this._notificationService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications: AppNotification[]) => {
+        const unread = notifications.filter((n: AppNotification) => !n.isRead);
+        this.unreadCount = unread.length;
+      });
+
+    this._notificationService.loadUserNotifications();
+
+    this._cartService.items$.pipe(takeUntil(this.destroy$)).subscribe((val) => {
       this.cartTotal = this._cartService.getTotal(val);
     });
 
@@ -51,24 +77,27 @@ export class MainComponent implements OnInit, OnDestroy {
 
     document.addEventListener('click', this.handleClickOutside.bind(this));
 
-    this.form.get("search")?.valueChanges.subscribe((val) => {
-      if ((val || "").length >= 3) {
-        this.isOpenSearch = true;
-        this.isSearching = true;
-        this._cartService.searchProducts(val || "").subscribe({
-          next: (products) => {
-            this.searchedProducts = products;
-            this.isSearching = false;
-          },
-          error: (error) => {
-            this.isSearching = false;
-            this.searchedProducts = [];
-          }
-        });
-      } else {
-        this.isOpenSearch = false;
-        this.searchedProducts = [];
-      }
+    this.form = new FormGroup({
+      search: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    });
+
+    this.form.get("search")?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      filter((val) => (val || "").length >= 3)
+    ).subscribe((val) => {
+      this.isOpenSearch = true;
+      this.isSearching = true;
+      this._cartService.searchProducts(val || "").subscribe({
+        next: (products) => {
+          this.searchedProducts = products;
+          this.isSearching = false;
+        },
+        error: (error) => {
+          this.isSearching = false;
+          this.searchedProducts = [];
+        }
+      });
     });
   }
 
@@ -130,6 +159,8 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    document.removeEventListener('click', this.handleClickOutside);
+    this.destroy$.next();
+    this.destroy$.complete();
+    document.removeEventListener('click', this.handleClickOutside.bind(this));
   }
 }

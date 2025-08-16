@@ -1,33 +1,39 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { CommonModule, NgStyle, TitleCasePipe } from '@angular/common';
+import { Router, RouterLink, RouterOutlet, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { NgStyle, TitleCasePipe } from '@angular/common';
-import { map } from 'rxjs';
-import { SideItemComponent } from "./side-item/side-item.component";
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { User } from '../../shared/models/User';
 import { DataService } from '../../services/data.service';
 import { NotificationService } from '../../services/notification.service';
+import { Subject, takeUntil } from 'rxjs';
+import { SideItemComponent } from './side-item/side-item.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    TitleCasePipe, 
-    SideItemComponent, 
+    CommonModule,
     NgStyle,
     RouterOutlet,
-    RouterLink
+    RouterLink,
+    TitleCasePipe,
+    SideItemComponent
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   _authService = inject(AuthService);
   _route = inject(ActivatedRoute);
   _router = inject(Router);
   _dataService = inject(DataService);
   _notiService = inject(NotificationService);
+  private destroy$ = new Subject<void>();
 
   currentTab: string = '';
+  currentUser: User | null = null;
+  unreadCount = 0;
+
   headerData: { [key: string]: { title: string; subtitle: string } } = {
     'cuenta': {
       title: "Mi cuenta",
@@ -56,10 +62,23 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.updateCurrentTab();
     this._router.events.subscribe(() => {
       this.updateCurrentTab();
     });
-    this.updateCurrentTab();
+    
+    this.currentUser = this._authService.currentUser$.value;
+    
+    this._notiService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications: any[]) => {
+        this.unreadCount = notifications.filter((n: any) => !n.isRead).length;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private updateCurrentTab(): void {
