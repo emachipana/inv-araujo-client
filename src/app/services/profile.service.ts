@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Order } from '../shared/models/Order';
 import { Pageable } from '../shared/models/Pageable';
-import { Observable, tap, switchMap, of, map } from 'rxjs';
+import { Observable, tap, switchMap, of, map, catchError } from 'rxjs';
 import { ApiConstants } from '../constants/index.constants';
 import { AuthService } from './auth.service';
 import { InvitroOrder } from '../shared/models/InvitroOrder';
@@ -58,6 +58,58 @@ export class ProfileService {
           })
         );
       })
+    );
+  }
+
+  loadVitroOrders(page: number = 0, size: number = 10): Observable<Pageable<InvitroOrder>> {
+    const cacheKey = `${page}-${size}`;
+
+    if (this.cachedVitroOrders[cacheKey]) {
+      this.vitroOrders.set(this.cachedVitroOrders[cacheKey].content);
+      return new Observable(observer => {
+        observer.next(this.cachedVitroOrders[cacheKey]);
+        observer.complete();
+      });
+    }
+
+    return this._authService.currentClient$.pipe(
+      switchMap(client => {
+        if (!client || !client.id) {
+          return of({ 
+            content: [], 
+            totalElements: 0, 
+            totalPages: 0, 
+            size, 
+            number: page,
+            pageable: {}
+          } as Pageable<InvitroOrder>);
+        }
+
+        return this._http.get<Pageable<InvitroOrder>>(
+          `${ApiConstants.invitro}?clientId=${client.id}&page=${page}&size=${size}`
+        ).pipe(
+          tap(response => {
+            this.cachedVitroOrders[cacheKey] = response;
+            this.vitroOrders.set(response.content);
+          })
+        );
+      })
+    );
+  }
+
+  getVitroOrderById(orderId: number): Observable<InvitroOrder | null> {
+    // First check if we have the order in the cache
+    const cachedOrder = this.vitroOrders().find(order => order.id === orderId);
+    if (cachedOrder) {
+      return of(cachedOrder);
+    }
+
+    // If not in cache, fetch it from the server
+    return this._http.get<ApiResponse<InvitroOrder>>(
+      `${ApiConstants.invitro}/${orderId}`
+    ).pipe(
+      map(response => response.data),
+      catchError(() => of(null))
     );
   }
 

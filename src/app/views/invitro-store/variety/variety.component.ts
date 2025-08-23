@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './variety.component.scss'
 })
 export class VarietyComponent {
-  @Input({required: true}) variety: OrderVariety = {id: 0, quantity: 500, variety: {id: 0, name: '', price: 0}};
+  @Input({required: true}) variety: OrderVariety = {id: 0, quantity: 500, variety: {id: 0, name: '', price: 0}, price: 0};
   @Input() isSelected: boolean = false;
   @Output() onClick = new EventEmitter<OrderVariety>();
 

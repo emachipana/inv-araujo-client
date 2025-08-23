@@ -16,11 +16,11 @@ import { ButtonComponent } from "../../shared/ui/buttons/button/button.component
 import { OrderVarietyComponent } from './order-variety/order-variety.component';
 import { InputComponent } from "../../shared/ui/input/input.component";
 import { DataService } from '../../services/data.service';
-
+import { PaymentComponent } from './payment/payment.component';
 @Component({
   selector: 'app-invitro-store',
   standalone: true,
-  imports: [NgClass, NgStyle, MatIconModule, VarietyComponent, CurrencyPipe, SpinnerComponent, ButtonComponent, OrderVarietyComponent, InputComponent],
+  imports: [NgClass, NgStyle, MatIconModule, VarietyComponent, CurrencyPipe, SpinnerComponent, ButtonComponent, OrderVarietyComponent, InputComponent, PaymentComponent],
   templateUrl: './invitro-store.component.html',
   styleUrl: './invitro-store.component.scss'
 })
@@ -75,7 +75,7 @@ export class InvitroStoreComponent implements OnInit {
     });
 
     this._invitroService.varietiesToOrder$.subscribe(() => {
-      if(this.varietiesSelected.value.length === 0 && this.currentTab === "checkout" && !this.orderId) {
+      if(this.varietiesSelected.value.length === 0 && this.currentTab === "checkout" && this.orderId <= 0) {
         this.currentTab = "varieties";
         this.router.navigate([], {queryParams: {tab: this.currentTab}});
         this._toast.warning("Elige almenos una variedad");
@@ -143,7 +143,13 @@ export class InvitroStoreComponent implements OnInit {
     });
   }
 
-  generateOrder(): void {
+  onOrderDetail(): void {
+    if(this._authService.isLoggedIn()) {
+      this.router.navigate([`/perfil/invitro/${this.orderId}`]);
+    }
+  }
+
+  onPay() {
     if(!this._authService.isLoggedIn()) {
       this._loginModalService.open("login", true, "invitro/pedido");
       this._toast.warning("Debes iniciar sesión primero");
@@ -173,17 +179,12 @@ export class InvitroStoreComponent implements OnInit {
         this._toast.success("Pedido generado exitosamente");
         this.router.navigate([], {queryParams: {tab: "success"}});
         this._invitroService.varietiesToOrder$.next([]);
+        this._profileService.cachedVitroOrders = {};
       },
       error: (error) => {
         this._toast.error(error.error.message);
         this.isLoadingOrder = false;
       }
     });
-  }
-
-  onOrderDetail(): void {
-    if(this._authService.isLoggedIn()) {
-      this.router.navigate([`/perfil/pedidos/invitro/${this.orderId}`]);
-    }
   }
 }

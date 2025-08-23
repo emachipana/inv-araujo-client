@@ -26,6 +26,7 @@ import { ShippingOption } from '../../shared/models/ShippingOption';
 import { Warehouse } from '../../shared/models/Warehouse';
 import { MapComponent } from '../../shared/ui/map/map.component';
 import { formattedTime } from '../../shared/helpers/main';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-cart',
@@ -56,6 +57,7 @@ export class CartComponent implements OnInit {
   displayMapDialog = false;
   _dataService = inject(DataService);
   router = inject(Router);
+  private _profileService = inject(ProfileService);
   
   totalCart: number = 0;
   totalWithoutIGV: number = 0;
@@ -355,6 +357,7 @@ export class CartComponent implements OnInit {
     this.currentTab = "success";
     this.orderId = order.id;
     this._cartService.clearCart();
+    this._profileService.cachedOrders = {};
   }
 
   onOrderDetail(): void {

@@ -60,7 +60,7 @@ export class NotificationComponent {
     VITRO_ORDER_ALREADY: {
       color: Colors.persian,
       backgroundColor: Colors.persian_light,
-      icon: "temp_preferences_eco"      
+      icon: "check_box"      
     },
   }
 

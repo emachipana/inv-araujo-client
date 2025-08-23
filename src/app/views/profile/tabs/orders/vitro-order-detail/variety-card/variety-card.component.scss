@@ -1,0 +1,30 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($gap: 1rem, $width: 100%, $justify: space-between);
+  border: 2px solid $platinium;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  height: 115px;
+}
+
+.name {
+  @include text($weight: 700, $size: 17px);
+}
+
+.text {
+  @include text($weight: 600, $size: 15px, $color: $taupe);
+}
+
+.price {
+  @include text($weight: 700, $size: 17px, $color: $blue);
+}
+
+.orange {
+  color: $orange;
+}

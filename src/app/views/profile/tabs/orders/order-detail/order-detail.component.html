@@ -5,7 +5,7 @@
     />
   }
   @else {
-    <section 
+    <section
       class="flex-row"
       (click)="goBack()"
       style="cursor: pointer;"
@@ -60,13 +60,15 @@
                 <p class="header-text">Ubicación del pedido</p>
                 <p class="text">{{ order.location === "ALMACEN" ? "En almacén" : "En agencia" }}</p>
               </div>
-              <div
-                class="flex-column"
-                style="gap: 0.1rem"
-              >
-                <p class="header-text">Serie de {{order.invoice?.invoiceType?.toLocaleLowerCase()}}</p>
-                <p class="text">{{ order.invoice?.serie }}-{{ order.invoice?.id }}</p>
-              </div>
+              @if(order.invoice) {
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Serie de {{order.invoice.invoiceType.toLocaleLowerCase()}}</p>
+                  <p class="text">{{ order.invoice.serie }}-{{ order.invoice.id }}</p>
+                </div>
+              }
             </section>
           </div>
           <div class="card border-type1" style="align-items: flex-start">
@@ -261,7 +263,7 @@
                 <p class="text blue">S/. {{ order.total.toFixed(2) }}</p>
               </div>
             </section>
-            @if(order.invoice) {
+            @if(order.invoice?.pdfUrl) {
               <hr class="line" />
               <app-button
                 fontSize="font-md"
@@ -270,22 +272,30 @@
                 icon="receipt"
                 (onClick)="openInvoiceDialog()"
               >
-                Ver {{ order.invoice.invoiceType.toLocaleLowerCase() }}
+                Ver {{ order.invoice?.invoiceType?.toLocaleLowerCase() }}
               </app-button>
             }
-            @if(order.location !== "AGENCIA" && (order.status !== "ENTREGADO" && order.status !== "CANCELADO")) {
+            @if (cancelRequests.length > 0) {
               <app-button
                 fontSize="font-md"
                 theme="danger"
                 [fullSize]="true"
-                [icon]="pendingRequest ? 'visibility' : 'cancel'"
-                (onClick)="displayCancelDialog = true"
+                icon="visibility"
+                (onClick)="displayViewCancelDialog = true"
+                style="margin-bottom: 1rem;"
               >
-                @if (pendingRequest) {
-                  Ver solicitud de cancelación
-                } @else {
-                  Solicitar cancelación
-                }
+                Ver solicitudes de cancelación
+              </app-button>
+            }
+            @if(order.location !== "AGENCIA" && order.status !== "ENTREGADO" && order.status !== "CANCELADO" && !pendingRequest) {
+              <app-button
+                fontSize="font-md"
+                theme="danger"
+                [fullSize]="true"
+                icon="cancel"
+                (onClick)="displayNewCancelDialog = true"
+              >
+                Solicitar cancelación
               </app-button>
             }
           </div>
@@ -454,28 +464,28 @@
       </ng-template>
     </p-dialog>
     <p-dialog 
-      [(visible)]="displayCancelDialog"
+      [(visible)]="displayViewCancelDialog"
       [modal]="true"
       [dismissableMask]="true"
       [closable]="true"
-      (onHide)="displayCancelDialog = false"
+      (onHide)="displayViewCancelDialog = false"
       [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
     >
       <ng-template #headless>
         <mat-icon 
           class="close-icon cursor-pointer"
-          (click)="displayCancelDialog = false"
+          (click)="displayViewCancelDialog = false"
           style="position: absolute; right: 1rem; top: 1rem; cursor: pointer;"
         >
           close
         </mat-icon>
-        @if (pendingRequest) {
-          <h5 
-            class="form-title"
-            style="margin-bottom: 1rem;"
-          >
-            Solicitudes de cancelación
-          </h5>
+        <h5 
+          class="form-title"
+          style="margin-bottom: 1rem;"
+        >
+          Solicitudes de cancelación
+        </h5>
+        <div class="flex-column">
           @for (request of cancelRequests; track $index) {
             <div class="cancel-card">
               <div
@@ -490,7 +500,7 @@
                 style="gap: 0.1rem"
               >
                 <p class="header-text">Fecha</p>
-                <p class="text">{{ request.createdAt | date:"MM/dd/yy HH:mm" }}</p>
+                <p class="text">{{ request.createdAt | date:"MM/dd/yy HH:mm a" }}</p>
               </div>
               <div
                 class="flex-column"
@@ -498,64 +508,80 @@
               >
                 <p class="header-text">Estado</p>
                 <app-status-badge 
-                  [status]="request.accepted ? 'ENTREGADO' : request.rejected ? 'CANCELADO' : 'PENDIENTE'"
-                  [text]="request.accepted ? 'Entregado' : request.rejected ? 'Cancelado' : 'Pendiente'"
+                  [status]="!request.accepted && !request.rejected ? 'PENDIENTE' : request.accepted ? 'APROBADO' : 'RECHAZADO'"
                 />
               </div>
             </div>
           }
-        }@else {
-          <div 
-            class="form"
-            [formGroup]="cancelForm"
-          >
-            <h5 class="form-title">¿Por qué deseas cancelar el pedido?</h5>
-            <div>
-              @for (reason of cancelReasons; track reason) {
-                <label 
-                  class="flex-row" 
-                  style="width: 100%; padding: 0.5rem; justify-content: flex-start; cursor: pointer;"
-                  (click)="selectCancelReason(reason)"
-                >
-                  <div class="flex-row" style="align-items: center; gap: 0.75rem;">
-                    <input 
-                      class="input-radio" 
-                      type="radio"
-                      name="cancel-reason" 
-                      [checked]="cancelForm.get('reason')?.value === reason"
-                      (click)="$event.stopPropagation()"
-                    >
-                    <span class="custom-radio"></span>
-                    <span class="text">{{ reason }}</span>
-                  </div>
-                </label>
-              }
-            </div>
-            @if (showOtherReason) {
-              <div 
-                style="width: 100%; padding-left: 1rem;"
+        </div>
+      </ng-template>
+    </p-dialog>
+    <p-dialog 
+      [(visible)]="displayNewCancelDialog"
+      [modal]="true"
+      [dismissableMask]="true"
+      [closable]="true"
+      (onHide)="displayNewCancelDialog = false"
+      [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+    >
+      <ng-template #headless>
+        <mat-icon 
+          class="close-icon cursor-pointer"
+          (click)="displayNewCancelDialog = false"
+          style="position: absolute; right: 1rem; top: 1rem; cursor: pointer;"
+        >
+          close
+        </mat-icon>
+        <div 
+          class="form"
+          [formGroup]="cancelForm"
+        >
+          <h5 class="form-title">¿Por qué deseas cancelar el pedido?</h5>
+          <div>
+            @for (reason of cancelReasons; track reason) {
+              <label 
+                class="flex-row" 
+                style="width: 100%; padding: 0.5rem; justify-content: flex-start; cursor: pointer;"
+                (click)="selectCancelReason(reason)"
               >
-                <custom-input
-                  formControlName="otherReason"
-                  id="otherReason"
-                  placeholder="Por favor, describe el motivo de la cancelación"
-                  [error]="errorMessage(cancelForm, 'otherReason', {})"
-                />
-              </div>
+                <div class="flex-row" style="align-items: center; gap: 0.75rem;">
+                  <input 
+                    class="input-radio" 
+                    type="radio"
+                    name="cancel-reason" 
+                    [checked]="cancelForm.get('reason')?.value === reason"
+                    (click)="$event.stopPropagation()"
+                  >
+                  <span class="custom-radio"></span>
+                  <span class="text">{{ reason }}</span>
+                </div>
+              </label>
             }
-            <app-button
-              type="button"
-              theme="danger"
-              fontSize="font-xl"
-              (onClick)="onCancelOrder()"
-              [isDisabled]="cancelForm.invalid || isFormSubmitting"
-              [isLoading]="isFormSubmitting"
-              style="align-self: center;"
-            >
-              Enviar solicitud
-            </app-button>
           </div>
-        }
+          @if (showOtherReason) {
+            <div 
+              style="width: 100%; padding-left: 1rem;"
+            >
+              <custom-input
+                formControlName="otherReason"
+                id="otherReason"
+                placeholder="Por favor, describe el motivo de la cancelación"
+                [error]="errorMessage(cancelForm, 'otherReason', {})"
+              />
+            </div>
+          }
+          <app-button
+            type="button"
+            theme="danger"
+            fontSize="font-xl"
+            (onClick)="onCancelOrder()"
+            [isDisabled]="cancelForm.invalid || isFormSubmitting"
+            [isLoading]="isFormSubmitting"
+            style="align-self: center;"
+          >
+            Enviar solicitud
+          </app-button>
+        </div>
       </ng-template>
     </p-dialog>
   }

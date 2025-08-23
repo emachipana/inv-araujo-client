@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Colors } from '../../../constants/index.constants';
 
-type StatusType = 'PENDIENTE' | 'PAGADO' | 'ENTREGADO' | 'CANCELADO' | 'PRODUCT' | 'ENVIADO' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN' | 'CARD_ENVIO_AGENCIA' | 'CARD_RECOJO_ALMACEN';
+type StatusType = 'PENDIENTE' | 'TERMINADO' |  'POR_DEFINIR' | 'PAGADO' | 'EN_PRODUCCION' | 'ENTREGADO' | 'CANCELADO' | 'PRODUCT' | 'ENVIADO' | 'ENVIO_AGENCIA' | 'RECOJO_ALMACEN' | 'CARD_ENVIO_AGENCIA' | 'CARD_RECOJO_ALMACEN' | 'APROBADO' | 'RECHAZADO';
 
 interface StatusConfig {
   text: string;
@@ -23,15 +23,40 @@ export class StatusBadgeComponent {
   @Input() fontSize: number = 13;
 
   statusConfig: Record<StatusType, StatusConfig> = {
+    APROBADO: {
+      text: 'Aprobado',
+      bgColor: Colors.persian_light,
+      textColor: Colors.persian,
+    },
+    RECHAZADO: {
+      text: 'Rechazado',
+      bgColor: Colors.red_light,
+      textColor: Colors.red,
+    },
+    TERMINADO: {
+      text: 'Terminado',
+      bgColor: Colors.blue_light,
+      textColor: Colors.blue,
+    },
     PENDIENTE: {
       text: 'Pendiente',
       bgColor: Colors.yellow_light,
       textColor: Colors.yellow_hover,
     },
+    POR_DEFINIR: {
+      text: 'Por definir',
+      bgColor: Colors.persian_light,
+      textColor: Colors.persian,
+    },
     PAGADO: {
       text: 'Pagado',
       bgColor: Colors.blue_light,
       textColor: Colors.blue,
+    },
+    EN_PRODUCCION: {
+      text: 'En producción',
+      bgColor: Colors.yellow_light,
+      textColor: Colors.yellow_hover,
     },
     ENTREGADO: {
       text: 'Entregado',

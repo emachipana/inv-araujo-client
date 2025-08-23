@@ -44,7 +44,7 @@
         }@else {
           @for (variety of _invitroService.varieties(); track $index) {
             <app-variety 
-              [variety]="{id: variety.id, quantity: 500, variety: variety}"
+              [variety]="{id: variety.id, quantity: 500, variety: variety, price: variety.price}"
               [isSelected]="varietyIsSelected(variety)"
               (onClick)="onClickCard($event)"
             />
@@ -135,15 +135,12 @@
             </div>
           </div>
           <hr class="line" />
-          <app-button
-            fontSize="font-xl"
-            [fullSize]="true"
-            [isDisabled]="!orderDate || isLoadingOrder"
-            (onClick)="generateOrder()"
-            [isLoading]="isLoadingOrder"
-          >
-            Hacer pedido
-          </app-button>
+          <app-payment 
+            [isValid]="!!orderDate && !isLoadingOrder"
+            [currentTab]="currentTab"
+            [isLoading]="isLoading"
+            (onPay)="onPay()"
+          />
         </div>
       </section>
     </section>
@@ -157,8 +154,8 @@
       
       <div class="delivery-info flex-column">
         <div class="flex-row info-item">
-          <span class="material-icons">local_shipping</span>
-          <p>Entrega en 1-3 días hábiles</p>
+          <span class="material-icons">timer</span>
+          <p>Tu pedido se encuentra ahora en producción</p>
         </div>
         <div class="flex-row info-item">
           <span class="material-icons">
@@ -178,11 +175,11 @@
           Ver detalle
         </app-button>
         <app-button 
-          (onClick)="router.navigate(['/tienda'])"
+          (onClick)="router.navigate(['/invitro/pedido'])"
           fontSize="font-xl"
           theme="secondary"
         >
-          Seguir comprando
+          Hacer otro pedido
         </app-button>
       </div>
     </div>

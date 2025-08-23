@@ -1,4 +1,5 @@
 @use 'layout.scss' as *;
+@use 'colors.scss' as *;
 
 :host {
   width: 100%;
@@ -9,29 +10,28 @@
   flex-wrap: wrap;
 }
 
-/* Estado vacío */
-.empty-state {
-  background-color: var(--surface-card);
-  border-radius: 12px;
-  padding: 3rem 2rem;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
-  i {
-    color: var(--primary-200);
+.button {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid $dim;
+  transition: .2s ease;
+  color: $dim;
+  cursor: pointer;
+  font-weight: 600;
+
+  &:hover {
+    color: $white;
+    background-color: $persian;
+    border-color: $persian;
   }
-  
-  h3 {
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
-  }
-  
-  p {
-    color: var(--text-color-secondary);
-    margin-bottom: 1.5rem;
-  }
-  
-  .p-button {
-    min-width: 180px;
-  }
+}
+
+.button.active {
+  color: $white;
+  background-color: $persian;
+  border-color: $persian;
+}
+
+.no-orders {
+  @include text($color: $taupe, $size: 17px);
 }

@@ -19,6 +19,7 @@ import { PickupInfoRequest } from '../../../shared/models/PickupInfoRequest';
 import { departments, provinces } from '../../../data/places';
 import { AuthService } from '../../../services/auth.service';
 import { InvoiceDetailRequest } from '../../../shared/models/InvoiceDetailRequest';
+import { ProfileService } from '../../../services/profile.service';
 
 @Component({
   selector: 'app-payment',
@@ -49,6 +50,8 @@ export class PaymentComponent implements OnInit, AfterViewInit {
   private _dataService = inject(DataService);
   private _authService = inject(AuthService);
   private toast = inject(HotToastService);
+
+  paymentComplete: boolean = false;
 
   isLoading: boolean = false;
   stripe = injectStripe(environment.stripe_public_key);
@@ -92,6 +95,10 @@ export class PaymentComponent implements OnInit, AfterViewInit {
         }
       });
     });
+  }
+
+  onPaymentChange(event: any) {
+    if(event.complete) this.paymentComplete = true;
   }
 
   handlePay(): void {

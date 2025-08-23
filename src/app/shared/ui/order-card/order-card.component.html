@@ -1,29 +1,32 @@
 <div class="container" (click)="handleClick()">
-  <section class="header">
-    <h3 class="title">Pedido #{{ order?.id }}</h3>
+  <section 
+    class="header"
+    [ngClass]="{ 'invitro': type === 'invitro' }"
+  >
+    <h3 class="title">{{ type === 'invitro' ? 'Pedido Invitro' : 'Pedido' }} #{{ order?.id }}</h3>
     <div class="flex-row">
       <mat-icon class="icon smoke" style="font-size: 17px; width: 17px">calendar_month</mat-icon>
-      <p class="text smoke">{{ order?.date | date:"d 'de' MMMM 'de' yyyy" }}</p>
+      <p class="text smoke">{{ orderDate | date:"d 'de' MMMM 'de' yyyy" }}</p>
     </div>
   </section>
   <div class="flex-row" style="padding: 0.5rem 1rem; width: 100%; justify-content: space-between;">
     <div class="flex-column" style="align-items: center;">
       <div class="flex-row" style="gap: 0.25rem">
-        <mat-icon class="icon dim">local_shipping</mat-icon>
+        <mat-icon class="icon dim">{{ order?.shippingType === 'ENVIO_AGENCIA' ? 'warehouse' : 'local_shipping' }}</mat-icon>
         <p class="text dim" style="font-size: 1rem; font-weight: 600">Entrega</p>
       </div>
-      <app-status-badge [status]="order?.shippingType === 'ENVIO_AGENCIA' ? 'CARD_ENVIO_AGENCIA' : 'CARD_RECOJO_ALMACEN'"></app-status-badge>      
+      <app-status-badge [status]="!order?.shippingType ? 'POR_DEFINIR' : (order?.shippingType === 'ENVIO_AGENCIA' ? 'CARD_ENVIO_AGENCIA' : 'CARD_RECOJO_ALMACEN')"></app-status-badge>      
     </div>
     <div class="flex-column" style="align-items: center;">
       <div class="flex-row" style="gap: 0.25rem">
         <mat-icon class="icon dim">receipt</mat-icon>
         <p class="text dim" style="font-size: 1rem; font-weight: 600">Total</p>
       </div>
-      <p class="text" style="font-size: 1rem">S/. {{ order?.total?.toFixed(2) }}</p>
+      <p class="text" style="font-size: 1rem">{{ orderTotal | currency:'S/.' }}</p>
     </div>
   </div>
   <section class="bottom">
     <p class="text dim" style="font-size: 1rem">Estado</p>
-    <app-status-badge [status]="order?.status ?? 'PENDIENTE'"></app-status-badge>
+    <app-status-badge [status]="isFinished ? 'TERMINADO' : order?.status ?? 'PENDIENTE'" />
   </section>
 </div>

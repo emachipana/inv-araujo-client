@@ -47,6 +47,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
       title: "Detalle del pedido",
       subtitle: "Revisa los detalles de tu pedido"
     },
+    'invitro/:id': {
+      title: "Detalle del pedido",
+      subtitle: "Revisa los detalles de tu pedido invitro"
+    },
     'contrasena': {
       title: "Cambiar contraseña",
       subtitle: "Actualiza tu contraseña para mantener tu cuenta segura"
@@ -95,6 +99,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       if (nextSegment === 'pedidos' && urlSegments.length > profileIndex + 2) {
         // This is a nested route like 'pedidos/123'
         this.currentTab = `pedidos/${urlSegments[profileIndex + 2]}`;
+      } else if (nextSegment === 'invitro' && urlSegments.length > profileIndex + 2) {
+        this.currentTab = `invitro/${urlSegments[profileIndex + 2]}`;
       } else {
         this.currentTab = nextSegment;
       }
@@ -118,6 +124,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
   getHeaderData() {
     if (this.currentTab.startsWith('pedidos/')) {
       return this.headerData['pedidos/:id'] || this.headerData['pedidos'];
+    }
+    
+    if (this.currentTab.startsWith('invitro/')) {
+      return this.headerData['invitro/:id'] || this.headerData['invitro'];
     }
     
     const tabKey = this.currentTab === '' ? 'cuenta' : this.currentTab;

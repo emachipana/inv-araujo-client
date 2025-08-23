@@ -14,7 +14,7 @@ import { SpinnerComponent } from "../../spinner/spinner.component";
   },
 })
 export class ButtonComponent {
-  @Input() theme: 'primary' | 'secondary' | 'warning' | 'danger' = "primary";
+  @Input() theme: 'primary' | 'secondary' | 'warning' | 'danger' | 'blue' | 'purple' = "primary";
   @Input() fontSize: 'font-sm' | 'font-md' | 'font-xl' | 'font-st' | 'font-xxl' = "font-st";
   @Input() type: "button" | "submit" | "reset" = "submit";
   @Input() fullSize: boolean = false;

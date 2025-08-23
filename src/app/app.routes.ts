@@ -12,6 +12,7 @@ import { OrdersComponent } from './views/profile/tabs/orders/orders.component';
 import { UpdatePasswordComponent } from './views/profile/tabs/update-password/update-password.component';
 import { NotificationsComponent } from './views/profile/tabs/notifications/notifications.component';
 import { OrderDetailComponent } from './views/profile/tabs/orders/order-detail/order-detail.component';
+import { VitroOrderDetailComponent } from './views/profile/tabs/orders/vitro-order-detail/vitro-order-detail.component';
 import { InvoiceComponent } from './views/profile/tabs/invoice/invoice.component';
 import { InvitroComponent } from './views/invitro/invitro.component';
 import { ContactComponent } from './views/contact/contact.component';
@@ -47,10 +48,11 @@ export const routes: Routes = [
     children: [
       { path: '', component: AccountComponent },
       { path: 'pedidos', component: OrdersComponent },
+      { path: 'pedidos/:id', component: OrderDetailComponent },
+      { path: 'invitro/:id', component: VitroOrderDetailComponent },
       { path: 'contrasena', component: UpdatePasswordComponent },
       { path: 'notificaciones', component: NotificationsComponent },
-      { path: 'facturacion', component: InvoiceComponent },
-      { path: 'pedidos/:id', component: OrderDetailComponent }
+      { path: 'facturacion', component: InvoiceComponent }
     ]
   },
   {

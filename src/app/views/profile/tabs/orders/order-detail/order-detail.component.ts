@@ -10,7 +10,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule, MatDatepicker } from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SpinnerComponent } from "../../../../../shared/ui/spinner/spinner.component";
 import { StatusBadgeComponent } from "../../../../../shared/ui/status-badge/status-badge.component";
@@ -65,7 +65,8 @@ export class OrderDetailComponent implements OnInit {
 
   warehouseSelected: Warehouse | null = null;
   displayMapDialog: boolean = false;
-  displayCancelDialog: boolean = false;
+  displayViewCancelDialog: boolean = false;
+  displayNewCancelDialog: boolean = false;
   editShippingDialog: boolean = false;
   displayInvoiceDialog: boolean = false;
   departmentOptions: SelectOption[] = departments.map((dep) => ({id: dep.id_ubigeo, content: dep.nombre_ubigeo}));
@@ -83,6 +84,7 @@ export class OrderDetailComponent implements OnInit {
   totalWithoutIGV: number = 0;
   igv: number = 0;
   _dataService = inject(DataService);
+  isAbleToCancel: boolean = false;
 
   private _route = inject(ActivatedRoute);
   private _router = inject(Router);
@@ -153,7 +155,7 @@ export class OrderDetailComponent implements OnInit {
     this._dataService.cancelOrderRequest(cancelRequest).pipe(
       finalize(() => {
         this.isFormSubmitting = false;
-        this.displayCancelDialog = false;
+        this.displayNewCancelDialog = false;
         this.cancelForm.reset();
       })
     ).subscribe({
@@ -331,6 +333,21 @@ export class OrderDetailComponent implements OnInit {
 
   formatTime = formattedTime;
 
+  private checkIfOrderIsCancelable(orderDate: string | Date): boolean {
+    const dateString = orderDate instanceof Date ? orderDate.toISOString() : orderDate;
+    const orderDateObj = new Date(dateString);
+    
+    if (isNaN(orderDateObj.getTime())) {
+      return false;
+    }
+    
+    const currentDate = new Date();
+    const diffTime = currentDate.getTime() - orderDateObj.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    
+    return diffDays < 7;
+  }
+
   loadOrderDetails(): void {
     this.isLoading = true;
     
@@ -346,6 +363,10 @@ export class OrderDetailComponent implements OnInit {
       this.cancelRequests = cancelRequests.sort((a, b) => b.id - a.id);
       this.pendingRequest = !!cancelRequests.find(request => request.rejected === false && request.accepted === false);
       this.calculateTotals();
+      
+      if (order.date) {
+        this.isAbleToCancel = this.checkIfOrderIsCancelable(order.date);
+      }
 
       if (order?.shippingType === 'ENVIO_AGENCIA' && order.receiverInfo) {
         const department = departments.find(d => d.nombre_ubigeo === order.department);

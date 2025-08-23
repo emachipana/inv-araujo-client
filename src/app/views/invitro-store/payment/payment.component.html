@@ -1,0 +1,45 @@
+@if (currentTab === "checkout") {
+  <div>
+    <ngx-stripe-elements [stripe]="stripe" [elementsOptions]="stripeElementsOptions">
+      <ngx-stripe-payment 
+        (change)="onPaymentChange($event)"
+        [options]="paymentOptions"
+      />
+      @if(isAdvance) {
+        <div 
+          class="flex-row"
+          style="margin-top: 1rem;"
+        >
+          <app-button
+            (onClick)="handlePay()"
+            [fullSize]="true"
+            [isLoading]="isLoading"
+            [isDisabled]="!isValid || !paymentComplete || isLoading"
+          >
+            Pagar
+          </app-button>
+          <app-button
+            theme="danger"
+            (onClick)="handleCancel()"
+            [fullSize]="true"
+            [isLoading]="isLoading"
+            [isDisabled]="isLoading"
+          >
+            Cancelar
+          </app-button>
+        </div>
+      }@else {
+        <div style="margin-top: 1rem;">
+          <app-button
+            (onClick)="handlePay()"
+            [fullSize]="true"
+            [isLoading]="isLoading"
+            [isDisabled]="!isValid || !paymentComplete || isLoading"
+          >
+            Hacer pedido
+          </app-button>
+        </div>
+      }
+    </ngx-stripe-elements>
+  </div>
+}

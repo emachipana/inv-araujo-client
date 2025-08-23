@@ -27,7 +27,7 @@ export class SideItemComponent {
     }
     
     if (this.tabIdentifier === 'pedidos') {
-      return this.currentTab === 'pedidos' || this.currentTab.startsWith('pedidos/');
+      return this.currentTab === 'pedidos' || this.currentTab.startsWith('pedidos/') || this.currentTab.startsWith('invitro/');
     }
     return this.currentTab === this.tabIdentifier;
   }

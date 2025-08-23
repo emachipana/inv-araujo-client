@@ -1,13 +1,15 @@
 @if (currentTab === "checkout") {
   <div>
     <ngx-stripe-elements [stripe]="stripe" [elementsOptions]="stripeElementsOptions">
-      <!-- <ngx-stripe-payment /> -->
+      <ngx-stripe-payment 
+        (change)="onPaymentChange($event)"
+      />
       <div style="margin-top: 1rem;">
         <app-button
           (onClick)="handlePay()"
           [fullSize]="true"
           [isLoading]="isLoading"
-          [isDisabled]="!isValid"
+          [isDisabled]="!isValid || !paymentComplete"
         >
           Hacer pedido
         </app-button>

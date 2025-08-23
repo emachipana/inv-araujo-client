@@ -14,6 +14,11 @@ import { AvailableMonth } from '../shared/models/AvailableMonth';
 
 // Constants
 import { ApiConstants } from '../constants/index.constants';
+import { Advance } from '../shared/models/Advance';
+import { ShippingTypeRequest } from '../shared/models/ShippingTypeRequest';
+import { ReceiverInfoRequest } from '../shared/models/ReceiverInfoRequest';
+import { UpdateReceiverInfoRequest } from '../shared/models/UpdateReceiverInfoRequest';
+import { PickupInfoRequest } from '../shared/models/PickupInfoRequest';
 
 const STORAGE_KEY = 'invitro_selected_varieties';
 @Injectable({
@@ -23,6 +28,10 @@ export class InvitroService {
   private _http = inject(HttpClient);
   varieties = signal<Variety[]>([]);
   varietiesToOrder$ = new BehaviorSubject<OrderVariety[]>(this.loadFromLocalStorage());
+
+  controller = {
+    varieties: false
+  }
 
   constructor() {
     this.varietiesToOrder$.subscribe(varieties => {
@@ -40,8 +49,16 @@ export class InvitroService {
     }
   }
 
-  controller = {
-    varieties: false
+  addShippingType(shippingType: ShippingTypeRequest, orderId: number): Observable<InvitroOrder> {
+    return this._http.put<ApiResponse<InvitroOrder>>(`${ApiConstants.invitro}/${orderId}/addShippingType`, shippingType).pipe(
+      map(response => response.data)
+    );
+  }
+
+  registerNewAdvance(advance: AdvanceRequest): Observable<Advance> {
+    return this._http.post<ApiResponse<Advance>>(`${ApiConstants.advances}`, advance).pipe(
+      map(response => response.data)
+    );
   }
 
   loadVarieties(): Observable<Variety[]> {
@@ -78,15 +95,16 @@ export class InvitroService {
   }
 
   registerOrder(request: InvitroRequest, varieties: OrderVariety[], advance: number, paymentType: "TARJETA_ONLINE" | "YAPE"): Observable<InvitroOrder> {
-    // First, register the order
     return this._http.post<ApiResponse<InvitroOrder>>(`${ApiConstants.invitro}`, request).pipe(
-      // After order is created, register varieties sequentially
       mergeMap(orderResponse => {
         const order = orderResponse.data;
         
-        // Convert varieties array to an observable that processes them sequentially
+        // Start notification in background without waiting for it to complete
+        this.sendNewOrderNotification(order.id).subscribe({
+          error: (err) => console.error('Error sending notification:', err)
+        });
+        
         return from(varieties).pipe(
-          // Process each variety one after another
           concatMap(variety => {
             const varietyRequest: OrderVarietyRequest = {
               vitroOrderId: order.id,
@@ -97,9 +115,7 @@ export class InvitroService {
             
             return this._http.post(`${ApiConstants.orderVariety}`, varietyRequest);
           }),
-          // Convert to array to know when all are done
           toArray(),
-          // After all varieties are registered, register the advance
           mergeMap(() => {
             const advanceRequest: AdvanceRequest = {
               vitroOrderId: order.id,
@@ -107,13 +123,42 @@ export class InvitroService {
               paymentType: paymentType
             };
             
-            // Register the advance and return the original order
             return this._http.post(`${ApiConstants.advances}`, advanceRequest).pipe(
-              map(() => order) // Return the original order on success
+              map(() => order)
             );
           })
         );
       })
+    );
+  }
+
+  private sendNewOrderNotification(orderId: number): Observable<any> {
+    return this._http.post(`${ApiConstants.invitro}/${orderId}/alertNewOrder`, {});
+  }
+
+  loadOrder(orderId: number): Observable<InvitroOrder> {
+    return this._http.get<ApiResponse<InvitroOrder>>(`${ApiConstants.invitro}/${orderId}`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  loadOrderItems(orderId: number): Observable<OrderVariety[]> {
+    return this._http.get<OrderVariety[]>(`${ApiConstants.orderVariety}/vitroOrder/${orderId}`);
+  }
+
+  loadAdvances(orderId: number): Observable<Advance[]> {
+    return this._http.get<Advance[]>(`${ApiConstants.advances}/vitroOrder/${orderId}`);
+  }
+
+  updateReceiverInfo(orderId: number, receiverInfo: UpdateReceiverInfoRequest): Observable<InvitroOrder> {
+    return this._http.put<ApiResponse<InvitroOrder>>(`${ApiConstants.invitro}/${orderId}/updateReceiverInfo`, receiverInfo).pipe(
+      map(response => response.data)
+    );
+  }
+
+  updatePickupInfo(orderId: number, pickupInfo: PickupInfoRequest): Observable<InvitroOrder> {
+    return this._http.put<ApiResponse<InvitroOrder>>(`${ApiConstants.invitro}/${orderId}/updatePickupInfo`, pickupInfo).pipe(
+      map(response => response.data)
     );
   }
 }
