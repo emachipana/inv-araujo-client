@@ -46,7 +46,7 @@
 }
 
 .text-discount {
-  @include text($color: $white, $hover_color: $white, $weight: 700);
+  @include text($color: $white, $weight: 700);
 }
 
 .brand {
@@ -62,7 +62,7 @@
 }
 
 .category {
-  @include text($size: 12.5px, $color: $taupe, $hover_color: $taupe, $weight: 700);
+  @include text($size: 12.5px, $color: $taupe, $weight: 700);
   text-transform: uppercase;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -90,11 +90,11 @@
   overflow: hidden;
   line-height: 14px;
   max-width: 200px;
-  @include text($size: 14px, $color: $taupe, $hover_color: $taupe);
+  @include text($size: 14px, $color: $taupe);
 }
 
 .price {
-  @include text($weight: 700, $color: $persian, $hover_color: $persian);
+  @include text($weight: 700, $color: $persian);
 }
 
 .price.hasDiscount {
@@ -103,5 +103,5 @@
 }
 
 .discount-price {
-  @include text($weight: 700, $color: $orange, $hover_color: $orange);
+  @include text($weight: 700, $color: $orange);
 }

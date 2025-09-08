@@ -25,7 +25,6 @@ export class CategoriesSectionComponent implements OnInit {
 
     this._dataService.loadCategories().subscribe({
       next: ((_response) => {
-        // setTimeout(() => this.isLoading = false, 5000);
         this.isLoading = false;
       }),
       error: ((error) => {

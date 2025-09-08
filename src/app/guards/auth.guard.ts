@@ -1,18 +1,48 @@
-import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { LoginModalService } from '../services/login-modal.service';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
-export const AuthGuard: CanActivateFn = () => {
-  const _authService = inject(AuthService);
-  const _loginModalService = inject(LoginModalService)
-  const router = inject(Router);
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
+  private authService = inject(AuthService);
+  private loginModalService = inject(LoginModalService);
+  private router = inject(Router);
+  private toast = inject(HotToastService);
 
-  if(!_authService.isLoggedIn()) {
-    router.navigate(['/']);
-    _loginModalService.open("login");
-    return false;
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> {
+    if (this.authService.isLoading()) {
+      return this.authService.checkAuth().pipe(
+        map(isAuthenticated => this.handleAuthCheck(isAuthenticated)),
+        catchError(() => of(this.handleAuthCheck(false)))
+      );
+    }
+
+    if (this.authService.isLoggedIn()) {
+      return of(true);
+    }
+    return of(this.handleAuthCheck(false));
   }
 
-  return true;
+  private handleAuthCheck(isAuthenticated: boolean): boolean {
+    if (!isAuthenticated) {
+      this.router.navigate(['/']);
+      this.loginModalService.open("login");
+      this.toast.error("Inicia sesión primero");
+      return false;
+    }
+    return true;
+  }
+}
+
+export function authGuard(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  return inject(AuthGuard).canActivate(route, state);
 }

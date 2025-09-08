@@ -1,0 +1,165 @@
+<section class="header">
+  <div 
+    class="flex-column"
+    style="align-items: center; gap: 0.3rem;"
+  >
+    <h2 class="title">Conoce nuestro <span class="persian">laboratorio</span></h2>
+    <mat-icon
+      class="icon"
+    >
+      eco
+    </mat-icon>
+  </div>
+  <div
+    class="flex-column"
+    style="width: 100%; align-items: center; gap: 1rem;"
+  >
+    <p class="text">Trabajamos con <span class="weight-md">técnicas modernas y seguras de biotecnología vegetal.</span> Si aún no conoces del tema, te compartimos un poco.</p>
+    <div class="between-row">
+      @for (card of cards; track $index) {
+        <app-card
+          [img]="card.img"
+          [description]="card.description"
+        />
+      }
+    </div>
+  </div>
+</section>
+<section class="main-banner">
+  <div 
+    class="flex-column"
+    style="align-items: center; gap: 0.3rem;"
+  >
+    <h2 
+      class="title"
+      style="color: #F5F5F5;"
+    >
+      Biotecnología vegetal
+    </h2>
+    <mat-icon
+      class="icon"
+    >
+      eco
+    </mat-icon>
+  </div>
+  <p 
+    class="text"
+    style="max-width: 50%; color: #F5F5F5;"
+  >
+    La biotecnología vegetal consiste en <span class="weight-md">estudiar las plantas, sus procesos de crecimiento y todo
+    lo relacionado con la agricultura</span> para determinar qué necesita mejorarse y cuál es el proceso
+    de mejora idóneo. <br/> Al realizar dicho análisis e implementar las técnicas es <span class="weight-md">factible acelerar
+    e incrementar la producción de la cosecha, producir plantas de mejor calidad, más saludables
+    y resistentes.</span> Así mismo, permite evitar, hasta cierto punto, el uso de productos químicos
+    como herbicidas, pesticidas y mejorar los fertilizante naturales.
+  </p>
+  <app-button
+    fontSize="font-xl"
+    style="margin-top: 1rem;"
+    (onClick)="navigateToStore()"
+  >
+    Realizar pedido
+  </app-button>
+</section>
+<section class="header">
+  <div 
+    class="flex-column"
+    style="align-items: center; gap: 0.3rem;"
+  >
+    <h2 class="title">Con que <span class="persian">cultivos</span> trabajamos</h2>
+    <mat-icon
+      class="icon"
+    >
+      eco
+    </mat-icon>
+  </div>
+  <div 
+    class="flex-row"
+    style="width: 100%; gap: 1rem; justify-content: space-around;"
+  >
+    <div
+      class="flex-column"
+      style="width: 40%; gap: 1rem;"
+    >
+      <p class="text">Nuestros cultivos con mejores resultados son:</p>
+      <div 
+        class="flex-column"
+        style="gap: 0.5rem;"
+      >
+        @for (variety of this._invitroService.varieties(); track $index) {
+          <div
+            class="flex-row"
+          >
+            <mat-icon
+              class="persian"
+            >
+              eco
+            </mat-icon>
+            <p class="variety">{{ variety.name }}</p>
+          </div>
+        }@empty {
+          <p class="text">Actualmente no contamos con ninguna variedad</p>
+        }
+      </div>
+      @if (this._invitroService.varieties().length > 0) {
+        <app-button
+          (onClick)="navigateToStore()"
+          fontSize="font-xl"
+        >
+          Consultar variedad
+        </app-button>
+      }
+    </div>
+    <iframe 
+      class="video"
+      src="https://www.youtube.com/embed/Db7X_VUa34A" 
+      title="Taller: Cultivo in vitro y micropropagación de plantas" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</section>
+<section class="header">
+  <div 
+    class="flex-column"
+    style="align-items: center; gap: 0.3rem;"
+  >
+    <h2 
+      class="title"
+      style="max-width: 70%;"
+    >
+      ¿Como saber si la <span class="persian">biotecnología vegetal</span> es útil para tu negocio?
+    </h2>
+    <mat-icon
+      class="icon"
+    >
+      eco
+    </mat-icon>
+  </div>
+  <div
+    class="flex-column"
+    style="width: 100%; align-items: center; gap: 1rem;"
+  >
+    <p class="text">Si no tienes claro si este modelo de producción es lo que necesitas, pregúntate lo siguiente:</p>
+    <div class="between-row">
+      <app-question-card
+        text="¿Necesitas incrementar exponencialmente la producción?"
+      />
+      <app-question-card
+        text="¿Deseas aprovechar mejor el terreno?"
+      />
+      <app-question-card
+        text="¿Es prioritario competir en mercados más exigentes?"
+      />
+    </div>
+  </div>
+  @if (this._invitroService.varieties().length > 0) {
+    <app-button
+      fontSize="font-xl"
+      (onClick)="navigateToStore()"
+    >
+      Realizar pedido
+    </app-button>
+  }
+</section>

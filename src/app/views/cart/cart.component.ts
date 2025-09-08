@@ -2,7 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CartService } from '../../services/cart.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { NgClass, NgStyle } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { CommonModule } from '@angular/common';
 import { ProductItemComponent } from "./product-item/product-item.component";
 import { ButtonComponent } from "../../shared/ui/buttons/button/button.component";
 import { LoginModalService } from '../../services/login-modal.service';
@@ -13,20 +14,37 @@ import { departments, provinces } from '../../data/places';
 import { SelectOption } from '../../shared/models/SelectOption';
 import { Client } from '../../shared/models/Client';
 import { DataService } from '../../services/data.service';
-import { SpinnerComponent } from "../../shared/ui/spinner/spinner.component";
 import { HotToastService } from '@ngxpert/hot-toast';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { matchPasswordValidator } from '../../shared/validators/matchpassword.validator';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { PaymentComponent } from "./payment/payment.component";
 import { messageGenerator } from '../../shared/ui/input/message-generator';
 import { SunatService } from '../../services/sunat.service';
 import { BehaviorSubject } from 'rxjs';
 import { Order } from '../../shared/models/Order';
+import { ShippingCardComponent } from "../../shared/ui/shipping-card/shipping-card.component";
+import { ShippingOption } from '../../shared/models/ShippingOption';
+import { Warehouse } from '../../shared/models/Warehouse';
+import { MapComponent } from '../../shared/ui/map/map.component';
+import { formattedTime } from '../../shared/helpers/main';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [MatIconModule, NgClass, ProductItemComponent, ButtonComponent, InputComponent, SelectComponent, SpinnerComponent, NgStyle, ReactiveFormsModule, PaymentComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIconModule, 
+    DialogModule,
+    ProductItemComponent,
+    ButtonComponent, 
+    InputComponent, 
+    SelectComponent, 
+    PaymentComponent, 
+    ShippingCardComponent,
+    MapComponent
+  ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
 })
@@ -36,44 +54,170 @@ export class CartComponent implements OnInit {
   _sunatService = inject(SunatService);
   _loginModalService = inject(LoginModalService);
   _authService = inject(AuthService);
+  displayMapDialog = false;
   _dataService = inject(DataService);
   router = inject(Router);
+  private _profileService = inject(ProfileService);
+  
   totalCart: number = 0;
   totalWithoutIGV: number = 0;
   igv: number = 0;
   toast = inject(HotToastService);
   private route = inject(ActivatedRoute);
-  departmentOptions: SelectOption[] = departments.map((dep) => ({id: +dep.id_ubigeo, content: dep.nombre_ubigeo}));
+  departmentOptions: SelectOption[] = departments.map((dep) => ({id: dep.id_ubigeo, content: dep.nombre_ubigeo}));
   currentDep: number = 0;
   provinceOptions: SelectOption[] = [];
   clientLogged: Client | undefined;
   isGettingClient: boolean = false;
-  shipType$ = new BehaviorSubject<"ENVIO_AGENCIA" | "RECOJO_ALMACEN">("RECOJO_ALMACEN");
-  createAccount: boolean = false;
+  shipType$ = new BehaviorSubject<"ENVIO_AGENCIA" | "RECOJO_ALMACEN" | null>(null);
   documentType: "DNI" | "RUC" | undefined;
+  invoicePreference: "BOLETA" | "FACTURA" | undefined;
+  disableDocumentType: boolean = false;
   isDocLoaded: boolean = false;
   isWarehouseLoaded: boolean = false;
-  warehouses: SelectOption[] = [];
-  redirectionLink: String = "";
-
+  clientAddress: string = "";
+  warehouseSelected: Warehouse | null = null;
+  orderId: number = 0;
+  availableHours: SelectOption[] = [];
+  minDate: string;
   errorMessage = messageGenerator;
+  updateInvoiceDetail: boolean = false;
+  shippingOptions: ShippingOption[] = [
+    {
+      id: 'RECOJO_ALMACEN',
+      title: 'Recojo en almacén',
+      subtitle: 'Huancayo, Sapallanga',
+      value: 'RECOJO_ALMACEN',
+      checked: false
+    },
+    {
+      id: 'ENVIO_AGENCIA',
+      title: 'Envio por Agencia Shalom',
+      subtitle: 'Pago contra entrega',
+      value: 'ENVIO_AGENCIA',
+      checked: false
+    }
+  ];
 
-  form = new FormGroup({
+  invoiceDetailForm = new FormGroup({
     documentType: new FormControl('', [Validators.required]),
     document: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
-    email: new FormControl('', [Validators.required, Validators.email]),
     rsocial: new FormControl('', [Validators.required]),
-    phone: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
+    invoicePreference: new FormControl('', [Validators.required]),
+    address: new FormControl('')
+  });
+
+  agencyForm = new FormGroup({
     department: new FormControl('', [Validators.required]),
     city: new FormControl('', [Validators.required]),
-    warehouse: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    confirmPassword: new FormControl('')
-  }, { validators: matchPasswordValidator(this._loginModalService)});
+    fullName: new FormControl('', [Validators.required]),
+    dni: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/), Validators.minLength(8), Validators.maxLength(8)]),
+    phone: new FormControl('', [Validators.required, Validators.pattern(/^\d+$/), Validators.minLength(9), Validators.maxLength(9)]),
+  });
+
+  warehouseForm = new FormGroup({
+    date: new FormControl('', [Validators.required]),
+    time: new FormControl({ value: '', disabled: true }, [Validators.required])
+  });
+
+  constructor() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    
+    if (currentHour > 17 || (currentHour === 17 && currentMinutes >= 30)) {
+      now.setDate(now.getDate() + 1);
+    }
+    
+    this.minDate = now.toISOString().split('T')[0];
+  }
+
+  showMapDialog() {
+    if (!this.warehouseSelected) return;
+    this.displayMapDialog = true;
+  }
+
+  formatTime = formattedTime;
 
   ngOnInit(): void {
+    this.warehouseForm.get('date')?.valueChanges.subscribe((date) => {
+      const timeControl = this.warehouseForm.get('time');
+      timeControl?.disable();
+      timeControl?.setValue('');
+      
+      if (date) {
+        this._dataService.getAvailableHours(date).subscribe({
+          next: (hours: string[]) => {
+            this.availableHours = hours.map(hour => ({
+              id: hour,
+              content: this.formatTime(hour)
+            }));
+            
+            if (this.availableHours.length > 0) {
+              timeControl?.enable();
+            } else {
+              this.toast.warning('No hay más horarios disponibles para hoy');
+            }
+          },
+          error: (error) => {
+            console.error('Error fetching available hours:', error);
+            this.toast.error('Error al cargar los horarios disponibles');
+          }
+        });
+      }
+    });
+
+    this._dataService.loadWarehouses().subscribe((warehouses) => {
+      this.warehouseSelected = warehouses[0];
+    });
+
+    this._authService.currentUser$.subscribe(user => {
+      if (user?.clientId) {
+        this._authService.getClient(user.clientId).subscribe();
+      }
+    });
+
+    this._authService.currentClient$.subscribe(client => {
+      if (client) {
+        this.clientLogged = client;
+        const clientAddress = client.invoiceDetail?.address || '';
+        this.isDocLoaded = true;
+        this.documentType = client.invoiceDetail?.documentType as "RUC" | "DNI";
+        if(this.documentType === "RUC") this.disableDocumentType = true;
+
+        this.invoicePreference = client.invoiceDetail?.invoicePreference as "BOLETA" | "FACTURA";
+
+        this.invoiceDetailForm.disable({ emitEvent: false });
+
+        this.invoiceDetailForm.patchValue({
+          documentType: client.invoiceDetail?.documentType,
+          document: client.invoiceDetail?.document,
+          rsocial: client.invoiceDetail?.rsocial || '',
+          invoicePreference: client.invoiceDetail?.invoicePreference || 'BOLETA',
+          address: clientAddress === "-" ? "" : clientAddress
+        }, { emitEvent: false });
+
+        this.invoiceDetailForm.enable({ emitEvent: false });
+
+        this.agencyForm.patchValue({
+          fullName: client.rsocial || '',
+          dni: client.document || '',
+          phone: client.phone || ''
+        });
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
-      const tab = params['tab'];
+      let tab = params['tab'];
+      if(tab === "success") tab = "checkout";
+
+      if(tab === "checkout" && !this._authService.isLoggedIn()) {
+        this._loginModalService.open('login', true);
+        this.toast.warning("Primero inicia sesión o registrate");
+        this.router.navigate([], {queryParams: {tab: "cart"}});
+        return;
+      }
+
       this.currentTab = tab ? tab : "cart";
     });
 
@@ -100,44 +244,54 @@ export class CartComponent implements OnInit {
       });
     });
 
-    this.form.get('documentType')?.valueChanges.subscribe((type) => {
-      this.documentType = +(type ?? -1) === 1 ? "DNI" : "RUC";
-      this.form.get('document')?.reset();
-      this.form.get('document')?.setValidators([
+    this.invoiceDetailForm.get("invoicePreference")?.valueChanges.subscribe((preference) => {
+      this.invoicePreference = preference as "BOLETA" | "FACTURA";
+      if (this.invoicePreference === "FACTURA") {
+        this.invoiceDetailForm.get('documentType')?.setValue("RUC");
+        this.disableDocumentType = true;
+      } else {
+        this.disableDocumentType = false;
+      }
+    });
+
+    this.invoiceDetailForm.get('documentType')?.valueChanges.subscribe((type) => {
+      this.documentType = type as "DNI" | "RUC";
+      const documentField = this.invoiceDetailForm.get('document');
+      const addressField = this.invoiceDetailForm.get('address');
+      
+      documentField?.reset();
+      documentField?.setValidators([
         Validators.required,
         Validators.minLength(this.documentType === 'DNI' ? 8 : 11),
         Validators.maxLength(this.documentType === 'DNI' ? 8 : 11)
       ]);
-      this.form.get('document')?.updateValueAndValidity();
+      documentField?.updateValueAndValidity();
+      
+      addressField?.setValidators([]);
+
+      if(this.documentType === "RUC") {
+        addressField?.setValidators([
+          Validators.required
+        ]);
+      }
+      
+      addressField?.updateValueAndValidity();
     });
 
-    this.form.get('document')?.valueChanges.subscribe((value) => {
+    this.invoiceDetailForm.get('document')?.valueChanges.subscribe((value) => {
       if (value?.length === (this.documentType === 'DNI' ? 8 : 11)) {
         this.getData(this.documentType ?? "DNI", value);
       } else {
-        this.form.get('rsocial')?.setValue('');
+        this.invoiceDetailForm.get('rsocial')?.setValue('');
+        this.invoiceDetailForm.get('address')?.setValue('');
         this.isDocLoaded = false;
       }
     });
 
-    this.form.get('department')?.valueChanges.subscribe((dep) => {
-      this.form.get('city')?.setValue('');
+    this.agencyForm.get('department')?.valueChanges.subscribe((dep) => {
+      this.agencyForm.get('city')?.setValue('');
       this.currentDep = +(dep ?? "");
-      this.provinceOptions = provinces[String(this.currentDep)].map((province) => ({id: province.id_ubigeo, content: province.nombre_ubigeo}));
-    });
-
-    this.shipType$.subscribe((data) => {
-      if(data === "ENVIO_AGENCIA" || this.isWarehouseLoaded) return;
-
-      this._dataService.getWarehouses().subscribe({
-        next: (response) => {
-          this.warehouses = response.map((war) => ({id: war.id, content: `${war.name} - ${war.address}`}));
-          this.isWarehouseLoaded = true;
-        },
-        error: (error) => {
-          this.toast.error(error.error.message);
-        }
-      });
+      this.provinceOptions = provinces[String(this.currentDep)]?.map((province) => ({id: province.id_ubigeo, content: province.nombre_ubigeo}));
     });
   }
 
@@ -145,11 +299,11 @@ export class CartComponent implements OnInit {
     this._sunatService.getData(type, document).subscribe({
       next: (response) => {
         if(type === "DNI" && !response.success) {
-          this.toast.error("El DNI no existe");
+          this.toast.error("No se encontro información");
           return;
         }
         if(type === "RUC" && !response.razonSocial) {
-          this.toast.error("El RUC no existe");
+          this.toast.error("No se encontro información");
           return;
         }
 
@@ -158,8 +312,13 @@ export class CartComponent implements OnInit {
           ? `${response.nombres} ${response.apellidoPaterno} ${response.apellidoMaterno}`
           : `${response.razonSocial}`;
 
-          this.form.get('rsocial')?.setValue(rsocial);
-          this.isDocLoaded = true;
+        if(type === "RUC") {
+          this.clientAddress = response.direccion;
+          this.invoiceDetailForm.get('address')?.setValue(response.direccion);
+        }
+
+        this.invoiceDetailForm.get('rsocial')?.setValue(rsocial);
+        this.isDocLoaded = true;
       },
       error: (error) => {
         console.error(error);
@@ -170,6 +329,13 @@ export class CartComponent implements OnInit {
   }
 
   changeTab(tab: "cart" | "checkout" | "success"): void {
+    if(!this._authService.isLoggedIn() && tab === "checkout") {
+      this._loginModalService.open('login', true, "carrito");
+      this.toast.warning("Primero inicia sesión o registrate");
+      this.router.navigate([], {queryParams: {tab: "cart"}});
+      return;
+    }
+
     this.currentTab = tab;
 
     if(tab === "checkout") {
@@ -182,17 +348,21 @@ export class CartComponent implements OnInit {
 
   onShipChange(type: "ENVIO_AGENCIA" | "RECOJO_ALMACEN"): void {
     this.shipType$.next(type);
+    this.shippingOptions.forEach((option) => {
+      option.checked = option.value === type;
+    });
   }
 
   onPay(order: Order): void {
-    this.redirectionLink = `https://api.whatsapp.com/send?phone=51990849369&text=Hola%2C%20quiero%20consultar%20m%C3%A1s%20detalles%20sobre%20mi%20pedido%3A%0ACliente%3A%20${order.client.rsocial}%0A${order.client.documentType}%3A%20${order.client.document}%20`
     this.currentTab = "success";
+    this.orderId = order.id;
     this._cartService.clearCart();
+    this._profileService.cachedOrders = {};
   }
 
-  onCreateAccount(): void {
-    this.createAccount = !this.createAccount;
-    this._loginModalService.currentAction = "register";
-    console.log(this._loginModalService.currentAction)
+  onOrderDetail(): void {
+    if(this.clientLogged) {
+      this.router.navigate([`/perfil/pedidos/${this.orderId}`]);
+    }
   }
 }

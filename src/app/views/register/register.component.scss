@@ -1,0 +1,45 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+ngx-otp-input ::ng-deep {
+	.ngx-otp-input-box {
+		text-transform: uppercase;
+		width: 45px;
+		height: 45px;
+	}
+
+	.ngx-otp-input-failed {
+		border-color: $red;
+	}
+}
+
+.main {
+	padding: 1rem 1rem 4rem 1rem;
+	margin: 1rem 0;
+	@include flex-container();
+}
+
+.container {
+	background-color: white;
+	padding: 1.5rem;
+	@include flex-container($direction: column, $gap: 1.5rem);
+}
+
+.title {
+	@include text($size: 1.5rem, $weight: 700, $align: center);
+}
+
+.text {
+	margin-top: 0.8rem;
+	@include text($size: 14px, $color: $red);
+}
+
+.form-title {
+	@include text($size: 1.4rem, $weight: 700, $color: $persian);
+	align-self: center;
+	margin-bottom: 1rem;
+}
+
+.input-section {
+	gap: 1rem;
+}

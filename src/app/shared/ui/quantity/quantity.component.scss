@@ -5,23 +5,85 @@
   overflow: hidden;
   gap: 0;
   width: fit-content;
+  font-size: 1rem;
+
+  &.sm {
+    font-size: 0.75rem;
+    
+    .button {
+      width: 24px;
+      height: 24px;
+      font-size: 1.1rem;
+    }
+    
+    .num {
+      width: auto;
+      padding: 0.25rem;
+      height: 24px;
+      font-size: 0.85rem;
+    }
+  }
+
+  &.md {
+    font-size: 1rem;
+    
+    .button {
+      width: 30px;
+      height: 30px;
+      font-size: 1.5rem;
+    }
+    
+    .num {
+      width: auto;
+      padding: 0.25rem 0.5rem;
+      height: 30px;
+      font-size: 1rem;
+    }
+  }
+
+  &.xl {
+    font-size: 1.25rem;
+    
+    .button {
+      width: 40px;
+      height: 40px;
+      font-size: 1.8rem;
+    }
+    
+    .num {
+      width: 50px;
+      height: 40px;
+      font-size: 1.25rem;
+    }
+  }
 }
 
 .button {
-  width: 30px;
-  height: 30px;
   color: $white;
   background-color: $gray;
-  font-size: 1.5rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: darken($gray, 10%);
+  }
+  
+  &:active {
+    background-color: darken($gray, 20%);
+  }
 }
 
 .num {
-  width: 35px;
-  height: 30px;
   background-color: white;
   color: $gray;
-  font-size: 1rem;
   font-weight: 600;
   border: 1px solid $gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }

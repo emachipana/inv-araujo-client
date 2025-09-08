@@ -1,0 +1,43 @@
+<div 
+  class="card" 
+  [ngClass]="{'active': isSelected}" 
+  (click)="onSelect()"
+>
+  @if(isSelected) {
+    <div class="check">
+      <mat-icon>check</mat-icon>
+    </div>
+  }
+  <div 
+    class="flex-column"
+    style="gap: 0;"
+  >
+    <h5 class="name">Variedad {{ variety.variety.name.split(" ")[1] }}</h5>
+    <p class="text">{{ variety.variety.name.split(" ")[0] }}</p>
+  </div>
+
+  <div
+    class="flex-column"
+    style="gap: 0;"
+  >
+    <p 
+      class="name blue"
+      style="font-size: 15px"
+    >
+      {{ variety.variety.price | currency: 'S/.'}} 
+      <span
+        class="text"
+        style="font-size: 13px;"     
+      >
+        c/u
+      </span>
+    </p>
+    <p 
+      class="text"
+      style="font-size: 12px;"
+    >
+      Mínimo: 500
+    </p>
+  </div>
+  <mat-icon class="leaf">eco</mat-icon>
+</div>

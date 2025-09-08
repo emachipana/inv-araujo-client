@@ -1,0 +1,31 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.container {
+  @include flex-container($gap: 1rem, $width: 100%, $justify: space-around, $align: flex-start);
+  flex-wrap: wrap;
+  padding: 1.5rem 0.5rem;
+}
+
+.title {
+  @include text($weight: 700, $size: 24px, $align: center);
+}
+
+.persian {
+  color: $persian;
+}
+
+.contact-card {
+  @include flex-container($gap: 1rem, $width: 300px, $direction: column, $align: flex-start);
+  border: 2px solid $platinium;
+  padding: 1.2rem;
+  border-radius: 0.75rem;
+}
+
+.text {
+  @include text($weight: 500, $color: $taupe, $size: 15px);
+}
+
+.contact-text {
+  @include text($weight: 600, $color: $dim);
+}

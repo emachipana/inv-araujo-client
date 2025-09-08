@@ -1,0 +1,23 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.container {
+  @include flex-container($gap: 2.5rem, $width: 90%, $direction: column);
+  padding: 2rem 1rem;
+  margin: 0 auto;
+}
+
+.title {
+  @include text($weight: 700, $size: 24px);
+}
+
+.text {
+  @include text($size: 15px, $color: $taupe, $weight: 600);
+  text-align: justify;
+}
+
+.image {
+  width: 340px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}

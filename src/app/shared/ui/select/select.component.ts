@@ -1,4 +1,4 @@
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { Component, computed, forwardRef, input, Input, InputSignal, Signal, signal, WritableSignal } from '@angular/core';
 import { SelectOption } from '../../models/SelectOption';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -6,7 +6,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, NgStyle],
   templateUrl: './select.component.html',
   styleUrl: './select.component.scss',
   providers: [
@@ -54,10 +54,6 @@ export class SelectComponent implements ControlValueAccessor {
 
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
-  }
-  
-  setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
   }
 
   onInputChange(event: Event): void {

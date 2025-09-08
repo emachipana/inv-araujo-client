@@ -1,12 +1,9 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
-import { LoginModalService } from "../../services/login-modal.service";
 
-export function matchPasswordValidator(service: LoginModalService): ValidatorFn {
+export function matchPasswordValidator(controlName: string, matchingControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    if(service.currentAction === "login") return null;
-
-    const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
+    const password = control.get(controlName || "password")?.value;
+    const confirmPassword = control.get(matchingControlName || "confirmPassword")?.value;
 
     return password === confirmPassword ? null : { passwordMismatch: true };
   };

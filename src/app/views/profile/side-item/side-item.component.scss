@@ -1,0 +1,39 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;  
+}
+
+.container {
+  width: 100%;
+  padding: 0.5rem;
+  @include flex-container($gap: .75rem, $justify: space-between);
+  color: $dim;
+  cursor: pointer;
+  transition: .3s ease-in;
+  border-radius: 0.75rem;
+
+  &:hover {
+    color: $white;
+    background-color: $persian;
+  }
+}
+
+.name {
+  @include text($weight: 600, $size: 17px);
+}
+
+.active {
+  color: $white;
+  background-color: $persian;
+}
+
+.notifications {
+  height: 25px;
+  border-radius: 50%;
+  background-color: $red;
+  color: white;
+  @include flex-container($width: 25px);
+  font-weight: 700;
+}

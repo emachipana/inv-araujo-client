@@ -26,3 +26,11 @@ hr {
   position: absolute;
   bottom: 0;
 }
+
+.notification {
+  @include text($size: 15px, $weight: 700, $color: $white);
+  border-radius: 0.5rem;
+  background-color: $red;
+  @include flex-container($align: center, $justify: center, $width: 23px);
+  height: 23px;
+}

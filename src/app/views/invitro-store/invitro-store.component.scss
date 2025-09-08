@@ -1,0 +1,105 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+.container {
+  width: 100%;
+  padding: 1rem;
+  min-height: 50vh;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-item {
+  color: $taupe;
+
+  &:hover {
+    color: $gray;
+  }
+}
+
+.nav-item.active {
+  color: $gray;
+}
+
+.item {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: $white;
+  background-color: $taupe;
+  font-size: 18px;
+  font-weight: 700;
+
+  &:hover {
+    background-color: $gray;
+  }
+}
+
+.item.active {
+  background-color: $gray;
+}
+
+.select-varieties {
+  padding: 1rem;
+  @include flex-container($gap: 1.5rem, $direction: column, $align: flex-start, $width: 80%);
+}
+
+.title {
+  @include text($weight: 700, $size: 17px);
+}
+
+.text {
+  @include text($weight: 500, $size: 15px, $color: $taupe);
+}
+
+.main-section {
+  @include flex-container($gap: 1rem, $justify: space-between, $width: 100%, $align: flex-start);
+  padding: 1rem;
+}
+
+.checkout {
+  @include flex-container($gap: 1rem, $direction: column, $align: flex-start, $width: 60%);
+}
+
+.payment {
+  width: 40%;
+}
+
+.info {
+  background-color: $persian_tiny;
+  padding: 0.75rem;
+  border: 2px solid $persian_light;
+  border-radius: 0.75rem;
+  width: 100%;
+}
+
+.info-text {
+  @include text($weight: 500, $size: 14px, $color: $persian);
+}
+
+.order {
+  width: 100%;
+  background-color: $smoke;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.order-title {
+  @include text($weight: 700, $color: $persian);
+}
+
+.header-title {
+  @include text($color: $taupe, $weight: 700);
+  text-transform: uppercase;
+}
+
+.order-text {
+  @include text($weight: 600);
+}
+
+.line {
+  width: 100%;
+  border: 0.2px solid $platinium;
+}

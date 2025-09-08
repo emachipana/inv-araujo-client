@@ -1,0 +1,46 @@
+<div 
+  class="container"
+  (click)="redirect()"
+>
+  <section class="flex-row">
+    <img 
+      [src]="mainImg(product.images[0])"
+      class="image"
+    />
+    <section 
+      class="flex-column"
+      style="gap: 0.5rem; max-width: 200px;"
+    >
+      <div 
+        class="flex-column"
+        style="gap: 0; width: 100%;"
+      >
+        <p class="product-name">{{product.name}}</p>
+        <p class="product-description">{{product.description}}</p>
+      </div>
+      <app-status-badge
+        status="PRODUCT"
+        [text]="product.brand"
+        [fontSize]="11"
+      />
+    </section>
+  </section>
+  <div 
+    class="flex-column"
+    style="gap: 0.2rem; align-items: flex-end;"
+  >
+    <p class="stock">
+      @if(product.stock <= 0) {
+        Agotado
+      }@else {
+        {{product.stock}} {{product.stock <= 1 ? 'disponible' : 'disponibles'}}
+      }
+    </p>
+    <div class="flex-row">
+      <p class="price" [ngClass]="{'hasDiscount': !!product.discount}">{{product.price | currency: 'S/.'}}</p>
+      @if(!!product.discount) {
+        <p class="price">{{product.discount.price | currency: 'S/.'}}</p>
+      }
+    </div>
+  </div>
+</div>

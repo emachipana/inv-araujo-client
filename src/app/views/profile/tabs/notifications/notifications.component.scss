@@ -1,0 +1,22 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($width: 100%, $direction: column, $gap: 1rem);
+  min-height: 200px;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+  font-size: 25px;
+  color: $persian;
+}
+
+.text {
+  @include text($color: $dim, $size: 17px, $weight: 600);
+}

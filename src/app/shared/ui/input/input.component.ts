@@ -23,6 +23,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() fontSize: 'font-sm' | 'font-md' | 'font-xl' | 'font-xxl' = "font-xl";
   @Input() icon?: string;
   @Input() isDisabled: boolean = false;
+  @Input() min?: string;
   @Input({required: true}) placeholder: string = "";
   @Input() type: string = "text";
   error: InputSignal<string> = input("");
@@ -56,10 +57,6 @@ export class InputComponent implements ControlValueAccessor {
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
-  
-  // setDisabledState?(isDisabled: boolean): void {
-  //   this.isDisabled = isDisabled;
-  // }
 
   onInputChange(event: Event): void {
     const val = (event.target as HTMLInputElement).value;

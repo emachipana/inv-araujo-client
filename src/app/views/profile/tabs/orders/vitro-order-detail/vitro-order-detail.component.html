@@ -1,0 +1,702 @@
+<div class="container" [ngStyle]="{ alignItems: isLoading ? 'center' : 'flex-start' }">
+  @if(isLoading) {
+    <spinner size="md"/>
+  }@else {
+    <section
+      class="flex-row"
+      (click)="goBack()"
+      style="cursor: pointer;"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      <p class="text">Volver a mis pedidos</p>
+    </section>
+    @if (!order) {
+      <p>No se encontro el pedido</p>
+    }@else {
+      <div class="wrapper">
+        <div class="main-section">
+          <div class="card border-type1">
+            <section
+              class="flex-row"
+              style="justify-content: space-between; width: 100%;"
+            >
+              <div class="flex-row">
+                <mat-icon>eco</mat-icon>
+                <p class="name">Pedido #{{order.id}}</p>
+              </div>
+              <app-status-badge
+                [status]="(order.status === 'PENDIENTE' && order.isReady) ? 'TERMINADO' : order.status === 'PENDIENTE' ? 'EN_PRODUCCION' : order.status"
+              />
+            </section>
+            <section class="card-section">
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Fecha de pedido</p>
+                <p class="text">{{ order.initDate | date:"d 'de' MMMM 'de' yyyy" }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Fecha de entrega</p>
+                <p class="text">{{ order.finishDate | date:"d 'de' MMMM 'de' yyyy" }}</p>
+              </div>
+              <div
+                class="flex-column"
+                style="gap: 0.1rem"
+              >
+                <p class="header-text">Tipo de entrega</p>
+                <app-status-badge 
+                  [status]="!order.shippingType ? 'POR_DEFINIR' : (order.shippingType === 'ENVIO_AGENCIA' ? 'CARD_ENVIO_AGENCIA' : 'CARD_RECOJO_ALMACEN')"
+                />
+              </div>
+              @if(order.shippingType === 'ENVIO_AGENCIA') {
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Ubicación del pedido</p>
+                  <p class="text">{{ order.location === "ALMACEN" ? "En almacén" : "En agencia" }}</p>
+                </div>
+              }
+              @if(order.invoice) {
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Serie de {{order.invoice.invoiceType.toLocaleLowerCase()}}</p>
+                  <p class="text">{{ order.invoice.serie }}-{{ order.invoice.id }}</p>
+                </div>
+              }
+            </section>
+          </div>
+          <div class="card border-type1" style="align-items: flex-start">
+            <div 
+              class="flex-row"
+              style="justify-content: space-between; width: 100%;"
+            >
+              <div class="flex-row">
+                <mat-icon>eco</mat-icon>
+                <p class="name">Variedades</p>
+              </div>
+              <p class="text">
+                {{ totalVarieties }} plántulas
+              </p>
+            </div>
+            @for (item of orderItems; track item.id) {
+              <app-variety-card
+                [variety]="item"
+              />
+            }
+          </div>
+          <div class="card border-type1" style="align-items: flex-start;">
+            <div class="flex-row" style="width: 100%; justify-content: space-between">
+              <div class="flex-row">
+                <mat-icon>
+                  @if(order.shippingType === 'ENVIO_AGENCIA') {
+                    local_shipping
+                  } @else {
+                    warehouse
+                  }
+                </mat-icon>
+                <p class="name" style="white-space: nowrap;">
+                  @if(order.shippingType === 'ENVIO_AGENCIA') {
+                    Datos de envío (Shalom)
+                  } @else {
+                    Datos de recojo (Sapallanga)
+                  }
+                </p>
+              </div>
+              @if(order.shippingType === "RECOJO_ALMACEN") {
+                <app-button
+                  fontSize="font-md"
+                  (onClick)="showMapDialog()"
+                >
+                  Ver en mapa
+                </app-button>
+              }
+            </div>
+            @if(order.shippingType === 'ENVIO_AGENCIA') {
+              <section class="card-section">
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Destino</p>
+                  <p class="text">{{ order.city }}, {{ order.department }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">A nombre de</p>
+                  <p class="text">{{ order.receiverInfo?.fullName }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">DNI</p>
+                  <p class="text">{{ order.receiverInfo?.document }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Teléfono</p>
+                  <p class="text">{{ order.receiverInfo?.phone }}</p>
+                </div>
+                @if(order.location === "AGENCIA" && order.shippingType === "ENVIO_AGENCIA") {
+                  <div
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Código tracking</p>
+                    <p class="text">{{ order.receiverInfo?.trackingCode }}</p>
+                  </div>
+                  <div
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Código de recojo</p>
+                    <p class="text">{{ order.receiverInfo?.code }}</p>
+                  </div>
+                }
+              </section>
+            }@else {
+              <section
+                class="card-section"
+                style="justify-content: flex-start; gap: 2rem;"
+              >
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Fecha de recojo</p>
+                  <p class="text">{{ order.pickupInfo?.date| date:"d 'de' MMMM 'de' yyyy" }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">Hora de recojo</p>
+                  <p class="text">{{ formatTime(order.pickupInfo?.hour) }}</p>
+                </div>
+              </section>
+            }
+            @if(order.evidence) {
+              <section
+                class="card-section"
+                style="justify-content: flex-start; gap: 2rem;"
+              >
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem"
+                >
+                  <p class="header-text">{{ order.shippingType === "ENVIO_AGENCIA" ? "Puesto en agencia" : "Entregado en almacén" }}</p>
+                  <p class="text">{{ order.deliveredAt| date:"d 'de' MMMM 'de' yyyy,  h:mm a" }}</p>
+                </div>
+                <div
+                  class="flex-column"
+                  style="gap: 0.1rem; margin-top: -1rem"
+                >
+                  <p class="header-text">{{ order.shippingType === "ENVIO_AGENCIA" ? "Evidencia de envío" : "Evidencia de recojo" }}</p>
+                  <img
+                    [src]="order.evidence.url"
+                    alt="Evidencia de envío"
+                    class="evidence"
+                  />
+                </div>
+              </section>
+            }
+            @if(order.location !== "AGENCIA" && order.status !== "ENTREGADO" && order.status !== "CANCELADO") {
+              <section 
+                class="card-section"
+                style="justify-content: center;"
+              >
+                <app-button
+                  theme="warning"
+                  fontSize="font-md"
+                  (onClick)="showEditShippingDialog()"
+                  icon="edit"
+                >
+                  @if(order.shippingType === "ENVIO_AGENCIA") {
+                    Editar datos de envío
+                  } @else {
+                    Editar datos de recojo
+                  }
+                </app-button>
+              </section>
+            }
+          </div>
+        </div>
+        <div 
+          class="second-section" 
+          style="position: sticky;" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}"
+        >
+          <div 
+            class="card border-type1"
+            style="align-items: flex-start; gap: 0.8rem;"
+          >
+            <div class="flex-row">
+              <mat-icon>wallet</mat-icon>
+              <p class="name">Resumen del pedido</p>
+            </div>
+            <section
+              class="flex-column"
+              style="gap: 0.3rem; width: 100%;"
+            >
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">Total</p>
+                <p class="text">{{ order.total | currency: 'S/' }}</p>
+              </div>
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">Adelanto</p>
+                <p class="text">{{ order.totalAdvance | currency: 'S/' }}</p>
+              </div>
+              <div
+                class="flex-row"
+                style="width: 100%; justify-content: space-between;"
+              >
+                <p class="text taupe">Pendiente</p>
+                <p class="text blue">{{ order.pending | currency: 'S/' }}</p>
+              </div>
+            </section>
+            @if(order.invoice?.pdfUrl) {
+              <hr class="line" />
+              <app-button
+                fontSize="font-md"
+                theme="secondary"
+                [fullSize]="true"
+                icon="receipt"
+                (onClick)="openInvoiceDialog()"
+              >
+                Ver {{ order.invoice?.invoiceType?.toLocaleLowerCase() }}
+              </app-button>
+            }
+            <app-button
+              fontSize="font-md"
+              theme="blue"
+              [fullSize]="true"
+              icon="account_balance_wallet"
+              (onClick)="displayAdvancesDialog = true"
+            >
+              Ver adelantos
+            </app-button>
+            @if(!order.shippingType && order.pending <= 0 && order.isReady) {
+              <app-button
+                fontSize="font-md"
+                theme="purple"
+                [fullSize]="true"
+                icon="local_shipping"
+                (onClick)="displayShippingDialog = true"
+              >
+                Elegir tipo de entrega
+              </app-button>
+            }
+            @if(!order.shippingType && order.pending > 0 && order.isReady) {
+              <p class="header-text red">*Para continuar con la entrega debes completar el monto pendiente {{ order.pending | currency: 'S/.' }}</p>
+            }
+          </div>
+        </div>
+      </div>
+      <p-dialog
+        [(visible)]="displayMapDialog" 
+        [style]="{width: '90vw', maxWidth: '800px'}"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [dismissableMask]="true"
+      >
+        @if(warehouseSelected) {
+          <ng-template #headless>
+            <app-map [warehouse]="warehouseSelected"></app-map>
+          </ng-template>
+        }
+      </p-dialog>
+      <p-dialog 
+        [(visible)]="editShippingDialog"
+        [modal]="true"
+        [dismissableMask]="true"
+        [closable]="true"
+        (onHide)="editShippingDialog = false"
+        [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+      >
+        <ng-template #headless>
+          <mat-icon 
+            class="close-icon cursor-pointer"
+            (click)="editShippingDialog = false"
+          >
+            close
+          </mat-icon>
+          @if (order.shippingType === 'ENVIO_AGENCIA') {
+            <form class="form" [formGroup]="agencyForm" (ngSubmit)="onAgencyUpdate()">
+              <h5 class="form-title">Editar datos de envío</h5>
+              <section class="input-section">
+                <app-select
+                  formControlName="department"
+                  id="department"
+                  [options]="departmentOptions"
+                  label="Departamento"
+                  [error]="errorMessage(agencyForm, 'department', {})"
+                />
+                <app-select
+                  formControlName="city"
+                  id="city"
+                  [options]="provinceOptions"
+                  [isDisabled]="currentDep <= 0"
+                  label="Ciudad"
+                  [error]="errorMessage(agencyForm, 'city', {})"
+                />
+              </section>
+              <custom-input
+                formControlName="fullName"
+                id="fullName"
+                label="Nombre completo"
+                placeholder="ej. Jhon Doe"
+                [error]="errorMessage(agencyForm, 'fullName', {minlength: 3})"
+              />
+              <section class="input-section">
+                <custom-input
+                  formControlName="dni"
+                  id="dni"
+                  placeholder="ej. 12345678"
+                  label="DNI"
+                  [error]="errorMessage(agencyForm, 'dni', {minlength: 8, maxlength: 8})"
+                />
+                <custom-input
+                  formControlName="phone"
+                  id="phone"
+                  placeholder="ej. 912345678"
+                  label="Teléfono"
+                  [error]="errorMessage(agencyForm, 'phone', {minlength: 9, maxlength: 9})"
+                />
+              </section>
+              <app-button
+                type="submit"
+                theme="warning"
+                fontSize="font-xl"
+                [isDisabled]="agencyForm.invalid || isSubmittingShipping"
+                [isLoading]="isSubmittingShipping"
+                style="align-self: center; margin-top: 1rem;"
+              >
+                Actualizar datos
+              </app-button>
+            </form>
+          } @else {
+            <form [formGroup]="warehouseForm" (ngSubmit)="onWarehouseUpdate()" class="form">
+              <h5 class="form-title">Editar datos de recojo</h5>
+              <section class="input-section">
+                <custom-input
+                  type="date"
+                  formControlName="date"
+                  id="date"
+                  [min]="minDate"
+                  label="Fecha"
+                  placeholder="Seleccione una fecha"
+                  [error]="errorMessage(warehouseForm, 'date', {})"
+                />
+                <app-select 
+                  formControlName="time"
+                  id="time"
+                  [options]="availableHours"
+                  label="Hora"
+                  [error]="errorMessage(warehouseForm, 'time', {})"
+                  placeholder="Seleccione una hora"
+                  [isDisabled]="!warehouseForm.get('time')?.enabled"
+                />
+              </section>
+              <app-button
+                type="submit"
+                theme="warning"
+                fontSize="font-xl"
+                [isDisabled]="warehouseForm.invalid || isSubmittingShipping"
+                [isLoading]="isSubmittingShipping"
+                style="align-self: center; margin-top: 1rem;"
+              >
+                Actualizar datos
+              </app-button>
+            </form>
+          }
+        </ng-template>
+      </p-dialog>
+      <p-dialog 
+        [(visible)]="displayShippingDialog"
+        [modal]="true"
+        [dismissableMask]="true"
+        [closable]="true"
+        (onHide)="onShippingDialogClose()"
+        [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+      >
+        <ng-template #headless>
+          <mat-icon
+            class="close-icon cursor-pointer"
+            (click)="onShippingDialogClose()"
+          >
+            close
+          </mat-icon>
+          <div 
+            class="flex-column"
+            style="width: 100%; gap: 1rem;"
+          >
+            <h4 class="form-title">Tipo de entrega</h4>
+            <app-shipping-card 
+              [options]="shippingOptions"
+              (selected)="onShipChange($event)"
+            />
+            @if (shipType$.value === "ENVIO_AGENCIA") {
+              <div class="main-card border-type1">
+                <div class="flex-row">
+                  <mat-icon>local_shipping</mat-icon>
+                  <h4 class="name">Datos de envío</h4>
+                </div>
+                <form 
+                  class="form" [formGroup]="agencyForm"
+                  (submit)="onAgencySubmit()"
+                >
+                  <section class="input-section">
+                    <app-select 
+                      formControlName="department"
+                      id="department"
+                      [options]="departmentOptions"
+                      label="Departamento"
+                      [error]="errorMessage(agencyForm, 'department', {})"
+                    />
+                    <app-select
+                      formControlName="city"
+                      id="city"
+                      [options]="provinceOptions"
+                      [isDisabled]="currentDep <= 0"
+                      label="Ciudad"
+                      [error]="errorMessage(agencyForm, 'city', {})"
+                    />
+                  </section>
+                  <custom-input
+                    formControlName="fullName"
+                    id="fullName"
+                    label="Nombre completo"
+                    placeholder="ej. Jhon Doe"
+                    [error]="errorMessage(agencyForm, 'fullName', {})"
+                  />
+                  <section class="input-section">
+                    <custom-input
+                      formControlName="dni"
+                      id="dni"
+                      placeholder="ej. 12345678"
+                      label="DNI"
+                      [error]="errorMessage(agencyForm, 'dni', {minlength: 8, maxlength: 8})"
+                    />
+                    <custom-input
+                      formControlName="phone"
+                      id="phone"
+                      placeholder="ej. 912345678"
+                      label="Teléfono"
+                      [error]="errorMessage(agencyForm, 'phone', {minlength: 9, maxlength: 9})"
+                    />
+                  </section>
+                  <app-button
+                    type="submit"
+                    theme="purple"
+                    [fullSize]="true"
+                    fontSize="font-md"
+                    [isDisabled]="agencyForm.invalid || isSubmittingShipping"
+                  >
+                    Guardar
+                  </app-button>
+                </form>
+              </div>
+            }@else if(shipType$.value === "RECOJO_ALMACEN") {
+              <div class="main-card border-type1">
+                <div class="flex-row">
+                  <mat-icon>edit_calendar</mat-icon>
+                  <h4 class="name">Programar recojo</h4>
+                </div>
+                <div class="warehouse-card">
+                  <div class="flex-row">
+                    <mat-icon 
+                      class="dim"
+                      style="font-size: 1.5rem"
+                    >
+                      location_on
+                    </mat-icon>
+                    <h5 class="warehouse-title dim">Almacen {{warehouseSelected?.name}}</h5>
+                  </div>
+                  <div 
+                    class="flex-column"
+                    style="gap: 0.2rem; width: 100%;"
+                  >
+                    <p class="warehouse-text">{{warehouseSelected?.address}}</p>
+                    <div class="flex-row" style="width: 100%; justify-content: space-between">
+                      <p class="warehouse-text">Horario: Lunes a Sábado 8:00 AM - 6:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+                <form 
+                  class="form" 
+                  [formGroup]="warehouseForm"
+                  (submit)="onWarehouseSubmit()"
+                >
+                  <section class="input-section">
+                    <custom-input
+                      type="date"
+                      formControlName="date"
+                      id="date"
+                      [min]="minDate"
+                      label="Fecha"
+                      placeholder="Seleccione una fecha"
+                      [error]="errorMessage(warehouseForm, 'date', {})"
+                    />
+                    <app-select
+                      formControlName="time"
+                      id="time"
+                      [options]="availableHours"
+                      label="Hora"
+                      [error]="errorMessage(warehouseForm, 'time', {})"
+                      placeholder="Seleccione una hora"
+                      [isDisabled]="!warehouseForm.get('time')?.enabled"
+                    />
+                  </section>
+                  <app-button
+                    type="submit"
+                    theme="purple"
+                    [fullSize]="true"
+                    fontSize="font-md"
+                    [isDisabled]="warehouseForm.invalid || isSubmittingShipping"
+                  >
+                    Guardar
+                  </app-button>
+                </form>
+              </div>
+            }
+          </div>  
+        </ng-template>
+      </p-dialog>
+      <p-dialog 
+        [(visible)]="displayAdvancesDialog"
+        [modal]="true"
+        [dismissableMask]="true"
+        [closable]="true"
+        (onHide)="onAdvancesDialogClose()"
+        [style]="{'width': '90vw', 'maxWidth': '600px', 'padding': '1.8rem', 'position': 'relative'}"
+      >
+        <ng-template #headless>
+          <mat-icon
+            class="close-icon cursor-pointer"
+            (click)="onAdvancesDialogClose()"
+          >
+            close
+          </mat-icon>
+          <h4 
+            class="form-title"
+            style="margin-bottom: 1rem;"
+          >
+            @if(registerNewAdvance) {
+              Completar pago
+            }@else {
+              Adelantos
+            }
+          </h4>
+          @if(registerNewAdvance) {
+            <app-payment
+              [isValid]="true"
+              currentTab="checkout"
+              [isLoading]="isRegisteringAdvance"
+              (onPay)="onRegisterAdvance()"
+              [isAdvance]="true"
+              (onCancel)="registerNewAdvance = false"
+            />
+          }@else {
+            <div 
+              class="flex-column"
+              style="gap: 1rem; width: 100%;"
+            >
+              @for (item of advances; track $index) {
+                <div class="advance">
+                  <div 
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Fecha</p>
+                    <p class="text">{{ item.createdAt | date:"d 'de' MMMM yyyy, h:mm a" }}</p>
+                  </div>
+                  <div 
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Monto</p>
+                    <p class="text">{{ item.amount | currency: 'S/' }}</p>
+                  </div>
+                  <div 
+                    class="flex-column"
+                    style="gap: 0.1rem"
+                  >
+                    <p class="header-text">Método</p>
+                    <p class="text">{{ item.paymentType === "TARJETA_ONLINE" ? "Tarjeta" : "Yape" }}</p>
+                  </div>
+                </div>
+              }
+              @if(order.isReady && order.totalAdvance < order.total) {
+                <app-button
+                  fontSize="font-md"
+                  theme="blue"
+                  [fullSize]="true"
+                  icon="account_balance_wallet"
+                  (onClick)="registerNewAdvance = true"
+                >
+                  Completar pago
+                </app-button>
+              }
+            </div>
+          }
+        </ng-template>
+      </p-dialog>
+      <p-dialog
+        [(visible)]="displayInvoiceDialog"
+        [modal]="true"
+        [dismissableMask]="true"
+        [closable]="true"
+        (onHide)="displayInvoiceDialog = false"
+        [style]="{'width': '90vw', 'maxWidth': '1000px', 'height': '90vh'}"
+        [contentStyle]="{'height': '100%', 'padding': '0', 'overflow': 'hidden'}"
+      >
+        <ng-template #headless>
+          <mat-icon 
+            class="close-icon cursor-pointer"
+            (click)="displayInvoiceDialog = false"
+            style="position: absolute; right: 10px; top: 10px; z-index: 1000; background: white; border-radius: 50%;"
+          >
+            close
+          </mat-icon>
+          @if (isInvoiceLoading) {
+            <div class="invoice-loader">
+              <spinner size="xl"></spinner>
+              <p>Cargando {{ order.invoice?.invoiceType?.toLocaleLowerCase() }}...</p>
+            </div>
+          }
+          @if (safePdfUrl) {
+            <iframe
+              title="factura"
+              [src]="safePdfUrl"
+              width="100%"
+              height="100%"
+              style="border: none"
+              (load)="onLoadInvoice()"
+            ></iframe>
+          } @else {
+            <div class="flex items-center justify-center h-full">
+              <p>No se pudo cargar el documento.</p>
+            </div>
+          }
+        </ng-template>
+      </p-dialog>
+    }
+  }
+</div>

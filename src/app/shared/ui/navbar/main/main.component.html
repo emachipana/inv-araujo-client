@@ -1,16 +1,43 @@
 <section class="container">
-  <img 
+  <img
+    (click)="router.navigate(['/'])"
     src="/logo.png"
     class="image"
   />
-  <form [formGroup]="form">
-    <custom-input
-      formControlName="search"
-      id="search"
-      placeholder="Busca un producto..."
-      icon="search"
-    />
-  </form>
+  <div class="search-container" (click)="$event.stopPropagation()">
+    <form 
+      [formGroup]="form"
+      style="max-width: 250px;"
+    >
+      <custom-input
+        formControlName="search"
+        id="search"
+        placeholder="Busca un producto..."
+        icon="search"
+      />
+    </form>
+    @if (isOpenSearch) {
+      <div class="search-results-container">
+        <div class="search-results-content">
+          @if(isSearching) {
+            <spinner size="md"/>
+          }@else {
+            @for (product of searchedProducts; track $index) {
+              <app-product
+                [product]="product"
+                (onClick)="closeSearch()"
+              />
+            }@empty {
+              <div class="flex-row">
+                <mat-icon>trolley</mat-icon>
+                <p class="not-found-text">No se encontraron resultados</p>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
   <div class="section">
     <div class="relative">
       <section class="section cursor-pointer" style="gap: 0.3rem" (mouseenter)="openProfileMenu(profile.show)">
@@ -19,28 +46,36 @@
           <br /> 
           <span style="font-weight: 700;">
             @if (_authService.isLoggedIn()) {
-              {{userFirstName}}
+              {{userFirstName.toLowerCase() | titlecase}}
             }@else {
               Iniciar sesión
             }
           </span>
         </p>
-        <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+        <div class="user-section">
+          <mat-icon class="icon" [ngClass]="{'active': isProfOpen}">person</mat-icon>
+          @if(_authService.isLoggedIn() && unreadCount > 0) {
+            <span class="notification-indicator">{{ unreadCount }}</span>
+          }
+        </div>
       </section>
       <app-menu #profile (onHide)="isProfOpen = false">
         <div class="flex-column">
           @if(_authService.isLoggedIn()) {
             <menu-item
-              (onClick)="router.navigate(['/perfil'])"
+              (onClick)="handleProfileMenu('/perfil', profile.hide)"
             >
               Mi cuenta
             </menu-item>
-            <menu-item 
+            <menu-item
+              [isNotification]="true"
+              [notificationsCount]="unreadCount"
+              (onClick)="handleProfileMenu('/perfil/notificaciones', profile.hide)"
             >
-              Mis compras
+              Notificaciones
             </menu-item>
             <menu-item
-              (onClick)="_authService.logout()"
+              (onClick)="handleLogout(profile.hide)"
             >
               Cerrar sesión
             </menu-item>

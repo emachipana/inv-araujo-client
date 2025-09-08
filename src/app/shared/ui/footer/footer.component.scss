@@ -35,7 +35,7 @@
 }
 
 .text {
-  @include text($weight: 400, $color: $platinium, $hover_color: $platinium, $cursor: pointer);
+  @include text($weight: 400, $color: $platinium, $cursor: pointer);
 }
 
 .link {

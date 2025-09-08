@@ -1,0 +1,22 @@
+@use 'colors.scss' as *;
+@use 'layout.scss' as *;
+
+:host {
+  width: 310px;
+}
+
+.container {
+  @include flex-container($gap: 1rem, $direction: column, $width: 100%);
+}
+
+.img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+
+.text {
+  @include text($weight: 500, $color: $taupe, $size: 15px);
+  text-align: justify;
+}

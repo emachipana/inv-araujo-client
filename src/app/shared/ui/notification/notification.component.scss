@@ -1,0 +1,48 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 100%;
+}
+
+.container {
+  @include flex-container($width: 100%, $justify: space-between);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  border: 1px solid $platinium;
+  transition: .3s ease;
+  position: relative;
+  
+  &:hover {
+    border-color: $taupe;
+  }
+}
+
+.title {
+  @include text($weight: 600, $color: $dim);
+}
+
+.text {
+  @include text($color: $taupe, $size: 14px);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  font-size: 18px;
+  color: $taupe;
+}
+
+.text-icon {
+  @include text($color: $taupe, $size: 15px, $weight: 600);
+}
+
+.point {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  top: -3px;
+  right: -3px;
+}

@@ -9,6 +9,8 @@ export const messageGenerator = (form: FormGroup, name: string, errors: errors):
   const input = form.get(name);
   if(!input || !input.touched) return "";
 
+  if(input.hasError("pattern")) return "Solo se admiten números";
+
   if(input.hasError("required")) return "Este campo es obligatorio";
 
   if(input.hasError("minlength")) return `El mínimo son ${errors.minlength} caracteres`;
@@ -16,8 +18,6 @@ export const messageGenerator = (form: FormGroup, name: string, errors: errors):
   if(input.hasError("maxlength")) return `El máximo son ${errors.maxlength} caracteres`;
 
   if(input.hasError("email")) return "El formato es incorrecto";
-
-  if(input.hasError("pattern")) return "Solo se admiten números";
 
   if(name === "confirmPassword" && form.hasError("passwordMismatch")) return "Las contraseñas no coinciden";
 

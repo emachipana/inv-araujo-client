@@ -1,0 +1,26 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+:host {
+  width: 350px;
+}
+
+.container {
+  @include flex-container($gap: 0.5rem, $width: 100%, $align: flex-start);
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+  color: $persian;
+}
+
+.title {
+  @include text($weight: 700, $size: 20px);
+}
+
+.text {
+  @include text($weight: 600, $size: 15px, $color: $taupe);
+  text-align: justify;
+}

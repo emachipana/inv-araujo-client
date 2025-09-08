@@ -1,0 +1,24 @@
+@for (option of options; track option.id) {
+  <div class="container"
+    (click)="onSelect(option.value)"
+    [ngClass]="{'active': option.checked}"
+  >
+    <label class="flex-row">
+      <input 
+        class="input-radio" 
+        type="radio" 
+        name="shipping-option" 
+        [value]="option.value"
+        [checked]="option.checked"
+      >
+      <span class="custom-radio"></span>
+      <div class="flex-column" style="gap: 0;">
+        <p class="title">{{ option.title }}</p>
+        <p class="subtitle">{{ option.subtitle }}</p>
+      </div>
+    </label>
+    <app-status-badge
+      [status]="option.value"
+    />
+  </div>
+}

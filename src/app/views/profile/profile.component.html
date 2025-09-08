@@ -1,0 +1,74 @@
+<div class="main">
+  <div class="sidebar border-type1" [ngStyle]="{'top': _dataService.isInfoNavbarVisible ? '180px' : '150px'}">
+    <section class="sidebar-header">
+      <img 
+        [src]="this._authService.currentUser$.value?.image?.url || 'default-avatar.jpg'"
+        alt=""
+        class="avatar"
+      >
+      <div class="flex-column">
+        <p class="name">{{ this._authService.currentUser$.value?.fullName?.split(" ")?.slice(0, 3)?.join(" ") | titlecase }}</p>
+        <p class="text">{{ this._authService.currentUser$.value?.username }}</p>
+      </div>
+    </section>
+    <section class="sidebar-body">
+      <app-side-item
+        icon="account_circle"
+        name="Mi cuenta"
+        [currentTab]="currentTab"
+        tabIdentifier="cuenta"
+        [routerLink]="'/perfil'"
+        (click)="onTabChange('')"
+      />
+      <app-side-item
+        icon="receipt"
+        name="Facturación"
+        [currentTab]="currentTab"
+        tabIdentifier="facturacion"
+        [routerLink]="'/perfil/facturacion'"
+        (click)="onTabChange('facturacion')"
+      />
+      <app-side-item
+        icon="shopping_bag"
+        name="Mis pedidos"
+        [currentTab]="currentTab"
+        tabIdentifier="pedidos"
+        [routerLink]="'/perfil/pedidos'"
+        (click)="onTabChange('pedidos')"
+      />
+      <app-side-item
+        icon="notifications"
+        name="Notificaciones"
+        [currentTab]="currentTab"
+        tabIdentifier="notificaciones"
+        [routerLink]="'/perfil/notificaciones'"
+        (click)="onTabChange('notificaciones')"
+        [isNotification]="true"
+        [notifications]="unreadCount"
+      />
+      <app-side-item
+        icon="lock"
+        name="Cambiar contraseña"
+        [currentTab]="currentTab"
+        tabIdentifier="contrasena"
+        [routerLink]="'/perfil/contrasena'"
+        (click)="onTabChange('contrasena')"
+      />
+      <app-side-item
+        icon="logout"
+        name="Cerrar sesión"
+        tabIdentifier="logout"
+        (click)="onTabChange('logout')"
+      />
+    </section>
+  </div>
+  <div class="content">
+    <div>
+      <h2 class="content-title">
+        {{ getHeaderData().title }}
+      </h2>
+      <p class="content-sub">{{ getHeaderData().subtitle }}</p>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

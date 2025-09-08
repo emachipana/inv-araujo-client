@@ -1,0 +1,56 @@
+@use 'layout.scss' as *;
+@use 'colors.scss' as *;
+
+.main {
+  padding: 2rem 1rem;
+  @include flex-container($width: 100%, $justify: space-between, $align: flex-start, $gap: 2rem);
+}
+
+.sidebar {
+  position: sticky;
+  top: 2.5rem;
+  width: 25%;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgb(214, 214, 214);
+  @include flex-container($gap: 1rem);
+}
+
+.sidebar-body {
+  padding: 1rem;
+  @include flex-container($direction: column, $gap: 0.5rem);
+}
+
+.content {
+  @include flex-container($direction: column, $gap: 0.75rem, $width: 75%, $align: flex-start, $justify: flex-start);
+}
+
+.name {
+  @include text($weight: 700, $size: 18px);
+}
+
+.text {
+  @include text($color: $taupe);
+}
+
+.flex-column {
+  gap: 0;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid $platinium;
+}
+
+.content-title {
+  @include text($weight: 700, $size: 26px);
+}
+
+.content-sub {
+  @include text($color: $taupe, $size: 17px);
+}

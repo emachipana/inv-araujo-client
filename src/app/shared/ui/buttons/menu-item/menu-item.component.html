@@ -1,6 +1,11 @@
 <div (click)="handleClick()" class="container cursor-pointer">
-  <p class="name">
-    <ng-content></ng-content>
-  </p>
+  <div class="flex-row">
+    <p class="name">
+      <ng-content></ng-content>
+    </p>
+    @if(isNotification && notificationsCount > 0) {
+      <span class="notification">{{notificationsCount}}</span>
+    }
+  </div>
   <hr />
 </div>

@@ -69,7 +69,7 @@
               </p-carousel>
             }
           </div>
-          <div class="flex-column">
+          <div class="flex-column" style="width: 55%">
             <section class="detail flex-column">
               <p class="text">TIENDA / {{product.categoryName.toUpperCase()}}</p>
               <h3 class="name">{{product.name}}</h3>
@@ -80,12 +80,12 @@
                 }
               </div>
               <p class="text">{{product.description}}</p>
-              <p class="discount-price"><span class="text">Distribución: </span>{{product.unit.toLocaleLowerCase()}}</p>
+              <p class="discount-price"><span class="text">Distribución: </span>{{units[product.unit]}}</p>
             </section>
             <section class="flex-column">
               <p [ngClass]="{'text red': product.stock <= 0, 'text gray': product.stock > 0}">
                 @if (product.stock <= 0) {
-                  Sin stock
+                  Agotado
                 } @else {
                   {{product.stock}} disponibles
                 }

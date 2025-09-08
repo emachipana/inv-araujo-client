@@ -1,0 +1,93 @@
+<app-banner-info
+  title="¿Tienes alguna consulta?"
+  text="Estamos aquí para resolverla"
+/>
+<section class="container">
+  <div class="flex-column">
+    <h3 class="title">Datos de <span class="persian">contacto</span></h3>
+    <div class="contact-card">
+      <div class="flex-row">
+        <mat-icon class="persian">location_on</mat-icon>
+        <p class="contact-text">Sapallanga, Huancayo, Perú</p>
+      </div>
+      <div class="flex-row">
+        <mat-icon class="persian">mail</mat-icon>
+        <p class="contact-text">{{'inversionesaraujojl@gmail.com'}}</p>
+      </div>
+      <div class="flex-row">
+        <mat-icon class="persian">phone</mat-icon>
+        <p class="contact-text">+51 990849369</p>
+      </div>
+    </div>
+  </div>
+  <div 
+    class="flex-column"
+    style="max-width: 600px"
+  >
+    <h3 class="title">Formulario de <span class="persian">contacto</span></h3>
+    <p class="text">
+      Si deseas incrementar exponencialmente tu producción agrícola, aprovechar
+      tu terreno de cultivo y mantener tus plantas protegidas de plagas y
+      enfermedades, envíanos tus datos. Contamos con la experiencia y equipos
+      necesarios para asegurar resultados.
+    </p>
+    <form 
+      class="form" 
+      [formGroup]="messageForm"
+      (submit)="sendMessage()"
+    >
+      <section class="input-section">
+        <custom-input
+          formControlName="fullName"
+          id="fullName"
+          placeholder="Ingresa tus nombres y apellidos"
+          label="Nombre"
+          [error]="errorMessage(messageForm, 'fullName', {minlength: 3})"
+        />
+        <custom-input
+          formControlName="email"
+          id="email"
+          placeholder="ej. inversiones@gmail.com"
+          label="Correo"
+          [error]="errorMessage(messageForm, 'email', {})"
+        />
+      </section>
+      <section class="input-section">
+        <custom-input
+          formControlName="phone"
+          id="phone"
+          placeholder="ej. 990849369"
+          label="Teléfono"
+          [error]="errorMessage(messageForm, 'phone', {minlength: 9, maxlength: 9})"
+        />
+        <custom-input
+          formControlName="subject"
+          id="subject"
+          placeholder="Ingresa el tema de interés"
+          label="Asunto"
+          [error]="errorMessage(messageForm, 'subject', {minlength: 3})"
+        />
+      </section>
+      <custom-textarea
+        id="content"
+        label="Mensaje"
+        placeholder="Ingresa tu mensaje"
+        [rows]="4"
+        [cols]="50"
+        formControlName="content"
+        [error]="errorMessage(messageForm, 'content', {minlength: 10})"
+      />
+      <app-button
+        type="submit"
+        [fullSize]="true"
+        fontSize="font-xl"
+        style="margin-top: 0.5rem;"
+        [isDisabled]="isLoading || messageForm.invalid"
+        icon="send"
+        [isLoading]="isLoading"
+      >
+        Enviar consulta
+      </app-button>
+    </form>
+  </div>
+</section>

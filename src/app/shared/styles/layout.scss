@@ -14,7 +14,7 @@
 
 @mixin text(
   $size: 1rem, $weight: 500, $color: inherit, $decoration: none,
-  $cursor: inherit, $align: start, $hover_color: inherit
+  $cursor: inherit, $align: start
   ) {
   font-size: $size;
   font-weight: $weight;
@@ -22,11 +22,6 @@
   text-decoration: $decoration;
   cursor: $cursor;
   text-align: $align;
-  transition: color .1s ease;
-
-  &:hover {
-    color: $hover_color;
-  }
 }
 
 @mixin image($height: 100px, $width: auto, $radius: 1rem, $cursor: pointer) {

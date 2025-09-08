@@ -33,7 +33,7 @@ export class CartModalComponent {
   }
 
   toCheckout(): void {
-    this.router.navigate(['/carrito'], {queryParams: {tab: 'checkout'}});
+    this.router.navigate(['/carrito']);
     this.onClose();
   }
 }

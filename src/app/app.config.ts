@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -11,6 +11,12 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { provideHotToastConfig } from '@ngxpert/hot-toast';
 import { provideNgxStripe } from 'ngx-stripe';
 import { environment } from '../environments/environment';
+import { registerLocaleData } from '@angular/common';
+import localeEsPE from '@angular/common/locales/es-PE';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+
+registerLocaleData(localeEsPE);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideHotToastConfig({
       position: "top-center"
     }),
+    { provide: LOCALE_ID, useValue: 'es-PE' },
     providePrimeNG({
       theme: {
         preset: Aura,
@@ -31,6 +38,8 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: false
         }
       }
-    })
+    }),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+    provideAuth(() => getAuth()),
   ]
 };

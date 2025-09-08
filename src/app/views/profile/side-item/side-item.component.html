@@ -1,0 +1,18 @@
+<a 
+  class="container"
+  [ngClass]="{'active': isActive()}"
+  (click)="onTabChange()"
+  [attr.aria-current]="isActive() ? 'page' : null"
+  role="button"
+  tabindex="0"
+  (keydown.enter)="onTabChange()"
+  (keydown.space)="$event.preventDefault(); onTabChange()"
+>
+  <div class="flex-row">
+    <mat-icon class="icon" aria-hidden="true">{{ icon }}</mat-icon>
+    <span class="name">{{ name }}</span>
+  </div>
+  @if(isNotification && notifications > 0) {
+    <div class="notifications">{{ notifications }}</div>
+  }
+</a>

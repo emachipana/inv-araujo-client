@@ -12,5 +12,6 @@ export interface Product {
   categoryId: number,
   categoryName: string,
   images: ProductImage[],
-  discount: Discount | null
+  discount: Discount | null,
+  isActive?: boolean
 }

@@ -9,6 +9,7 @@
     </label>
   }
   <section
+  [ngStyle]="{'pointer-events': isDisabled ? 'none' : null}"
     class="input-section"
     [ngClass]="color()"
   >
@@ -34,7 +35,7 @@
       @for (option of options; track $index) {
         <option 
           [value]="option.id"
-          [selected]="option.id === +value"
+          [selected]="option.id === value"
         >
           {{ option.content }}
         </option>

@@ -1,0 +1,67 @@
+<div>
+  <section
+    class="flex-row"
+    style="width: 100%; justify-content: space-between; margin-bottom: 1rem;"
+  >
+    <div class="flex-row">
+      <div 
+        class="button"
+        [ngClass]="{ active: currentTab === 'orders' }"
+        (click)="currentTab = 'orders'"
+      >
+        Productos
+      </div>
+      <div 
+        class="button"
+        [ngClass]="{ active: currentTab === 'invitro' }"
+        (click)="currentTab = 'invitro'"
+      >
+        Invitro
+      </div>
+    </div>
+    @if ((currentTab === 'orders' && totalOrders > 0) || (currentTab === 'invitro' && totalVitroOrders > 0)) {
+      <div class="pagination-container mt-4">
+        <p-paginator 
+          [first]="currentTab === 'orders' ? firstOrders : firstVitroOrders"
+          [rows]="rows" 
+          [totalRecords]="currentTab === 'orders' ? totalOrders : totalVitroOrders"
+          (onPageChange)="onPageChange($event)"
+          [showFirstLastIcon]="true"
+        />
+      </div>
+    }
+  </section>
+  <div class="orders-container">
+    @if (isLoading && ((currentTab === 'orders' && orders.length === 0) || (currentTab === 'invitro' && vitroOrders.length === 0))) {
+      <spinner size="md" />
+    } @else {
+      @if (currentTab === 'orders') {
+        @for (order of orders; track order.id) {
+          <app-order-card 
+            [order]="order"
+            type="order"
+            (click)="viewOrderDetails(order.id)"
+          />
+        }
+        @if (orders.length === 0) {
+          <div class="no-orders">
+            <p>No se encontraron pedidos</p>
+          </div>
+        }
+      } @else if (currentTab === 'invitro') {
+        @for (vitro of vitroOrders; track vitro.id) {
+          <app-order-card 
+            [order]="vitro"
+            type="invitro"
+            (click)="viewOrderDetails(vitro.id)"
+          />
+        }
+        @if (vitroOrders.length === 0) {
+          <div class="no-orders">
+            <p>No se encontraron pedidos de vitro</p>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

@@ -29,7 +29,7 @@
           <div
             (click)="changeAction('login')"
             class="flex-row item-modal-header cursor-pointer"
-            [ngClass]="{'active': _loginModalService.currentAction === 'login'}"
+            [ngClass]="{'active': _loginModalService.currentAction$.value === 'login'}"
           >
             <mat-icon>person</mat-icon>
             <p class="text-modal-header">Iniciar sesión</p>
@@ -37,7 +37,7 @@
           <div
             (click)="changeAction('register')"
             class="flex-row item-modal-header cursor-pointer"
-            [ngClass]="{'active': _loginModalService.currentAction === 'register'}"
+            [ngClass]="{'active': _loginModalService.currentAction$.value === 'register'}"
           >
             <mat-icon>person_add</mat-icon>
             <p class="text-modal-header">Registrarme</p>
@@ -51,33 +51,15 @@
             icon="alternate_email"
             [error]="errorMessage(form, 'username', {})"
           />
-          <custom-input 
-            id="password"
-            formControlName="password"
-            placeholder="Contraseña"
-            icon="lock"
-            type="password"
-            [error]="errorMessage(form, 'password', {minlength: 6})"
-          />
-          @if (_loginModalService.currentAction === "register") {
+          @if (_loginModalService.currentAction$.value === "login") {
             <custom-input 
-              id="confirmPassword"
-              formControlName="confirmPassword"
-              type="password"
-              placeholder="Confirmar la contraseña"
+              id="password"
+              formControlName="password"
+              placeholder="Contraseña"
               icon="lock"
-              [error]="errorMessage(form, 'confirmPassword', {})"
+              type="password"
+              [error]="errorMessage(form, 'password', {minlength: 6})"
             />
-            <div class="flex-row" style="margin-bottom: 0.4rem;">
-              <p class="base-form-text">¿Ya tienes una cuenta?</p>
-              <p
-                class="link"
-                (click)="changeAction('login')"
-              >
-                Iniciar sesión
-              </p>
-            </div>
-          }@else {
             <div>
               <div class="flex-row" style="margin-bottom: 0.4rem;">
                 <p class="base-form-text">¿No tienes una cuenta?</p>
@@ -90,30 +72,54 @@
               </div>
               <p class="link">Olvidé mi contraseña</p>
             </div>
+          } @else {
+            <div class="flex-row" style="margin-bottom: 0.4rem;">
+              <p class="base-form-text">¿Ya tienes una cuenta?</p>
+              <p
+                class="link"
+                (click)="changeAction('login')"
+              >
+                Iniciar sesión
+              </p>
+            </div>
           }
           <app-button 
             style="align-self: center;"
             [isLoading]="isLoading"
             [isDisabled]="form.invalid || isLoading"
           >
-            @if (_loginModalService.currentAction === "login") {
-              Iniciar sesión
-            }@else {
-              Registrarme
+            @if (_loginModalService.currentAction$.value === "login") {
+              @if (isLoading) {
+                Iniciando...
+              } @else {
+                Iniciar sesión
+              }
+            } @else {
+              @if (isLoading) {
+                Registrando...
+              } @else {
+                Registrarme
+              }
             }
           </app-button>
         </form>
         <button
           class="flex-row button-google cursor-pointer"
           style="align-self: center;"
+          (click)="onGoogleSignIn()"
+          [disabled]="isGoogleLoading"
         >
           <img
             class="button-google-icon"
             alt="google-logo"
-            src="google.svg"
+            src="/google.svg"
           />
           <p class="button-google-text">
-            Continuar con Google
+            @if (isGoogleLoading) {
+              Ingresando...
+            } @else {
+              Continuar con Google
+            }
           </p>
         </button>
       </div>

@@ -53,6 +53,22 @@
   }
 }
 
+.blue {
+  background-color: $blue;
+
+  &:hover {
+    background-color: $blue_hover;
+  }
+}
+
+.purple {
+  background-color: $purple;
+
+  &:hover {
+    background-color: $purple_hover;
+  }
+}
+
 .icon {
   width: 18px;
   height: 18px;

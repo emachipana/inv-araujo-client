@@ -1,0 +1,46 @@
+<div class="input-container">
+  @if(label) {
+    <label 
+      [htmlFor]="id"
+      [ngClass]="fontSize"
+      class="input-label"
+    >
+      {{ label }}
+    </label>
+  }
+  <section
+    [ngStyle]="{'pointer-events': isDisabled ? 'none' : null}"
+    class="input-section"
+    [ngClass]="color()"
+  >
+    @if (isDisabled) {
+      <div class="disabled"></div>
+    }
+    @if (icon) {
+      <mat-icon 
+        class="input-icon" 
+        [ngClass]="color()"
+      >{{ icon }}</mat-icon>
+    }
+    <textarea
+      class="custom-textarea"
+      [id]="id"
+      [ngClass]="fontSize"
+      [placeholder]="placeholder"
+      [value]="value"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (input)="onInputChange($event)"
+      [rows]="rows"
+      [cols]="cols"
+      [style.resize]="'none'"
+    ></textarea>
+  </section>
+  @if(error()) {
+    <p 
+      class="input-red font-md"
+    >
+      {{ error() }}
+    </p>
+  }
+</div>
