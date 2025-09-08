@@ -3,6 +3,7 @@
     <ngx-stripe-elements [stripe]="stripe" [elementsOptions]="stripeElementsOptions">
       <ngx-stripe-payment 
         (change)="onPaymentChange($event)"
+        [options]="paymentOptions"
       />
       <div style="margin-top: 1rem;">
         <app-button

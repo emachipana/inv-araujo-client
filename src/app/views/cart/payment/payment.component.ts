@@ -4,7 +4,7 @@ import {
   injectStripe,
   StripePaymentElementComponent
 } from 'ngx-stripe';
-import { StripeElements, StripeElementsOptions } from '@stripe/stripe-js';
+import { StripeElements, StripeElementsOptions, StripePaymentElementOptions } from '@stripe/stripe-js';
 import { environment } from '../../../../environments/environment';
 import { CartService } from '../../../services/cart.service';
 import { PaymentService } from '../../../services/payment.service';
@@ -19,7 +19,6 @@ import { PickupInfoRequest } from '../../../shared/models/PickupInfoRequest';
 import { departments, provinces } from '../../../data/places';
 import { AuthService } from '../../../services/auth.service';
 import { InvoiceDetailRequest } from '../../../shared/models/InvoiceDetailRequest';
-import { ProfileService } from '../../../services/profile.service';
 
 @Component({
   selector: 'app-payment',
@@ -61,6 +60,22 @@ export class PaymentComponent implements OnInit, AfterViewInit {
     locale: 'es',
     clientSecret: "",
   };
+
+  paymentOptions: StripePaymentElementOptions = {
+    layout: {
+      type: 'tabs',
+    },
+    fields: {
+
+      billingDetails: {
+        name: 'never',
+        email: 'never',
+        address: 'never',
+        phone: 'never'
+      }
+    },
+    paymentMethodOrder: ['card']
+  }
 
   ngAfterViewInit(): void {
     this._stripeService.elements(this.stripeElementsOptions).subscribe((elements) => {

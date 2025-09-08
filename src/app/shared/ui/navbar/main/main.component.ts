@@ -90,7 +90,7 @@ export class MainComponent implements OnInit, OnDestroy {
       this.isSearching = true;
       this._cartService.searchProducts(val || "").subscribe({
         next: (products) => {
-          this.searchedProducts = products;
+          this.searchedProducts = products.filter((p) => p.isActive);
           this.isSearching = false;
         },
         error: (error) => {
